@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.casemng.repository.CaseMapper">
+
+	<select id="findAll" resultMap="case">
+		select
+		cases.id,
+		cases.case_name,
+		cases.customer_id,
+		cases.case_date,
+		cases.shipping_status,
+		cases.shipping_stock_flg,
+		cases.memo,
+
+		customer.id as cust_id,
+		customer.last_name as cust_last_name,
+		customer.first_name as cust_first_name,
+		customer.zipcode as cust_zipcode,
+		customer.address as cust_address,
+		customer.phone_number as cust_phone_number,
+
+		orders.id as order_id,
+		orders.order_date as order_date,
+
+		quotation.id AS quot_id,
+		quotation.case_id AS quot_case_id,
+
+		inquiry.id as inqu_id,
+		inquiry.inquiry_date as inqu_date,
+		inquiry.contents as inqu_contents
+		
+		from
+		cases
+		LEFT JOIN customer on cases.customer_id = customer.id
+		LEFT JOIN orders on cases.id = orders.case_id AND orders.is_deleted = 0
+		LEFT JOIN quotation on cases.id = quotation.case_id AND quotation.is_deleted = 0
+		LEFT JOIN inquiry ON cases.id = inquiry.case_id AND inquiry.is_deleted = 0
+		where
+		cases.is_deleted = 0
+		AND customer.is_deleted = 0
+	</select>
+
+	<select id="findById" resultMap="case">
+		select
+		cases.id,
+		cases.case_name,
+		cases.customer_id,
+		cases.case_date,
+		cases.shipping_status,
+		cases.shipping_stock_flg,
+		cases.memo,
+		
+		orders.id as order_id
+		from
+		cases
+		LEFT JOIN orders ON cases.id = orders.case_id AND orders.is_deleted = 0
+		where
+		cases.id = #{id}
+		and cases.is_deleted = 0
+	</select>
+
+	<update id="caseEdit">
+		update cases
+		set
+		case_name = #{caseName},
+		case_date = #{caseDate},
+		shipping_status = #{shippingStatus},
+		memo = #{memo}
+		where
+		id = #{id}
+	</update>
+	
+	<update id="logicalDelete">
+		update cases
+		set
+		is_deleted = 1
+		where
+		id = #{id}
+	</update>
+	
+	<update id="editShippingStockFlg">
+		update cases
+		set
+		shipping_stock_flg = 1
+		where
+		id = #{id}
+	</update>
+	
+	<insert id="create" useGeneratedKeys="true" keyProperty="id">
+		insert into cases(
+		  case_name,
+		  customer_id,
+		  case_date,
+		  memo
+		)values(
+		  #{caseName},
+		  #{customerId},
+		  #{caseDate},
+		  #{memo}
+		)
+	</insert>
+	
+	<resultMap type="com.example.casemng.entity.Case" id="case">
+		<id property="id" column="id" />
+		<result property="caseName" column="case_name" />
+		<result property="customerId" column="customer_id" />
+		<result property="caseDate" column="case_Date" />
+		<result property="shippingStatus" column="shipping_status" />
+		<result property="shippingStockFlg" column="shipping_stock_flg" />
+		<result property="memo" column="memo" />
+		<result property="isDeleted" column="is_deleted" />
+		<association property="customer" resultMap="cust"
+			columnPrefix="cust_" />
+		<association property="order" resultMap="order"
+			columnPrefix="order_" />
+		<collection property="quotation" resultMap="quot"
+			columnPrefix="quot_" />
+		<collection property="inquiry" resultMap="inqu"
+			columnPrefix="inqu_" />
+	</resultMap>
+
+	<resultMap type="com.example.casemng.entity.Customer"
+		id="cust">
+		<id property="id" column="id" />
+		<result property="lastName" column="last_name" />
+		<result property="firstName" column="first_name" />
+		<result property="zipcode" column="zipcode" />
+		<result property="address" column="address" />
+		<result property="phoneNumber" column="phone_number" />
+		<result property="memo" column="memo" />
+	</resultMap>
+
+	<resultMap type="com.example.casemng.entity.Order" id="order">
+		<id property="id" column="id" />
+		<result property="orderDate" column="order_date" />
+		<result property="memo" column="memo" />
+	</resultMap>
+
+	<resultMap type="com.example.casemng.entity.Product"
+		id="prdu">
+		<id property="id" column="id" />
+		<result property="productName" column="product_name" />
+		<result property="productCategoryId"
+			column="product_category_id" />
+		<result property="price" column="price" />
+		<result property="stock" column="stock" />
+		<result property="choose" column="is_choose" />
+	</resultMap>
+
+	<resultMap type="com.example.casemng.entity.Quotation"
+		id="quot">
+		<id property="id" column="id" />
+		<result property="quotationDate" column="quotation_date" />
+		<result property="memo" column="memo" />
+	</resultMap>
+
+	<resultMap type="com.example.casemng.entity.Inquiry"
+		id="inqu">
+		<id property="id" column="id" />
+		<result property="inquiryDate" column="inququiry_date" />
+		<result property="contents" column="contents" />
+	</resultMap>
+
+</mapper>

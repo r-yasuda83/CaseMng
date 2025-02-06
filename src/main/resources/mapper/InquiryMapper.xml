@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.casemng.repository.InquiryMapper">
+
+	<select id="findAll" resultMap="inq">
+		SELECT
+		inquiry.id,
+		inquiry.inquiry_date,
+		inquiry.contents,
+
+		cases.id AS case_id,
+		cases.case_name AS case_case_name,
+		cases.case_date AS case_case_date,
+		cases.shipping_status AS case_shipping_status,
+		cases.memo AS case_memo,
+
+		customer.id AS case_cust_id,
+		customer.last_name AS case_cust_last_name,
+		customer.first_name AS case_cust_first_name,
+		customer.zipcode AS
+		case_cust_zipcode,
+		customer.address AS case_cust_address,
+		customer.phone_number AS case_cust_phone_number,
+		customer.memo AS
+		case_cust_memo
+		FROM
+		inquiry
+		LEFT JOIN cases ON inquiry.case_id = cases.id
+		LEFT JOIN customer ON cases.customer_id = customer.id
+		WHERE
+		inquiry.is_deleted = 0
+		AND cases.is_deleted = 0
+		AND customer.is_deleted
+		= 0
+	</select>
+
+	<select id="findById" resultMap="inq">
+		SELECT
+		inquiry.id,
+		inquiry.inquiry_date,
+		inquiry.contents,
+
+		cases.id AS case_id,
+		cases.case_name AS case_case_name,
+		cases.customer_id as
+		case_customer_id,
+		cases.case_date AS case_case_date,
+		cases.shipping_status AS case_shipping_status,
+		cases.memo AS case_memo
+
+		FROM
+		inquiry
+		LEFT JOIN cases ON inquiry.case_id = cases.id
+		LEFT JOIN customer on cases.customer_id = customer.id
+		where
+		inquiry.id = #{id}
+		AND inquiry.is_deleted = 0
+		AND cases.is_deleted = 0
+		AND customer.is_deleted = 0
+	</select>
+
+	<update id="inquiryEdit">
+		update inquiry
+		set
+		inquiry_date = #{inquiryDate},
+		contents = #{contents}
+		where
+		inquiry.id = #{id}
+	</update>
+	
+	<update id="logicalDelete">
+		update inquiry
+		set
+		is_deleted = 1
+		where
+		id = #{id}
+	</update>
+
+	<insert id="create" useGeneratedKeys="true" keyProperty="id">
+		insert into inquiry
+		(
+		case_id,
+		inquiry_date,
+		contents
+		)
+		values
+		(
+		#{caseId},
+		#{inquiryDate},
+		#{contents}
+		)
+	</insert>
+
+	<resultMap type="com.example.casemng.entity.Inquiry" id="inq">
+		<id property="id" column="id" />
+		<result property="inquiryDate" column="inquiry_date" />
+		<result property="contents" column="contents" />
+		<association property="cases" resultMap="cases"
+			columnPrefix="case_" />
+	</resultMap>
+
+	<resultMap type="com.example.casemng.entity.Case" id="cases">
+		<id property="id" column="id" />
+		<result property="caseName" column="case_name" />
+		<result property="customerId" column="customer_id" />
+		<result property="caseDate" column="case_date" />
+		<result property="shippingStatus" column="shipping_status" />
+		<result property="memo" column="memo" />
+		<association property="customer" resultMap="cust"
+			columnPrefix="cust_" />
+	</resultMap>
+
+	<resultMap type="com.example.casemng.entity.Customer"
+		id="cust">
+		<id property="id" column="id" />
+		<result property="lastName" column="last_name" />
+		<result property="firstName" column="first_name" />
+		<result property="zipcode" column="zipcode" />
+		<result property="address" column="address" />
+		<result property="phoneNumber" column="phone_number" />
+		<result property="memo" column="memo" />
+	</resultMap>
+
+</mapper>

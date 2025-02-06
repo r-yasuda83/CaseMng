@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper
+	namespace="com.example.casemng.repository.QuotationProductMapper">
+
+	<select id="findByQuotationId" resultMap="quoPr">
+		select
+		product.id as prdu_id,
+		product.product_name as prdu_product_name,
+		product.price asprdu_price,
+
+		quotation_product.quantity as quantity,
+		quotation_product.discount as discount
+
+		from
+		quotation_product
+		inner join product on quotation_product.product_id = product.id
+		where
+		quotation_product.quotation_id = #{id}
+		and quotation_product.is_deleted = 0
+
+	</select>
+	
+	<select id="findAllExport" resultMap="quoPr">
+		SELECT
+		quotation.id as quo_id,
+		quotation.quotation_date as quo_quotation_date,
+		
+		cases.id as quo_case_id,
+		cases.case_name as quo_case_case_name,
+		
+		customer.id as quo_case_cus_id,
+		customer.last_name as quo_case_cus_last_name,
+		customer.first_name as quo_case_cus_first_name,
+		
+		product.id as prdu_id,
+		product.product_name as prdu_product_name,
+		product.price as prdu_price,
+		
+		quotation_product.id as id,
+		quotation_product.quantity as quantity,
+		quotation_product.discount as discount
+		FROM
+		quotation_product
+		LEFT JOIN product ON quotation_product.product_id = product.id
+		INNER JOIN quotation ON quotation_product.quotation_id = quotation.id
+		INNER JOIN cases ON quotation.case_id = cases.id
+		LEFT JOIN customer ON cases.customer_id = customer.id
+		WHERE
+		quotation_product.is_deleted = 0
+		AND quotation.is_deleted = 0
+		AND cases.is_deleted = 0
+		AND customer.is_deleted = 0
+	</select>
+	
+	<select id="findById" resultType="QuotationProduct">
+		select
+		*
+		from
+		quotation_product
+		where
+		id = #{id}
+		AND quotation_product.is_deleted = 0
+	</select>
+	
+	<select id="findByIdAll" resultType="QuotationProduct">
+		select
+		*
+		from
+		quotation_product
+		where
+		id = #{id}
+	</select>
+
+	<resultMap type="com.example.casemng.entity.QuotationProduct"
+		id="quoPr">
+		<id property="id" column="id" />
+		<result property="quotationId" column="quotation_id" />
+		<result property="productId" column="product_id" />
+		<result property="quantity" column="quantity" />
+		<result property="discount" column="discount" />
+		<result property="isDeleted" column="is_deleted" />
+		<association property="product" resultMap="prdu"
+			columnPrefix="prdu_" />
+		<association property="quotation" resultMap="quo" columnPrefix="quo_" />
+	</resultMap>
+
+	<resultMap type="com.example.casemng.entity.Product"
+		id="prdu">
+		<id property="id" column="id" />
+		<result property="productName" column="product_name" />
+		<result property="productCategoryId"
+			column="product_category_id" />
+		<result property="price" column="price" />
+		<result property="stock" column="stock" />
+		<result property="choose" column="is_choose" />
+	</resultMap>
+	
+	<resultMap type="com.example.casemng.entity.Quotation" id="quo">
+		<id property="id" column="id" />
+		<result property="quotationDate" column="quotation_date" />
+		<result property="memo" column="memo" />
+		<association property="cases" resultMap="case"
+			columnPrefix="case_" />
+	</resultMap>
+	
+	<resultMap type="com.example.casemng.entity.Case" id="case">
+		<id property="id" column="id" />
+		<result property="caseName" column="case_name" />
+		<result property="customerId" column="customer_id" />
+		<result property="caseDate" column="case_date" />
+		<result property="shippingStatus" column="shipping_status" />
+		<result property="memo" column="memo" />
+		<result property="isDeleted" column="is_deleted" />
+		<association property="customer" resultMap="cus" columnPrefix="cus_" />
+	</resultMap>
+	
+	<resultMap type="com.example.casemng.entity.Customer" id="cus">
+		<id property="id" column="id" />
+		<result property="lastName" column="last_name" />
+		<result property="firstName" column="first_name" />
+		<result property="zipcode" column="zipcode" />
+		<result property="address" column="address" />
+		<result property="phoneNumber" column="phone_number" />
+		<result property="memo" column="memo" />
+		<result property="isDeleted" column="is_deleted" />
+	</resultMap>
+
+	<update id="quotationProductEdit" parameterType="java.util.List">
+		update quotation_product
+		set
+		product_id = elt(field(id,
+		<foreach collection="list" item="item" separator=",">
+			#{item.id}
+		</foreach>
+		),
+		<foreach collection="list" item="item" separator=",">
+			#{item.productId}
+		</foreach>
+		),
+		
+		
+		quantity = elt(field(id,
+		<foreach collection="list" item="item" separator=",">
+			#{item.id}
+		</foreach>
+		),
+		<foreach collection="list" item="item" separator=",">
+			#{item.quantity}
+		</foreach>
+		),
+
+		discount = elt(field(id,
+		<foreach collection="list" item="item" separator=",">
+			#{item.id}
+		</foreach>
+		),
+		<foreach collection="list" item="item" separator=",">
+			#{item.discount}
+		</foreach>
+		)
+		where
+		id IN
+		(
+		<foreach collection="list" item="item" separator=",">
+			#{item.id}
+		</foreach>
+		)
+	</update>
+
+	<update id="logicalDelete" parameterType="java.util.List">
+		update quotation_product
+		set
+		product_id = elt(field(id,
+		<foreach collection="list" item="item" separator=",">
+			#{item.id}
+		</foreach>
+		),
+		<foreach collection="list" item="item" separator=",">
+			#{item.productId}
+		</foreach>
+		),
+		
+		quantity = elt(field(id,
+		<foreach collection="list" item="item" separator=",">
+			#{item.id}
+		</foreach>
+		),
+		<foreach collection="list" item="item" separator=",">
+			#{item.quantity}
+		</foreach>
+		),
+
+		discount = elt(field(id,
+		<foreach collection="list" item="item" separator=",">
+			#{item.id}
+		</foreach>
+		),
+		<foreach collection="list" item="item" separator=",">
+			#{item.discount}
+		</foreach>
+		),
+		
+		is_deleted = elt(field(id,
+		<foreach collection="list" item="item" separator=",">
+			#{item.id}
+		</foreach>
+		),
+		<foreach collection="list" item="item" separator=",">
+			1
+		</foreach>
+		)
+		where
+		id IN
+		(
+		<foreach collection="list" item="item" separator=",">
+			#{item.id}
+		</foreach>
+		)
+	</update>
+	
+	<insert id="create" parameterType="java.util.List">
+		insert into quotation_product
+			(
+			quotation_id,
+			product_id,
+			quantity,
+			discount
+			)
+		values
+		<foreach collection="list" item="item" separator=",">
+			(
+			#{item.quotationId},
+			#{item.productId},
+			#{item.quantity},
+			#{item.discount}
+			)
+		</foreach>
+	</insert>
+
+	<insert id="addQuotationProduct" parameterType="java.util.List">
+		insert into
+		quotation_product(quotation_id, product_id, quantity, discount)
+		values
+		<foreach collection="list" item="item" separator=",">
+			(
+			#{item.quotationId}, #{item.productId}, #{item.quantity},
+			#{item.discount}
+			)
+		</foreach>
+	</insert>
+
+</mapper>

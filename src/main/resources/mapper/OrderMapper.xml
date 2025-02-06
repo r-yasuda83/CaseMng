@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.casemng.repository.OrderMapper">
+
+	<select id="findAll" resultType="order">
+		select
+		*
+		from
+		orders
+		where
+		orders.is_deleted = 0
+	</select>
+
+	<select id="findById" resultMap="ord">
+		select
+		orders.id,
+		orders.case_id,
+		orders.order_date,
+		orders.memo,
+		
+		cases.id as case_id,
+		cases.customer_id as case_customer_id,
+		cases.shipping_stock_flg as case_shipping_stock_flg,
+		
+		order_product.id as ordPr_id,
+		order_product.orders_id as ordPr_orders_id,
+		order_product.product_id as ordPr_product_id,
+		order_product.quantity as ordPr_quantity,
+		order_product.discount as ordPr_discount,
+		order_product.is_deleted as ordPr_is_deleted,
+		
+		product.id as ordPr_prdu_id,
+		product.product_name as ordPr_prdu_product_name,
+		product.price as ordPr_prdu_price,
+		product.stock as ordPr_prdu_stock,
+		product.is_choose as ordPr_prdu_is_choose
+		
+		from
+		orders
+		inner JOIN cases ON orders.case_id = cases.id
+		INNER JOIN customer ON cases.customer_id = customer.id
+		left join order_product on orders.id = order_product.orders_id AND order_product.is_deleted = 0
+		left join product on order_product.product_id = product.id
+		where
+		orders.id = #{id}
+		AND orders.is_deleted = 0
+		AND cases.is_deleted = 0
+		AND customer.is_deleted = 0
+	</select>
+	
+	<select id="findByCaseId" resultMap="ord">
+		select
+		orders.id,
+		orders.case_id,
+		orders.order_date,
+		orders.memo,
+		
+		cases.id as case_id,
+		cases.customer_id as case_customer_id,
+		cases.shipping_stock_flg as case_shipping_stock_flg,
+		
+		order_product.id as ordPr_id,
+		order_product.orders_id as ordPr_orders_id,
+		order_product.product_id as ordPr_product_id,
+		order_product.quantity as ordPr_quantity,
+		order_product.discount as ordPr_discount,
+		order_product.is_deleted as ordPr_is_deleted,
+		
+		product.id as ordPr_prdu_id,
+		product.product_name as ordPr_prdu_product_name,
+		product.price as ordPr_prdu_price,
+		product.stock as ordPr_prdu_stock,
+		product.is_choose as ordPr_prdu_is_choose
+		
+		from
+		orders
+		inner JOIN cases ON orders.case_id = cases.id
+		INNER JOIN customer ON cases.customer_id = customer.id
+		left join order_product on orders.id = order_product.orders_id AND order_product.is_deleted = 0
+		left join product on order_product.product_id = product.id
+		where
+		orders.case_id = #{caseId}
+		AND orders.is_deleted = 0
+		AND cases.is_deleted = 0
+		AND customer.is_deleted = 0
+		
+	</select>
+
+	<update id="orderEdit">
+		update orders
+		set
+		order_date = #{orderDate},
+		memo = #{memo}
+		where
+		id = #{id}
+	</update>
+	
+	<update id="logicalDelete">
+		update orders 
+		set
+		is_deleted = 1
+		where
+		id = #{id}
+	</update>
+	
+	<insert id="create" useGeneratedKeys="true" keyProperty="id">
+		insert into orders(
+		  case_id,
+		  order_date,
+		  memo
+		)values(
+		  #{caseId},
+		  #{orderDate},
+		  #{memo}
+		)
+	</insert>
+
+	<resultMap type="com.example.casemng.entity.Order" id="ord">
+		<id property="id" column="id" />
+		<result property="caseId" column="case_id" />
+		<result property="orderDate" column="order_date" />
+		<result property="memo" column="memo" />
+		<association property="cases" resultMap="case"
+			columnPrefix="case_" />
+		<collection property="orderProduct" resultMap="ordPr" columnPrefix="ordPr_"/>
+	</resultMap>
+	
+	<resultMap type="com.example.casemng.entity.Case" id="case">
+		<id property="id" column="id" />
+		<result property="caseName" column="case_name" />
+		<result property="customerId" column="customer_id" />
+		<result property="caseDate" column="case_date" />
+		<result property="shippingStatus" column="shipping_status" />
+		<result property="shippingStockFlg" column="shipping_stock_flg" />
+		<result property="memo" column="memo" />
+		<result property="isDeleted" column="is_deleted" />
+		<association property="customer" resultMap="cus" columnPrefix="cus_" />
+	</resultMap>
+	
+	<resultMap type="com.example.casemng.entity.Customer" id="cus">
+		<id property="id" column="id" />
+		<result property="lastName" column="last_name" />
+		<result property="firstName" column="first_name" />
+		<result property="zipcode" column="zipcode" />
+		<result property="address" column="address" />
+		<result property="phoneNumber" column="phone_number" />
+		<result property="memo" column="memo" />
+		<result property="isDeleted" column="is_deleted" />
+	</resultMap>
+
+	<resultMap type="com.example.casemng.entity.OrderProduct"
+		id="ordPr">
+		<id property="id" column="id" />
+		<result property="ordersId" column="orders_id" />
+		<result property="productId" column="product_id" />
+		<result property="quantity" column="quantity" />
+		<result property="discount" column="discount" />
+		<result property="isDeleted" column="is_deleted" />
+		<association property="product" resultMap="prdu"
+			columnPrefix="prdu_" />
+	</resultMap>
+
+	<resultMap type="com.example.casemng.entity.Product"
+		id="prdu">
+		<id property="id" column="id" />
+		<result property="productName" column="product_name" />
+		<result property="productCategoryId"
+			column="product_category_id" />
+		<result property="price" column="price" />
+		<result property="stock" column="stock" />
+		<result property="choose" column="is_choose" />
+	</resultMap>
+
+</mapper>

@@ -1,0 +1,25 @@
+@charset "UTF-8";
+
+.case-items{
+	display:none;
+}
+
+.quotation-items{
+	display:none;
+}
+
+.inquiry-items{
+	display:none;
+}
+
+.customer{
+	width:30%;
+}
+
+.cases{
+	width:70%;
+}
+
+th, td{
+    padding: 5px 10px;
+}

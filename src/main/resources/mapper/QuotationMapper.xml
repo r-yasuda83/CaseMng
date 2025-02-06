@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="com.example.casemng.repository.QuotationMapper">
+
+	<select id="findById" resultMap="quot">
+		SELECT
+		quotation.id,
+		quotation.quotation_date,
+		quotation.memo,
+
+		cases.id as case_id,
+		cases.customer_id as case_customer_id,
+		
+		quotation_product.id as quoPr_id,
+		quotation_product.quotation_id as quoPr_quotation_id,
+		quotation_product.product_id as quoPr_product_id,
+		quotation_product.quantity as quoPr_quantity,
+		quotation_product.discount as quoPr_discount,
+		quotation_product.is_deleted as quoPr_is_deleted,
+		
+		product.id as quoPr_prdu_id,
+		product.product_name as quoPr_prdu_product_name,
+		product.price as quoPr_prdu_price,
+		product.stock as quoPr_prdu_stock,
+		product.is_choose as quoPr_prdu_is_choose
+		
+		FROM
+		quotation
+		INNER JOIN cases ON quotation.case_id = cases.id
+		INNER JOIN customer ON cases.customer_id = customer.id
+		left join quotation_product on quotation.id = quotation_product.quotation_id AND quotation_product.is_deleted = 0
+		left join product on quotation_product.product_id = product.id
+		where
+		quotation.id = #{id}
+		AND quotation.is_deleted = 0
+		AND cases.is_deleted = 0
+		AND customer.is_deleted = 0
+	</select>
+
+	<update id="quotationEdit">
+		update quotation
+		set
+		  quotation_date = #{quotationDate},
+		  memo = #{memo}
+		where
+		  quotation.id = #{id}
+	</update>
+	
+	<update id="logicalDelete">
+		update quotation
+		set
+		is_deleted = 1
+		where
+		id = #{id}
+	</update>
+	
+	<insert id="create" useGeneratedKeys="true" keyProperty="id">
+		insert into quotation
+		(
+		  case_id,
+		  quotation_date,
+		  memo
+		)
+		values
+		(
+		  #{caseId},
+		  #{quotationDate},
+		  #{memo}
+		)
+	</insert>
+
+	<resultMap type="com.example.casemng.entity.Quotation"
+		id="quot">
+		<id property="id" column="id" />
+		<result property="quotationDate" column="quotation_date" />
+		<result property="memo" column="memo" />
+		<association property="cases" resultMap="case" columnPrefix="case_" />
+		<collection property="quotationProduct" resultMap="quoPr" columnPrefix="quoPr_"/>
+	</resultMap>
+
+	<resultMap type="com.example.casemng.entity.Case" id="case">
+		<id property="id" column="id" />
+		<result property="caseName" column="case_name" />
+		<result property="customerId" column="customer_id" />
+		<result property="caseDate" column="case_date" />
+		<result property="shippingStatus" column="shipping_status" />
+		<result property="memo" column="memo" />
+		<result property="isDeleted" column="is_deleted" />
+	</resultMap>
+	
+	<resultMap type="com.example.casemng.entity.QuotationProduct"
+		id="quoPr">
+		<id property="id" column="id" />
+		<result property="quotationId" column="quotation_id" />
+		<result property="productId" column="product_id" />
+		<result property="quantity" column="quantity" />
+		<result property="discount" column="discount" />
+		<result property="isDeleted" column="is_deleted" />
+		<association property="product" resultMap="prdu"
+			columnPrefix="prdu_" />
+	</resultMap>
+
+	<resultMap type="com.example.casemng.entity.Product"
+		id="prdu">
+		<id property="id" column="id" />
+		<result property="productName" column="product_name" />
+		<result property="productCategoryId"
+			column="product_category_id" />
+		<result property="price" column="price" />
+		<result property="stock" column="stock" />
+		<result property="choose" column="is_choose" />
+	</resultMap>
+
+</mapper>

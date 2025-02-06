@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.casemng.repository.UserMapper">
+
+	<select id="findByUsername" resultMap="user">
+		select
+		users.id,
+		users.user_id,
+		users.password,
+		users.last_name,
+		users.first_name,
+		users.email_address,
+		users.department_id,
+		users.role,
+		users.is_deleted,
+		
+		department.id as depa_id,
+		department.department_name as depa_department_name,
+		
+		roles.id AS role_id,
+		roles.role_name AS role_role_name
+		from
+		users
+		inner join department ON users.department_id = department.id
+		INNER JOIN roles ON users.role = roles.id
+		where
+		users.user_id = #{userId}
+	</select>
+
+	<select id="findAll" resultMap="user">
+		select
+		users.id,
+		users.user_id,
+		users.password,
+		users.last_name,
+		users.first_name,
+		users.email_address,
+		users.department_id,
+		users.role,
+		users.is_deleted,
+		
+		department.id as depa_id,
+		department.department_name as depa_department_name
+		
+		from
+		users
+		inner join department ON users.department_id = department.id
+	</select>
+		
+	<select id="findWithoutThisId" resultType="User">
+		select
+		users.id,
+		users.user_id
+		
+		from
+		users
+		inner join department ON users.department_id = department.id
+		where
+		users.id != #{id};
+	</select>
+	
+	<select id="findById" resultMap="user">
+		select
+		users.id,
+		users.user_id,
+		users.password,
+		users.last_name,
+		users.first_name,
+		users.email_address,
+		users.department_id,
+		users.role,
+		users.is_deleted,
+		
+		department.id as depa_id,
+		department.department_name as depa_department_name
+		
+		from
+		users
+		inner join department ON users.department_id = department.id
+		where
+		users.id = #{id}
+	</select>
+	
+	<update id="edit">
+		update users
+		set
+		user_id = #{userId},
+		password = #{password},
+		last_name= #{lastName},
+		first_name= #{firstName},
+		email_address= #{emailAddress},
+		department_id= #{departmentId},
+		role = #{role},
+		is_deleted = #{deleted}
+		where
+		id = #{id}
+	</update>
+	
+	<update id="editExceptPassword">
+		update users
+		set
+		user_id = #{userId},
+		last_name= #{lastName},
+		first_name= #{firstName},
+		email_address= #{emailAddress},
+		department_id= #{departmentId},
+		role = #{role},
+		is_deleted = #{deleted}
+		where
+		id = #{id}
+	</update>
+	
+	<update id="editLoginUser">
+		update users
+		set
+		password = #{password},
+		email_address= #{emailAddress},
+		department_id= #{departmentId}
+		where
+		id = #{id}
+	</update>
+	
+	<update id="editLoginUserExceptPassword">
+		update users
+		set
+		email_address= #{emailAddress},
+		department_id= #{departmentId}
+		where
+		id = #{id}
+	</update>
+	
+	<insert id="create">
+		insert into users
+		(
+		user_id,
+		password,
+		last_name,
+		first_name,
+		email_address,
+		department_id,
+		role
+		)
+		values
+		(
+		#{userId},
+		#{password},
+		#{lastName},
+		#{firstName},
+		#{emailAddress},
+		#{departmentId},
+		#{role}
+		)
+	</insert>
+	
+	<update id="logicalDelete">
+		update users
+		set
+		is_deleted = 1
+		where
+		id = #{id}
+	</update>
+	
+	<resultMap type="com.example.casemng.entity.User" id="user">
+		<id property="id" column="id" />
+		<result property="userId" column="user_id" />
+		<result property="password" column="password" />
+		<result property="lastName" column="last_name" />
+		<result property="firstName" column="first_name" />
+		<result property="emailAddress" column="email_address" />
+		<result property="departmentId" column="department_id" />
+		<result property="role" column="role" />
+		<result property="deleted" column="is_deleted" />
+		<association property="department" columnPrefix="depa_" resultMap="depa" />
+		<association property="roles" columnPrefix="role_" resultMap="role" />
+	</resultMap>
+	
+	<resultMap type="com.example.casemng.entity.Department" id="depa">
+		<id property="id" column="id" />
+		<result property="departmentName" column="department_name" />
+	</resultMap>
+	
+	<resultMap type="com.example.casemng.entity.Role" id="role">
+		<id property="id" column="id" />
+		<result property="roleName" column="role_name" />
+ 	</resultMap>
+
+</mapper>

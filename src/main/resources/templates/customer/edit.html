@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout(title='顧客編集')}">
+
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" th:href="@{/css/edit.css}">
+	<title th:text="${title}"></title>
+
+<body>
+	<div class="mt-3" style="width:90%; margin: 0 auto;" layout:fragment="content">
+		<div class="card m-3">
+			<div class="card-header d-flex justify-content-between align-items-center">
+				<div th:text="${'顧客ID：' + formCustomer.id + ' ' + formCustomer.getFullName() + ' 様'}"></div>
+			</div>
+			<div class="card-body">
+				<form th:action="@{/customer/{id}/edit(id=${formCustomer.id})}" method="post"
+					th:object="${formCustomer}">
+					<input type="hidden" th:field="*{id}">
+
+					<table>
+						<tr>
+							<th>姓</th>
+							<td><input type="text" th:field="*{lastName}"></td>
+							<td th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" th:errorclass="err">
+							</td>
+						</tr>
+						<tr>
+							<th>名</th>
+							<td><input type="text" th:field="*{firstName}"></td>
+							<td th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" th:errorclass="err">
+							</td>
+						</tr>
+						<tr>
+							<th>〒</th>
+							<td><input type="text" th:field="*{zipcode}"></td>
+							<td th:if="${#fields.hasErrors('zipcode')}" th:errors="*{zipcode}" th:errorclass="err"></td>
+						</tr>
+						<tr>
+							<th>住所</th>
+							<td><input type="text" th:field="*{address}"></td>
+							<td th:if="${#fields.hasErrors('address')}" th:errors="*{address}" th:errorclass="err"></td>
+						</tr>
+						<tr>
+							<th>電話番号</th>
+							<td><input type="tel" th:field="*{phoneNumber}" pattern="\d{2,4}-\d{3,4}-\d{3,4}"></td>
+							<td th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"
+								th:errorclass="err"></td>
+						</tr>
+						<tr>
+							<th>備考</th>
+							<td><input type="text" th:field="*{memo}"></td>
+						</tr>
+					</table>
+					<input type="button" th:onclick="|location.href='@{/customer/{id}(id=${formCustomer.id})}'|"
+						value="取消">
+					<input type="submit" value="保存">
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

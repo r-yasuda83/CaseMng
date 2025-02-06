@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.casemng.repository.ProductMapper">
+
+	<select id="findAll" resultMap="prod">
+		select
+		product.id,
+		product.product_name,
+		product.product_category_id,
+		product.price,
+		product.stock,
+		product.is_choose
+		from
+		product
+	</select>
+	
+	<select id="findAllForSelect" resultMap="prod">
+		select
+		product.id,
+		product.product_name,
+		product.product_category_id,
+		product.price,
+		product.stock,
+		product.is_choose
+		from
+		product
+		where
+		product.is_choose = 0
+	</select>
+	
+	<select id="findAllForSelectStock" resultMap="prod">
+		select
+		product.id,
+		product.product_name,
+		product.product_category_id,
+		product.price,
+		product.stock,
+		product.is_choose
+		from
+		product
+		where
+		product.is_choose = 0
+		and product.stock > 0
+	</select>
+	
+	<select id="findById" resultMap="prod">
+		select
+		product.id,
+		product.product_name,
+		product.product_category_id,
+		product.price,
+		product.stock,
+		product.is_choose,
+		
+		product_category.id as cate_id,
+		product_category.category_name as cate_category_name
+		from
+		product
+		left join product_category on product.product_category_id = product_category.id
+		where
+		product.id = #{id}
+	</select>
+	
+	<update id="edit">
+		update product
+		set
+		product_name = #{productName},
+		product_category_id = #{productCategoryId},
+		price = #{price},
+		stock = #{stock},
+		is_choose = #{choose}
+		where
+		id = #{id}
+	</update>
+	
+	<update id="editStock" parameterType="java.util.List">
+		update product
+		set
+		stock = elt(field(id,
+		<foreach collection="list" item="item" separator=",">
+			#{item.id}
+		</foreach>
+		),
+		<foreach collection="list" item="item" separator=",">
+			stock - #{item.quantity}
+		</foreach>
+		)
+		where
+		id IN
+		(
+		<foreach collection="list" item="item" separator=",">
+			#{item.productId}
+		</foreach>
+		)
+	</update>
+	
+	<insert id="create">
+		insert into product
+		(
+		product_name,
+		product_category_id,
+		price,
+		stock,
+		is_choose
+		)
+		values
+		(
+		#{productName},
+		#{productCategoryId},
+		#{price},
+		#{stock},
+		#{choose}
+		)
+	</insert>
+	
+	<resultMap type="com.example.casemng.entity.Product" id="prod">
+		<id property="id" column="id" />
+		<result property="productName" column="product_name" />
+		<result property="productCategoryId" column="product_category_id" />
+		<result property="price" column="price" />
+		<result property="stock" column="stock" />
+		<result property="choose" column="is_choose" />
+		<association property="productCategory" columnPrefix="cate_" resultMap="cate" />
+	</resultMap>
+	
+	<resultMap type="com.example.casemng.entity.ProductCategory" id="cate">
+		<id property="id" column="id" />
+		<result property="categoryName" column="category_name" />
+	</resultMap>
+	
+</mapper>
