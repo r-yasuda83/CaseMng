@@ -19,19 +19,20 @@
 
 					<input type="hidden" th:field="*{cases.customerId}">
 
-					<table>
-						<tr>
-							<th>受注日</th>
-							<td><input type="date" th:field="*{inquiryDate}"></td>
-							<td th:if="${#fields.hasErrors('inquiryDate')}" th:errors="*{inquiryDate}"
-								th:errorclass="err">
-							</td>
-						</tr>
-						<tr>
-							<th>問い合わせ内容</th>
-							<td><textarea th:field="*{contents}"></textarea></td>
-						</tr>
-					</table>
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label">作成日</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="date" th:field="*{inquiryDate}">
+						</div>
+						<span th:if="${#fields.hasErrors('inquiryDate')}" th:errors="*{inquiryDate}"
+							th:errorclass="err">
+					</div>
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label">問い合わせ内容</label>
+						<div class="col-sm-8">
+							<textarea class="form-control" th:field="*{contents}" rows="3"></textarea>
+						</div>
+					</div>
 					<input type="button"
 						th:onclick="|location.href='@{/customer/{id}(id=${formInquiry.cases.customerId}, caseId=${formInquiry.caseId})}'|"
 						value="取消">

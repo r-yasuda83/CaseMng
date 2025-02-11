@@ -6,54 +6,70 @@
 
 	<select id="findByOrdersId" resultMap="ordPr">
 		select
-		product.id as prdu_id,
+		product.id as
+		prdu_id,
 		product.product_name as prdu_product_name,
-		product.price as prdu_price,
+		product.price as
+		prdu_price,
 
 		order_product.quantity as quantity,
-		order_product.discount as discount
+		order_product.discount
+		as discount
 
 		from
 		order_product
-		inner join product on order_product.product_id = product.id
+		inner join product on
+		order_product.product_id = product.id
 		where
-		order_product.orders_id = #{id}
+		order_product.orders_id =
+		#{id}
 		AND order_product.is_deleted = 0
 	</select>
-	
+
 	<select id="findAllExport" resultMap="ordPr">
 		SELECT
 		orders.id as ord_id,
 		orders.order_date as ord_order_date,
-		
+
 		cases.id as ord_case_id,
 		cases.case_name as ord_case_case_name,
-		
+
 		customer.id as ord_case_cus_id,
 		customer.last_name as ord_case_cus_last_name,
-		customer.first_name as ord_case_cus_first_name,
-		
+		customer.first_name as
+		ord_case_cus_first_name,
+
 		product.id as prdu_id,
-		product.product_name as prdu_product_name,
-		product.price as prdu_price,
-		
+		product.product_name as
+		prdu_product_name,
+		product.price as
+		prdu_price,
+
 		order_product.id as id,
 		order_product.quantity as quantity,
-		order_product.discount as discount
+		order_product.discount as
+		discount
 		FROM
 		order_product
-		LEFT JOIN product ON order_product.product_id = product.id
+		LEFT JOIN product ON order_product.product_id
+		=
+		product.id
 		LEFT JOIN orders ON order_product.orders_id = orders.id
-		LEFT JOIN cases ON orders.case_id = cases.id
-		LEFT JOIN customer ON cases.customer_id = customer.id
-	
+		LEFT
+		JOIN cases ON orders.case_id = cases.id
+		LEFT JOIN customer ON
+		cases.customer_id = customer.id
+
 		WHERE
 		order_product.is_deleted = 0
-		AND orders.is_deleted = 0
-		AND cases.is_deleted = 0
-		AND customer.is_deleted = 0
+		AND
+		orders.is_deleted = 0
+		AND
+		cases.is_deleted = 0
+		AND customer.is_deleted =
+		0
 	</select>
-	
+
 	<select id="findById" resultType="OrderProduct">
 		select
 		*
@@ -63,7 +79,7 @@
 		id = #{id}
 		and order_product.is_deleted = 0
 	</select>
-	
+
 	<select id="findByIdAll" resultType="OrderProduct">
 		select
 		*
@@ -72,7 +88,7 @@
 		where
 		id = #{id}
 	</select>
-	
+
 	<resultMap type="com.example.casemng.entity.OrderProduct"
 		id="ordPr">
 		<id property="id" column="id" />
@@ -83,7 +99,8 @@
 		<result property="isDeleted" column="is_deleted" />
 		<association property="product" resultMap="prdu"
 			columnPrefix="prdu_" />
-		<association property="orders" resultMap="ord" columnPrefix="ord_"></association>
+		<association property="orders" resultMap="ord"
+			columnPrefix="ord_"></association>
 	</resultMap>
 
 	<resultMap type="com.example.casemng.entity.Product"
@@ -96,7 +113,7 @@
 		<result property="stock" column="stock" />
 		<result property="choose" column="is_choose" />
 	</resultMap>
-	
+
 	<resultMap type="com.example.casemng.entity.Order" id="ord">
 		<id property="id" column="id" />
 		<result property="orderDate" column="order_date" />
@@ -104,7 +121,7 @@
 		<association property="cases" resultMap="case"
 			columnPrefix="case_" />
 	</resultMap>
-	
+
 	<resultMap type="com.example.casemng.entity.Case" id="case">
 		<id property="id" column="id" />
 		<result property="caseName" column="case_name" />
@@ -113,10 +130,12 @@
 		<result property="shippingStatus" column="shipping_status" />
 		<result property="memo" column="memo" />
 		<result property="isDeleted" column="is_deleted" />
-		<association property="customer" resultMap="cus" columnPrefix="cus_" />
+		<association property="customer" resultMap="cus"
+			columnPrefix="cus_" />
 	</resultMap>
-	
-	<resultMap type="com.example.casemng.entity.Customer" id="cus">
+
+	<resultMap type="com.example.casemng.entity.Customer"
+		id="cus">
 		<id property="id" column="id" />
 		<result property="lastName" column="last_name" />
 		<result property="firstName" column="first_name" />
@@ -126,8 +145,22 @@
 		<result property="memo" column="memo" />
 		<result property="isDeleted" column="is_deleted" />
 	</resultMap>
-
-	<update id="orderProductEdit" parameterType="java.util.List">
+	
+	<!-- h2 -->
+	<update id="edit" parameterType="java.util.List">
+		<foreach collection="list" item="item" separator=";">
+			UPDATE order_product
+			SET
+			product_id = #{item.productId},
+			quantity = #{item.quantity},
+			discount = #{item.discount}
+			WHERE
+			id = #{item.id}
+		</foreach>
+	</update>
+	
+	<!-- MySQL
+	<update id="edit" parameterType="java.util.List">
 		update order_product
 		set
 		product_id = elt(field(id,
@@ -139,7 +172,7 @@
 			#{item.productId}
 		</foreach>
 		),
-		
+
 		quantity = elt(field(id,
 		<foreach collection="list" item="item" separator=",">
 			#{item.id}
@@ -159,7 +192,7 @@
 			#{item.discount}
 		</foreach>
 		)
-		
+
 		where
 		id IN
 		(
@@ -168,15 +201,31 @@
 		</foreach>
 		)
 	</update>
+	 -->
 	
-	<insert id="create" parameterType="java.util.List">
-		insert into order_product
+	<insert id="addOrderProduct" parameterType="java.util.List">
+		insert into
+		order_product(orders_id, product_id, quantity, discount)
+		values
+		<foreach collection="list" item="item" separator=",">
 			(
-			orders_id,
-			product_id,
-			quantity,
-			discount
+			#{item.ordersId}, 
+			#{item.productId}, 
+			#{item.quantity},
+			#{item.discount}
 			)
+		</foreach>
+	</insert>
+
+	<insert id="create" parameterType="java.util.List">
+		insert into
+		order_product
+		(
+		orders_id,
+		product_id,
+		quantity,
+		discount
+		)
 		values
 		<foreach collection="list" item="item" separator=",">
 			(
@@ -187,7 +236,21 @@
 			)
 		</foreach>
 	</insert>
-
+	
+	<!-- h2 -->
+	<update id="logicalDelete" parameterType="java.util.List">
+		<foreach collection="list" item="item" separator=";">
+			UPDATE order_product
+			SET
+			product_id = #{item.productId},
+			quantity = #{item.quantity},
+			discount = #{item.discount},
+			is_deleted = 1
+			WHERE
+			id = #{item.id}
+		</foreach>
+	</update>
+	<!-- MySQL
 	<update id="logicalDelete" parameterType="java.util.List">
 		update order_product
 		set
@@ -200,7 +263,7 @@
 			#{item.productId}
 		</foreach>
 		),
-		
+
 		quantity = elt(field(id,
 		<foreach collection="list" item="item" separator=",">
 			#{item.id}
@@ -220,7 +283,7 @@
 			#{item.discount}
 		</foreach>
 		),
-		
+
 		is_deleted = elt(field(id,
 		<foreach collection="list" item="item" separator=",">
 			#{item.id}
@@ -230,7 +293,7 @@
 			1
 		</foreach>
 		)
-		
+
 		where
 		id IN
 		(
@@ -239,17 +302,6 @@
 		</foreach>
 		)
 	</update>
-
-	<insert id="addOrderProduct" parameterType="java.util.List">
-		insert into
-		order_product(orders_id, product_id, quantity, discount)
-		values
-		<foreach collection="list" item="item" separator=",">
-			(
-			#{item.ordersId}, #{item.productId}, #{item.quantity},
-			#{item.discount}
-			)
-		</foreach>
-	</insert>
+	 -->
 
 </mapper>

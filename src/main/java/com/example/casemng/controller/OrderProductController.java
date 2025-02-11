@@ -1,6 +1,5 @@
 package com.example.casemng.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,29 +26,19 @@ public class OrderProductController {
 
 	@PostMapping("/orderproduct/{ordersId}/add")
 	public String postAdd(@ModelAttribute("formOrderProduct") @Validated FormOrderProductList form,
-			BindingResult result, @PathVariable("ordersId") int id, Model model) {
-
-		for (FormOrderProduct item : form.getOrderProductList()) {
-			item.setOrdersId(id);
-		}
-		List<FormOrderProduct> validOrderProductList = new ArrayList<>();
-		for (FormOrderProduct fop : form.getOrderProductList()) {
-			if (fop.getQuantity() <= 0) {
-				continue;
-			}
-			validOrderProductList.add(fop);
-		}
-
-		List<String> quantityErrMsgs = orderProductService.comparisonStock(validOrderProductList);
-		if (validOrderProductList.isEmpty()) {
+			BindingResult result, @PathVariable("ordersId") int ordersId, Model model) {
+		List<FormOrderProduct> validList = orderProductService.organizeList(form.getOrderProductList(), ordersId);
+		
+		List<String> quantityErrMsgs = orderProductService.comparisonStock(validList);
+		if (validList.isEmpty()) {
 			model.addAttribute("errMsg", "商品は追加されませんでした");
 		} else if (quantityErrMsgs.isEmpty()) {
-			form.setOrderProductList(validOrderProductList);
+			form.setOrderProductList(validList);
 			orderProductService.addOrderProduct(form.getOrderProductList());
 		} else {
 			model.addAttribute("errMsg", quantityErrMsgs);
 		}
 
-		return orderController.getEdit(id, model);
+		return orderController.getEdit(ordersId, model);
 	}
 }

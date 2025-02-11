@@ -30,7 +30,7 @@
 		<a class="btn btn-outline-secondary" th:href="@{/user/setting}">アカウント設定</a>
 		<a class="btn btn-outline-secondary" sec:authorize="hasAuthority('ROLE_ADMIN')" th:href="@{/admin/user}">アカウント管理</a>
 		<a class="btn btn-outline-secondary" th:href="@{/product}">商品管理</a>
-		<button type="button" class="btn btn-outline-secondary" th:onclick="|location.href='@{/logout}'|">ログアウト</button>
+		<form th:action="@{/logout}" method="post"><input type="submit" class="btn btn-outline-secondary" value="ログアウト" /></form>
 	</nav>
 </body>
 

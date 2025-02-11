@@ -126,8 +126,21 @@
 		<result property="memo" column="memo" />
 		<result property="isDeleted" column="is_deleted" />
 	</resultMap>
-
-	<update id="quotationProductEdit" parameterType="java.util.List">
+	
+	<!-- h2 -->
+	<update id="edit" parameterType="java.util.List">
+		<foreach collection="list" item="item" separator=";">
+			UPDATE quotation_product
+			SET
+			product_id = #{item.productId},
+			quantity = #{item.quantity},
+			discount = #{item.discount}
+			WHERE
+			id = #{item.id}
+		</foreach>
+	</update>
+	<!-- MySQL
+	<update id="edit" parameterType="java.util.List">
 		update quotation_product
 		set
 		product_id = elt(field(id,
@@ -139,7 +152,6 @@
 			#{item.productId}
 		</foreach>
 		),
-		
 		
 		quantity = elt(field(id,
 		<foreach collection="list" item="item" separator=",">
@@ -168,7 +180,22 @@
 		</foreach>
 		)
 	</update>
-
+	 -->
+	
+	<!-- h2 -->
+	<update id="logicalDelete" parameterType="java.util.List">
+		<foreach collection="list" item="item" separator=";">
+			UPDATE quotation_product
+			SET
+			product_id = #{item.productId},
+			quantity = #{item.quantity},
+			discount = #{item.discount},
+			is_deleted = 1
+			WHERE
+			id = #{item.id}
+		</foreach>
+	</update>
+	<!-- MySQL
 	<update id="logicalDelete" parameterType="java.util.List">
 		update quotation_product
 		set
@@ -219,6 +246,7 @@
 		</foreach>
 		)
 	</update>
+	 -->
 	
 	<insert id="create" parameterType="java.util.List">
 		insert into quotation_product

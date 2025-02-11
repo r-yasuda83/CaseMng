@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.casemng.entity.Order;
-import com.example.casemng.entity.OrderProduct;
 import com.example.casemng.form.FormOrder;
 import com.example.casemng.form.FormOrderProduct;
 import com.example.casemng.repository.OrderMapper;
@@ -48,7 +47,7 @@ public class OrderServiceImpl implements OrderService {
 	public void create(FormOrder form) {
 		Order order = modelMapper.map(form, Order.class);
 		orderMapper.create(order);
-		
+		/*
 		List<OrderProduct> validList = new ArrayList<>();
 		for (OrderProduct orpr : order.getOrderProduct()) {
 			if (orpr.getQuantity() <= 0) {
@@ -61,6 +60,7 @@ public class OrderServiceImpl implements OrderService {
 		if(validList.isEmpty() == false) {
 			orderProductMapper.create(validList);
 		}
+		*/
 	}
 	
 	public void logicalDelete(int id) {

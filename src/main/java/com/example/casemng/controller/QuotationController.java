@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import com.example.casemng.entity.Product;
 import com.example.casemng.form.FormCase;
 import com.example.casemng.form.FormQuotation;
+import com.example.casemng.form.FormQuotationProduct;
 import com.example.casemng.form.FormQuotationProductList;
 import com.example.casemng.service.CaseService;
 import com.example.casemng.service.ProductService;
@@ -55,10 +56,10 @@ public class QuotationController {
 	CustomerController customerCtrl;
 
 	@PostMapping("/quotation/{id}/edit")
-	public String postEdit(
-			@ModelAttribute("formQuotationProductList") FormQuotationProductList formQuotationProductList,
+	public String postEdit(@ModelAttribute("formQuotationProductList") FormQuotationProductList formQuotationProductList,
 			@ModelAttribute("formQuotation") @Validated FormQuotation form, BindingResult result,
 			@PathVariable("id") int id, Model model) {
+		
 		if (result.hasErrors()) {
 			List<Product> productList = productService.findAllForSelect();
 			model.addAttribute("productList", productList);
@@ -68,19 +69,12 @@ public class QuotationController {
 			return "quotation/edit";
 		}
 		
-		/*
-		quotationService.quotationEdit(form);
-		quotationProductService.quotationProductEdit(form.getQuotationProduct());
-
-		return customerCtrl.getDetails(form.getCases().getCustomerId(), form.getCaseId(), form.getId(), null,model);
-		*/
-		
-		
 		List<String> quantityErrMsgs = quotationProductService.comparisonStock(form.getQuotationProduct());
+		
 		if (quantityErrMsgs.isEmpty()) {
 			quotationService.quotationEdit(form);
-			quotationProductService.quotationProductEdit(form.getQuotationProduct());
-			return customerCtrl.getDetails(form.getCases().getCustomerId(), form.getCaseId(), form.getId(), null,model);
+			quotationProductService.edit(form.getQuotationProduct());
+			return customerCtrl.getDetails(form.getCases().getCustomerId(), form.getCaseId(), form.getId(), null, model);
 		} else {
 			model.addAttribute("errMsg", quantityErrMsgs);
 
@@ -108,7 +102,7 @@ public class QuotationController {
 		form.setCases(cases);
 		form.setQuotationProduct(quotationService.generateProductList());
 		model.addAttribute("formQuotation", form);
-		System.out.println(form);
+		
 		List<Product> productList = productService.findAllForSelect();
 		model.addAttribute("productList", productList);
 		return "quotation/create";
@@ -122,9 +116,15 @@ public class QuotationController {
 			model.addAttribute("productList", productList);
 			return "quotation/create";
 		}
-		List<String> quantityErrMsgs = quotationProductService.comparisonStock(form.getQuotationProduct());
+		List<FormQuotationProduct> validList = quotationProductService.organizeList(form.getQuotationProduct());
+		
+		List<String> quantityErrMsgs = quotationProductService.comparisonStock(validList);
 		if (quantityErrMsgs.isEmpty()) {
 			int quotationId = quotationService.create(form);
+			
+			quotationProductService.setQuotationId(validList, form.getId());
+			quotationProductService.addQuotationProduct(validList);
+			
 			return customerCtrl.getDetails(form.getCases().getCustomerId(), form.getCaseId(), quotationId, null, model);
 		} else {
 			model.addAttribute("errMsg", quantityErrMsgs);

@@ -23,7 +23,7 @@
 			<div class="card-body">
 				<form th:action="@{/order/create/{caseId}(caseId=${formOrder.caseId})}" method="post"
 					th:object="${formOrder}">
-
+					<input type="hidden" th:field="*{caseId}">
 					<input type="hidden" th:field="*{cases.customerId}">
 
 					<th:block th:if="${errMsg}" th:each="text : ${errMsg}">

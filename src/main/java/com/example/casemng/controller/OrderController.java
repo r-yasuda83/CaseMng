@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import com.example.casemng.entity.Product;
 import com.example.casemng.form.FormCase;
 import com.example.casemng.form.FormOrder;
+import com.example.casemng.form.FormOrderProduct;
 import com.example.casemng.form.FormOrderProductList;
 import com.example.casemng.service.CaseService;
 import com.example.casemng.service.OrderProductService;
@@ -62,18 +63,21 @@ public class OrderController {
 	public String postEdit(@ModelAttribute("formOrderProductList") FormOrderProductList formOrderProductList,
 			@ModelAttribute("formOrder") @Validated FormOrder form, BindingResult result,
 			@PathVariable("id") int id, Model model) {
+
 		if (result.hasErrors()) {
 			List<Product> productList = productService.findAllForSelectStock();
 			model.addAttribute("productList", productList);
 
 			formOrderProductList.setOrderProductList(orderService.generateProductList());
+			model.addAttribute("formOrderProductList", formOrderProductList);
 			return "order/edit";
 		}
-
+		
 		List<String> quantityErrMsgs = orderProductService.comparisonStock(form.getOrderProduct());
+
 		if (quantityErrMsgs.isEmpty()) {
 			orderService.orderEdit(form);
-			orderProductService.orderProductEdit(form.getOrderProduct());
+			orderProductService.edit(form.getOrderProduct());
 			return customerCtrl.getDetails(form.getCases().getCustomerId(), form.getCaseId(), null, null, model);
 		} else {
 			model.addAttribute("errMsg", quantityErrMsgs);
@@ -116,10 +120,13 @@ public class OrderController {
 			model.addAttribute("productList", productList);
 			return "order/create";
 		}
+		List<FormOrderProduct> validList = orderProductService.organizeList(form.getOrderProduct());
 
-		List<String> quantityErrMsgs = orderProductService.comparisonStock(form.getOrderProduct());
+		List<String> quantityErrMsgs = orderProductService.comparisonStock(validList);
 		if (quantityErrMsgs.isEmpty()) {
 			orderService.create(form);
+			orderProductService.setOrdersId(validList, form.getId());
+			orderProductService.addOrderProduct(validList);
 			return customerCtrl.getDetails(form.getCases().getCustomerId(), caseId, null, null, model);
 		} else {
 			model.addAttribute("errMsg", quantityErrMsgs);
