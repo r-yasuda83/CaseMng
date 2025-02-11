@@ -26,32 +26,6 @@ public class QuotationProductServiceImpl implements QuotationProductService{
 	@Autowired
 	ProductMapper productMapper;
 	
-	@Transactional
-	public void quotationProductEdit(List<FormQuotationProduct> list) {
-		
-		List<FormQuotationProduct> deleteList = new ArrayList<>();
-		List<FormQuotationProduct> updateList = new ArrayList<>();;
-		
-		for(FormQuotationProduct item : list) {
-			if(item.getQuantity() == 0) {
-				deleteList.add(item);
-			}else {
-				updateList.add(item);
-			}
-		}
-		
-		List<QuotationProduct> delete = List.of(modelMapper.map(deleteList, QuotationProduct[].class));
-		List<QuotationProduct> update = List.of(modelMapper.map(updateList, QuotationProduct[].class));
-		
-		if(delete.size() > 0) {
-			quotationMapper.logicalDelete(delete);
-		}
-		
-		if(update.size() > 0) {
-			quotationMapper.quotationProductEdit(update);
-		}
-	}
-	
 	public QuotationProduct findById(int id) {
 		return quotationMapper.findById(id);
 	}
@@ -69,13 +43,78 @@ public class QuotationProductServiceImpl implements QuotationProductService{
 		return quotationMapper.findByIdAll(id);
 	}
 	
+	public List<FormQuotationProduct> setQuotationId(List<FormQuotationProduct> list, int quotationId){
+		for(FormQuotationProduct item : list) {
+			item.setQuotationId(quotationId);
+		}
+		return list;
+	}
+	
+	//個数が1以上のものは更新、0以下のものは論理削除
+	@Transactional
+	public void edit(List<FormQuotationProduct> list) {
+		
+		List<FormQuotationProduct> deleteList = new ArrayList<>();
+		List<FormQuotationProduct> updateList = new ArrayList<>();;
+		
+		for(FormQuotationProduct item : list) {
+			if(item.getQuantity() == null || item.getQuantity() <= 0) {
+				deleteList.add(item);
+			}else {
+				updateList.add(item);
+			}
+		}
+		
+		List<QuotationProduct> delete = List.of(modelMapper.map(deleteList, QuotationProduct[].class));
+		List<QuotationProduct> update = List.of(modelMapper.map(updateList, QuotationProduct[].class));
+		
+		if(delete.size() > 0) {
+			quotationMapper.logicalDelete(delete);
+		}
+		
+		if(update.size() > 0) {
+			quotationMapper.edit(update);
+		}
+	}
+	
+	public List<FormQuotationProduct> organizeList(List<FormQuotationProduct> list) {
+
+		List<FormQuotationProduct> validQuotationProductList = new ArrayList<>();
+		for (FormQuotationProduct fop : list) {
+			if (fop.getQuantity() == null || fop.getQuantity() <= 0) {
+				continue;
+			}
+			validQuotationProductList.add(fop);
+		}
+		return validQuotationProductList;
+	}
+
+	public List<FormQuotationProduct> organizeList(List<FormQuotationProduct> list, int quotationId) {
+		if (quotationId > 0) {
+			for (FormQuotationProduct item : list) {
+				item.setQuotationId(quotationId);
+			}
+		}
+		List<FormQuotationProduct> validQuotationProductList = new ArrayList<>();
+		for (FormQuotationProduct fop : list) {
+			if (fop.getQuantity() == null || fop.getQuantity() <= 0) {
+				continue;
+			}
+			validQuotationProductList.add(fop);
+		}
+		return validQuotationProductList;
+	}
+	
+	//商品個数が在庫を上回るかのチェック
 	public List<String> comparisonStock(List<FormQuotationProduct> list) {
 		List<String> quantityErrMsgs = new ArrayList<String>();
 		List<Product> productList = productMapper.findAll();
 		int zeroQuantityCount = 0;
+		
 		for (FormQuotationProduct quotation : list) {
-			if(quotation.getQuantity()==0) {
+			if(quotation.getQuantity() == null  || quotation.getQuantity() <= 0) {
 				zeroQuantityCount++;
+				continue;
 			}
 			for (Product product : productList) {
 				if (quotation.getProductId() == product.getId() && quotation.getQuantity() > product.getStock()) {
@@ -84,8 +123,9 @@ public class QuotationProductServiceImpl implements QuotationProductService{
 				}
 			}
 		}
+		
 		if(zeroQuantityCount==list.size()) {
-			quantityErrMsgs.add("見積個数が1以上の商品を最低1件登録してください");
+			quantityErrMsgs.add("個数が1以上の商品を最低1件登録してください");
 		}
 		
 		return quantityErrMsgs;

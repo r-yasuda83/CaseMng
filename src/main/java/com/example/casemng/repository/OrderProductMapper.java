@@ -11,11 +11,11 @@ import com.example.casemng.form.FormOrderProduct;
 public interface OrderProductMapper {
 
 	public List<OrderProduct> findByOrdersId(int id);
-	public void orderProductEdit(List<OrderProduct> orderProduct);
+	public void edit(List<OrderProduct> orderProduct);
 	public void logicalDelete(List<OrderProduct> list);
 	public OrderProduct findById(int id);
 	public void addOrderProduct(List<FormOrderProduct> list);
 	public List<OrderProduct> findAllExport();
-	public void create(List<OrderProduct> orderProduct);
+	public void create(List<OrderProduct> validList);
 	public OrderProduct findByIdAll(int id);
 }

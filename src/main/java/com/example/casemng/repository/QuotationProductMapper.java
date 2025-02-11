@@ -11,7 +11,7 @@ import com.example.casemng.form.FormQuotationProduct;
 public interface QuotationProductMapper {
 
 	public List<QuotationProduct> findByQuotationId(int id);
-	public void quotationProductEdit(List<QuotationProduct> quotationProduct);
+	public void edit(List<QuotationProduct> quotationProduct);
 	public void logicalDelete(List<QuotationProduct> quotationProduct);
 	public QuotationProduct findById(int id);
 	public void addQuotationProduct(List<FormQuotationProduct> list);

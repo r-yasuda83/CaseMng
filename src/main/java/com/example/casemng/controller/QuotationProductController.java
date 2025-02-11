@@ -33,7 +33,7 @@ public class QuotationProductController {
 		}
 		List<FormQuotationProduct> validQuoProdList = new ArrayList<>();
 		for (FormQuotationProduct fop : form.getQuotationProductList()) {
-			if (fop.getQuantity() == 0) {
+			if (fop.getQuantity() == null || fop.getQuantity() <= 0) {
 				continue;
 			}
 			validQuoProdList.add(fop);
