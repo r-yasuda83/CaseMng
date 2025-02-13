@@ -30,61 +30,82 @@
 						<p class="err" th:text="${text}"></p>
 					</th:block>
 
-					<label>受注日</label>
-					<input type="date" th:field="*{orderDate}">
-					<span th:if="${#fields.hasErrors('orderDate')}" th:errors="*{orderDate}" th:errorclass="err"></span>
-
-					<table id="itemTable">
-						<thead>
-							<tr>
-								<th>商品</th>
-								<th>単価</th>
-								<th>個数</th>
-								<th>値引き</th>
-								<th>金額</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr th:each="item, iterStat:*{orderProduct}">
-								<td>
-									<input type="hidden" th:field="*{orderProduct[__${iterStat.index}__].id}">
-									<select class="product"
-										th:field="*{orderProduct[__${iterStat.index}__].productId}" />
-									<option th:each="prod : ${productList}" th:value="${prod.id}"
-										th:text="${prod.productName}" th:selected="${prod.id == item.productId}">
-									</option>
-									</select>
-								</td>
-								<td><span id="price"></td>
-								<td><input id="quantity" type="number"
-										th:field="*{orderProduct[__${iterStat.index}__].quantity}"></td>
-								<td><input id="discount" type="number"
-										th:field="*{orderProduct[__${iterStat.index}__].discount}"></td>
-								<td><span id="rowTotal"></td>
-								<td>
-									<th:block th:with="key='orderProduct[' + ${iterStat.index} + '].quantity'">
-										<div th:each="err : ${#fields.errors(key)}" th:text="${err}" style="color:red;">
-											<span th:text="${key}"></span>
-										</div>
-									</th:block>
-								</td>
-
-							</tr>
-						</tbody>
-					</table>
-
-					<div>
-						<label>合計金額</label>
-						<span id="totalPrice"></span>
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label">受注日</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="date" th:field="*{orderDate}">
+						</div>
+						<span th:if="${#fields.hasErrors('orderDate')}" th:errors="*{orderDate}" th:errorclass="err">
 					</div>
 
-					<label>備考</label>
-					<input type="textarea" th:field="*{memo}">
+					<div class="row mb-3">
+						<table id="itemTable">
+							<thead>
+								<tr>
+									<th>商品</th>
+									<th>単価</th>
+									<th>個数</th>
+									<th>値引き</th>
+									<th>金額</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="item, iterStat:*{orderProduct}">
+									<td class="col-md-3">
+										<input type="hidden" th:field="*{orderProduct[__${iterStat.index}__].id}">
+										<select class="product form-select"
+											th:field="*{orderProduct[__${iterStat.index}__].productId}" />
+										<option th:each="prod : ${productList}" th:value="${prod.id}"
+											th:text="${prod.productName}" th:selected="${prod.id == item.productId}">
+										</option>
+										</select>
+									</td>
+									<td class="col-md-1">
+										<span id="price">
+									</td>
+									<td class="col-md-1">
+										<input class="form-control" id="quantity" type="number"
+											th:field="*{orderProduct[__${iterStat.index}__].quantity}">
+									</td>
+									<td class="col-md-1">
+										<input class="form-control" id="discount" type="number"
+											th:field="*{orderProduct[__${iterStat.index}__].discount}">
+									</td>
+									<td class="col-md-1">
+										<span id="rowTotal">
+									</td>
+									<td>
+										<th:block th:with="key='orderProduct[' + ${iterStat.index} + '].quantity'">
+											<div th:each="err : ${#fields.errors(key)}" th:text="${err}"
+												style="color:red;">
+												<span th:text="${key}"></span>
+											</div>
+										</th:block>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 
-					<input type="button"
-						th:onclick="|location.href='@{/customer/{id}(id=${formOrder.cases.customerId}, caseId=${formOrder.caseId})}'|"
-						value="取消">
-					<input type="submit" value="保存">
+					<div class="row mb-3" s="row mb-3">
+						<label class="col-sm-2 col-form-label">合計金額</label>
+						<div class="col-sm-2 d-flex align-items-center">
+							<span id="totalPrice"></span>
+						</div>
+					</div>
+
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label d-flex align-items-center">備考</label>
+						<div class="col-sm-8">
+							<textarea class="form-control" th:field="*{memo}" rows="3"></textarea>
+						</div>
+					</div>
+					<div>
+						<input type="button"
+							th:onclick="|location.href='@{/customer/{id}(id=${formOrder.cases.customerId}, caseId=${formOrder.caseId})}'|"
+							value="取消">
+						<input type="submit" value="保存">
+					</div>
 				</form>
 			</div>
 		</div>

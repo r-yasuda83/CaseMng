@@ -18,43 +18,60 @@
 					th:object="${formCustomer}">
 					<input type="hidden" th:field="*{id}">
 
-					<table>
-						<tr>
-							<th>姓</th>
-							<td><input type="text" th:field="*{lastName}"></td>
-							<td th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" th:errorclass="err">
-							</td>
-						</tr>
-						<tr>
-							<th>名</th>
-							<td><input type="text" th:field="*{firstName}"></td>
-							<td th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" th:errorclass="err">
-							</td>
-						</tr>
-						<tr>
-							<th>〒</th>
-							<td><input type="text" th:field="*{zipcode}"></td>
-							<td th:if="${#fields.hasErrors('zipcode')}" th:errors="*{zipcode}" th:errorclass="err"></td>
-						</tr>
-						<tr>
-							<th>住所</th>
-							<td><input type="text" th:field="*{address}"></td>
-							<td th:if="${#fields.hasErrors('address')}" th:errors="*{address}" th:errorclass="err"></td>
-						</tr>
-						<tr>
-							<th>電話番号</th>
-							<td><input type="tel" th:field="*{phoneNumber}" pattern="\d{2,4}-\d{3,4}-\d{3,4}"></td>
-							<td th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"
-								th:errorclass="err"></td>
-						</tr>
-						<tr>
-							<th>備考</th>
-							<td><input type="text" th:field="*{memo}"></td>
-						</tr>
-					</table>
-					<input type="button" th:onclick="|location.href='@{/customer/{id}(id=${formCustomer.id})}'|"
-						value="取消">
-					<input type="submit" value="保存">
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label">姓</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" th:field="*{lastName}">
+						</div>
+						<span th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" th:errorclass="err">
+					</div>
+
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label">名</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" th:field="*{firstName}">
+						</div>
+						<span th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" th:errorclass="err">
+					</div>
+
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label">〒</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" th:field="*{zipcode}">
+						</div>
+						<span th:if="${#fields.hasErrors('zipcode')}" th:errors="*{zipcode}" th:errorclass="err">
+					</div>
+
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label">住所</label>
+						<div class="col-sm-6">
+							<input class="form-control" type="text" th:field="*{address}">
+						</div>
+						<span th:if="${#fields.hasErrors('address')}" th:errors="*{address}" th:errorclass="err">
+					</div>
+
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label">電話番号</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="tel" th:field="*{phoneNumber}"
+								pattern="\d{2,4}-\d{3,4}-\d{3,4}">
+						</div>
+						<span th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"
+							th:errorclass="err">
+					</div>
+
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label d-flex align-items-center">備考</label>
+						<div class="col-sm-8">
+							<textarea class="form-control" th:field="*{memo}" rows="3"></textarea>
+						</div>
+					</div>
+
+					<div>
+						<input type="button" th:onclick="|location.href='@{/customer/{id}(id=${formCustomer.id})}'|"
+							value="取消">
+						<input type="submit" value="保存">
+					</div>
 				</form>
 			</div>
 		</div>
