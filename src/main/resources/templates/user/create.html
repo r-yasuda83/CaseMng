@@ -20,69 +20,82 @@
 				</th:block>
 
 				<form th:action="@{/admin/user/create}" method="post" th:object="${formUser}">
-					<table>
-						<tr>
-							<th>ユーザーID</th>
-							<td><input type="text" th:field="*{userId}"></td>
-							<td th:if="${#fields.hasErrors('userId')}" th:errors="*{userId}" th:errorclass="err">
-							</td>
-						</tr>
-						<tr>
-							<th>姓</th>
-							<td><input type="text" th:field="*{lastName}"></td>
-							<td th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" th:errorclass="err">
-							</td>
-						</tr>
-						<tr>
-							<th>名</th>
-							<td><input type="text" th:field="*{firstName}"></td>
-							<td th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" th:errorclass="err">
-							</td>
-						</tr>
-						<tr>
-							<th>メールアドレス</th>
-							<td><input type="email" th:field="*{emailAddress}"></td>
-							<td th:if="${#fields.hasErrors('emailAddress')}" th:errors="*{emailAddress}"
-								th:errorclass="err"></td>
-						</tr>
-						<tr>
-							<th>パスワード</th>
-							<td><input type="password" th:field="*{password}"></td>
-							<td th:if="${#fields.hasErrors('password')}" th:errors="*{password}" th:errorclass="err">
-							</td>
-						</tr>
-						<tr>
-							<th>パスワード（確認用）</th>
-							<td><input type="password" th:field="*{passwordReenter}"></td>
-							<td th:if="${#fields.hasErrors('passwordReenter')}" th:errors="*{passwordReenter}"
-								th:errorclass="err">
-							</td>
-							<td th:if="${#fields.hasErrors('passwordValid')}" th:errors="*{passwordValid}"
-								th:errorclass="err">
-							</td>
-						</tr>
-						<tr>
-							<th>部署</th>
-							<td>
-								<select th:field="*{departmentId}">
-									<option th:each="item : ${departmentList}" th:value="${item.id}"
-										th:text="${item.departmentName}"
-										th:select="${item.id == formUser.departmentId}"></option>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<th>ロール</th>
-							<td>
-								<select th:field="*{role}">
-									<option th:each="item : ${roleList}" th:value="${item.id}"
-										th:text="${item.roleName}" th:select="${item.id == formUser.role}"></option>
-								</select>
-							</td>
-						</tr>
-					</table>
-					<input type="button" th:onclick="|location.href='@{/admin/user}'|" value="取消">
-					<input type="submit" value="保存">
+
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label">ユーザーID</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" th:field="*{userId}">
+						</div>
+						<span th:if="${#fields.hasErrors('userId')}" th:errors="*{userId}" th:errorclass="err">
+					</div>
+
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label">姓</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" th:field="*{lastName}">
+						</div>
+						<span th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" th:errorclass="err">
+					</div>
+
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label">名</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" th:field="*{firstName}">
+						</div>
+						<span th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" th:errorclass="err">
+					</div>
+
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label">メールアドレス</label>
+						<div class="col-sm-3">
+							<input class="form-control" type="email" th:field="*{emailAddress}">
+						</div>
+						<span th:if="${#fields.hasErrors('emailAddress')}" th:errors="*{emailAddress}"
+							th:errorclass="err">
+					</div>
+
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label">パスワード</label>
+						<div class="col-sm-3">
+							<input class="form-control" type="password" th:field="*{password}">
+						</div>
+						<span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" th:errorclass="err">
+					</div>
+
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label">パスワード（確認用）</label>
+						<div class="col-sm-3">
+							<input class="form-control" type="password" th:field="*{passwordReenter}">
+						</div>
+						<span th:if="${#fields.hasErrors('passwordValid')}" th:errors="*{passwordValid}"
+							th:errorclass="err">
+					</div>
+
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label">部署</label>
+						<div class="col-sm-2">
+							<select class="form-select" th:field="*{departmentId}">
+								<option th:each="item : ${departmentList}" th:value="${item.id}"
+									th:text="${item.departmentName}" th:select="${item.id == formUser.departmentId}">
+								</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label">ロール</label>
+						<div class="col-sm-2">
+							<select class="form-select" th:field="*{role}">
+								<option th:each="item : ${roleList}" th:value="${item.id}" th:text="${item.roleName}"
+									th:select="${item.id == formUser.role}"></option>
+							</select>
+						</div>
+					</div>
+
+					<div>
+						<input type="button" th:onclick="|location.href='@{/admin/user}'|" value="取消">
+						<input type="submit" value="保存">
+					</div>
 				</form>
 			</div>
 		</div>

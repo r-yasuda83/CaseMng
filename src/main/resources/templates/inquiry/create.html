@@ -33,10 +33,12 @@
 							<textarea class="form-control" th:field="*{contents}" rows="3"></textarea>
 						</div>
 					</div>
-					<input type="button"
-						th:onclick="|location.href='@{/customer/{id}(id=${formInquiry.cases.customerId}, caseId=${formInquiry.caseId})}'|"
-						value="取消">
-					<input type="submit" value="保存">
+					<div>
+						<input type="button"
+							th:onclick="|location.href='@{/customer/{id}(id=${formInquiry.cases.customerId}, caseId=${formInquiry.caseId})}'|"
+							value="取消">
+						<input type="submit" value="保存">
+					</div>
 				</form>
 			</div>
 		</div>

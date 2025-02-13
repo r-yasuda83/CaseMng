@@ -16,50 +16,58 @@
 			<div class="card-body">
 				<form th:action="@{/product/create}" method="post" th:object="${formProduct}">
 
-					<table>
-						<tr>
-							<th>商品名</th>
-							<td><input type="text" th:field="*{productName}"></td>
-							<td th:if="${#fields.hasErrors('productName')}" th:errors="*{productName}"
-								th:errorclass="err">
-							</td>
-						</tr>
-						<tr>
-							<th>商品カテゴリ</th>
-							<td>
-								<select th:field="*{productCategoryId}">
-									<option th:each="item : ${category}" th:value="${item.id}"
-										th:text="${item.categoryName}"
-										th:select="${item.id == formProduct.productCategoryId}"></option>
-								</select>
-							</td>
-						</tr>
-						<tr>
-							<th>金額</th>
-							<td><input type="number" th:field="*{price}"></td>
-							<td th:if="${#fields.hasErrors('price')}" th:errors="*{price}" th:errorclass="err">
-							</td>
-						</tr>
-						<tr>
-							<th>在庫</th>
-							<td><input type="number" th:field="*{stock}"></td>
-							<td th:if="${#fields.hasErrors('stock')}" th:errors="*{stock}" th:errorclass="err">
-							</td>
-						</tr>
-						<tr>
-							<th>登録可否</th>
-							<td>
-								<input type="radio" th:field="*{choose}" th:value="false"
-									th:checked="${formProduct.choose == false}">
-									<label th:text="登録可"></label>
-								<input type="radio" th:field="*{choose}" th:value="true"
-									th:checked="${formProduct.choose == true}">
-									<label th:text="登録不可"></label>
-							</td>
-						</tr>
-					</table>
-					<input type="button" th:onclick="|location.href='@{/product}'|" value="取消">
-					<input type="submit" value="保存">
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label">商品名</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="text" th:field="*{productName}">
+						</div>
+						<span th:if="${#fields.hasErrors('productName')}" th:errors="*{productName}"
+							th:errorclass="err">
+					</div>
+
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label">商品カテゴリ</label>
+						<div class="col-sm-2">
+							<select class="form-select" th:field="*{productCategoryId}">
+								<option th:each="item : ${category}" th:value="${item.id}"
+									th:text="${item.categoryName}"
+									th:select="${item.id == formProduct.productCategoryId}"></option>
+							</select>
+						</div>
+					</div>
+
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label">金額</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="number" th:field="*{price}">
+						</div>
+						<span th:if="${#fields.hasErrors('price')}" th:errors="*{price}" th:errorclass="err">
+					</div>
+
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label">在庫</label>
+						<div class="col-sm-2">
+							<input class="form-control" type="number" th:field="*{stock}">
+						</div>
+						<span th:if="${#fields.hasErrors('stock')}" th:errors="*{stock}" th:errorclass="err">
+					</div>
+
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label">登録可否</label>
+						<div class="col-sm-2">
+							<input class="form-check-input" type="radio" th:field="*{choose}" th:value="false"
+								th:checked="${formProduct.choose == false}">
+							<label th:text="登録可"></label>
+							<input class="form-check-input" type="radio" th:field="*{choose}" th:value="true"
+								th:checked="${formProduct.choose == true}">
+							<label th:text="登録不可"></label>
+						</div>
+					</div>
+					<div>
+						<input type="button" th:onclick="|location.href='@{/product}'|" value="取消">
+						<input type="submit" value="保存">
+					</div>
+
 				</form>
 			</div>
 		</div>
