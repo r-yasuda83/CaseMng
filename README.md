@@ -7,6 +7,7 @@
 - Spring Security
 - MyBatis
 - Thymeleaf
+- DataTables
 - MySql
 - JavaScript
 
