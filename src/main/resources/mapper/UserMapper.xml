@@ -13,7 +13,7 @@
 		users.first_name,
 		users.email_address,
 		users.department_id,
-		users.role,
+		users.roles_id,
 		users.is_deleted,
 		
 		department.id as depa_id,
@@ -24,7 +24,7 @@
 		from
 		users
 		inner join department ON users.department_id = department.id
-		INNER JOIN roles ON users.role = roles.id
+		INNER JOIN roles ON users.roles_id = roles.id
 		where
 		users.user_id = #{userId}
 	</select>
@@ -38,7 +38,7 @@
 		users.first_name,
 		users.email_address,
 		users.department_id,
-		users.role,
+		users.roles_id,
 		users.is_deleted,
 		
 		department.id as depa_id,
@@ -70,7 +70,7 @@
 		users.first_name,
 		users.email_address,
 		users.department_id,
-		users.role,
+		users.roles_id,
 		users.is_deleted,
 		
 		department.id as depa_id,
@@ -92,7 +92,7 @@
 		first_name= #{firstName},
 		email_address= #{emailAddress},
 		department_id= #{departmentId},
-		role = #{role},
+		roles_id = #{role},
 		is_deleted = #{deleted}
 		where
 		id = #{id}
@@ -106,7 +106,7 @@
 		first_name= #{firstName},
 		email_address= #{emailAddress},
 		department_id= #{departmentId},
-		role = #{role},
+		roles_id = #{role},
 		is_deleted = #{deleted}
 		where
 		id = #{id}
@@ -140,7 +140,7 @@
 		first_name,
 		email_address,
 		department_id,
-		role
+		roles_id
 		)
 		values
 		(
@@ -170,7 +170,7 @@
 		<result property="firstName" column="first_name" />
 		<result property="emailAddress" column="email_address" />
 		<result property="departmentId" column="department_id" />
-		<result property="role" column="role" />
+		<result property="role" column="roles_id" />
 		<result property="deleted" column="is_deleted" />
 		<association property="department" columnPrefix="depa_" resultMap="depa" />
 		<association property="roles" columnPrefix="role_" resultMap="role" />
