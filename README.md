@@ -8,7 +8,7 @@
 - MyBatis
 - Thymeleaf
 - DataTables
-- MySql（想定）
+- MySql
   - H2 Database(動作確認用として実装)
 - JavaScript
 
@@ -31,6 +31,10 @@
 # 動作確認
 動作確認用としてH2データーベース実装とsqlファイルをresources直下に配置しています。  
 spring bootプロジェクトとしてインポートしてご利用ください。
+管理者アカウント
+id:admin pw:pass
+一般アカウント
+id:user pw:test
 
 | ログイン画面 |　一覧 |
 | ---- | ---- |
