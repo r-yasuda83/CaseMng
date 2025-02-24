@@ -32,6 +32,7 @@ id:user pw:test
 
 # 使い方
 | ログイン画面 |
+| ---- |
 | ![ログイン](https://github.com/user-attachments/assets/ff6dd574-f291-4a75-9751-18de2434816a) |
 | ログインIDとパスワードでログインします。 |
 | 案件一覧画面 |
