@@ -39,5 +39,5 @@ id:user pw:test
 | 顧客詳細画面 | 編集画面 |
 | ![顧客詳細](https://github.com/user-attachments/assets/77a7e366-afe0-4c7d-a443-2da5b1c1997c) | ![受注編集](https://github.com/user-attachments/assets/b1e6017c-cd1c-4287-96a4-4f568c6d4a15) |
 | 顧客の詳細画面です。紐づく案件、受注、見積、問い合わせ情報を確認、編集できます。 | 案件編集画面です。商品の追加も可能です。削除は在庫を0以下で保存すると反映されます。 |
-| ![csv出力](https://github.com/user-attachments/assets/4e19acd3-5b4a-4c00-b6ee-0c3b64b7502a) |
-| 各リストをcsv出力できます。 |
+| ![csv出力](https://github.com/user-attachments/assets/4e19acd3-5b4a-4c00-b6ee-0c3b64b7502a) 
+| 各リストをcsv出力できます。 
