@@ -39,6 +39,7 @@
 	<select id="findById" resultMap="inq">
 		SELECT
 		inquiry.id,
+		inquiry.case_id,
 		inquiry.inquiry_date,
 		inquiry.contents,
 
@@ -95,6 +96,7 @@
 
 	<resultMap type="com.example.casemng.entity.Inquiry" id="inq">
 		<id property="id" column="id" />
+		<result property="caseId" column="case_id" />
 		<result property="inquiryDate" column="inquiry_date" />
 		<result property="contents" column="contents" />
 		<association property="cases" resultMap="cases"

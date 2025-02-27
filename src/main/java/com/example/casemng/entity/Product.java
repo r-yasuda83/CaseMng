@@ -12,13 +12,9 @@ public class Product {
 	@NotBlank
 	private String productName;
 	
-	private int productCategoryId;
-	
 	private int price;
 	
 	private int stock;
 	
 	private boolean choose;
-	
-	private ProductCategory productCategory;
 }

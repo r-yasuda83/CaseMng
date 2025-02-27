@@ -12,18 +12,13 @@
 		users.last_name,
 		users.first_name,
 		users.email_address,
-		users.department_id,
 		users.roles_id,
 		users.is_deleted,
-		
-		department.id as depa_id,
-		department.department_name as depa_department_name,
-		
+
 		roles.id AS role_id,
 		roles.role_name AS role_role_name
 		from
 		users
-		inner join department ON users.department_id = department.id
 		INNER JOIN roles ON users.roles_id = roles.id
 		where
 		users.user_id = #{userId}
@@ -37,16 +32,11 @@
 		users.last_name,
 		users.first_name,
 		users.email_address,
-		users.department_id,
 		users.roles_id,
-		users.is_deleted,
-		
-		department.id as depa_id,
-		department.department_name as depa_department_name
+		users.is_deleted
 		
 		from
 		users
-		inner join department ON users.department_id = department.id
 	</select>
 		
 	<select id="findWithoutThisId" resultType="User">
@@ -56,7 +46,6 @@
 		
 		from
 		users
-		inner join department ON users.department_id = department.id
 		where
 		users.id != #{id};
 	</select>
@@ -69,16 +58,11 @@
 		users.last_name,
 		users.first_name,
 		users.email_address,
-		users.department_id,
 		users.roles_id,
-		users.is_deleted,
-		
-		department.id as depa_id,
-		department.department_name as depa_department_name
+		users.is_deleted
 		
 		from
 		users
-		inner join department ON users.department_id = department.id
 		where
 		users.id = #{id}
 	</select>
@@ -87,13 +71,19 @@
 		update users
 		set
 		user_id = #{userId},
-		password = #{password},
 		last_name= #{lastName},
 		first_name= #{firstName},
 		email_address= #{emailAddress},
-		department_id= #{departmentId},
 		roles_id = #{role},
 		is_deleted = #{deleted}
+		where
+		id = #{id}
+	</update>
+	
+	<update id="editPassword">
+		update users
+		set
+		password = #{password}
 		where
 		id = #{id}
 	</update>
@@ -105,7 +95,6 @@
 		last_name= #{lastName},
 		first_name= #{firstName},
 		email_address= #{emailAddress},
-		department_id= #{departmentId},
 		roles_id = #{role},
 		is_deleted = #{deleted}
 		where
@@ -115,18 +104,9 @@
 	<update id="editLoginUser">
 		update users
 		set
-		password = #{password},
-		email_address= #{emailAddress},
-		department_id= #{departmentId}
-		where
-		id = #{id}
-	</update>
-	
-	<update id="editLoginUserExceptPassword">
-		update users
-		set
-		email_address= #{emailAddress},
-		department_id= #{departmentId}
+		last_name= #{lastName},
+		first_name= #{firstName},
+		email_address= #{emailAddress}
 		where
 		id = #{id}
 	</update>
@@ -139,7 +119,6 @@
 		last_name,
 		first_name,
 		email_address,
-		department_id,
 		roles_id
 		)
 		values
@@ -149,7 +128,6 @@
 		#{lastName},
 		#{firstName},
 		#{emailAddress},
-		#{departmentId},
 		#{role}
 		)
 	</insert>
@@ -169,16 +147,9 @@
 		<result property="lastName" column="last_name" />
 		<result property="firstName" column="first_name" />
 		<result property="emailAddress" column="email_address" />
-		<result property="departmentId" column="department_id" />
 		<result property="role" column="roles_id" />
 		<result property="deleted" column="is_deleted" />
-		<association property="department" columnPrefix="depa_" resultMap="depa" />
 		<association property="roles" columnPrefix="role_" resultMap="role" />
-	</resultMap>
-	
-	<resultMap type="com.example.casemng.entity.Department" id="depa">
-		<id property="id" column="id" />
-		<result property="departmentName" column="department_name" />
 	</resultMap>
 	
 	<resultMap type="com.example.casemng.entity.Role" id="role">

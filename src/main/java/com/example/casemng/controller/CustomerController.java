@@ -1,8 +1,8 @@
 package com.example.casemng.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.casemng.entity.Customer;
 import com.example.casemng.form.FormCustomer;
+import com.example.casemng.form.FormSearch;
 import com.example.casemng.service.CustomerService;
 
 @Controller
@@ -24,32 +25,27 @@ public class CustomerController {
 	CustomerService customerService;
 
 	@GetMapping("/customer")
-	public String getList(Model model) {
-		List<Customer> list = customerService.findAll();
-		model.addAttribute("list", list);
-		return "customer/list";
+	public String getList(@ModelAttribute("search") FormSearch form,
+			@RequestParam(name = "displayedNum", required = false) Integer displayedNum,
+			@RequestParam(name = "sortKey", required = false) String sortKey,
+			@RequestParam(name = "sortDirection", required = false) String sortDirection,
+			@PageableDefault(size = 5) Pageable pageable, Model model) {
+		return customerService.pagenation(form.getKeyword(), displayedNum, sortKey, sortDirection, pageable, model);
 	}
 
 	@GetMapping("/customer/{id}")
 	public String getDetails(@PathVariable("id") int id, @RequestParam(required = false) Integer caseId,
-			@RequestParam(required = false) Integer quotationId, @RequestParam(required = false) Integer inquiryId,
+			@RequestParam(name = "quotationId", required = false) Integer quotationId,
+			@RequestParam(required = false) Integer inquiryId,
 			Model model) {
 		Customer customer = customerService.findById(id);
-		if (caseId != null) {
-			model.addAttribute("caseId", caseId);
-		}
-		if (quotationId != null) {
-			model.addAttribute("quotationId", quotationId);
-		}
-		if (inquiryId != null) {
-			model.addAttribute("inquiryId", inquiryId);
-		}
 
 		if (customer == null) {
 			model.addAttribute("msg", "存在しないIDです。");
 			return "error";
 		}
 		model.addAttribute("customer", customer);
+		model.addAttribute("caseId", caseId);
 		return "customer/details";
 	}
 
@@ -72,7 +68,7 @@ public class CustomerController {
 			return "customer/edit";
 		}
 		customerService.customerEdit(form);
-		return getDetails(id, null, null, null, model);
+		return "redirect:/customer/" + id;
 	}
 
 	@GetMapping("/customer/create")
@@ -90,13 +86,13 @@ public class CustomerController {
 		}
 
 		int id = customerService.create(form);
-		//auto_crementしたidを↓で指定
-		return getDetails(id, null, null, null, model);
+
+		return "redirect:/customer/" + id;
 	}
 
 	@PostMapping("/customer/delete/{id}")
 	public String postDelete(@PathVariable("id") int id, Model model) {
 		customerService.logicalDelete(id);
-		return getList(model);
+		return "redirect:/customer";
 	}
 }

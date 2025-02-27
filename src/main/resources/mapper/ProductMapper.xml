@@ -6,10 +6,10 @@
 		select
 		product.id,
 		product.product_name,
-		product.product_category_id,
 		product.price,
 		product.stock,
 		product.is_choose
+		
 		from
 		product
 	</select>
@@ -18,10 +18,10 @@
 		select
 		product.id,
 		product.product_name,
-		product.product_category_id,
 		product.price,
 		product.stock,
 		product.is_choose
+		
 		from
 		product
 		where
@@ -32,10 +32,10 @@
 		select
 		product.id,
 		product.product_name,
-		product.product_category_id,
 		product.price,
 		product.stock,
 		product.is_choose
+		
 		from
 		product
 		where
@@ -47,16 +47,12 @@
 		select
 		product.id,
 		product.product_name,
-		product.product_category_id,
 		product.price,
 		product.stock,
-		product.is_choose,
+		product.is_choose
 		
-		product_category.id as cate_id,
-		product_category.category_name as cate_category_name
 		from
 		product
-		left join product_category on product.product_category_id = product_category.id
 		where
 		product.id = #{id}
 	</select>
@@ -65,7 +61,6 @@
 		update product
 		set
 		product_name = #{productName},
-		product_category_id = #{productCategoryId},
 		price = #{price},
 		stock = #{stock},
 		is_choose = #{choose}
@@ -73,6 +68,19 @@
 		id = #{id}
 	</update>
 	
+	<!-- h2 -->
+	<update id="editStock" parameterType="java.util.List">
+		<foreach collection="list" item="item" separator=";">
+			UPDATE product
+			SET
+			id = #{item.productId},
+			stock = stock - #{item.quantity}
+			WHERE
+			id = #{item.id}
+		</foreach>
+	</update>
+	
+	<!-- MySQL
 	<update id="editStock" parameterType="java.util.List">
 		update product
 		set
@@ -93,12 +101,12 @@
 		</foreach>
 		)
 	</update>
+	 -->
 	
 	<insert id="create">
 		insert into product
 		(
 		product_name,
-		product_category_id,
 		price,
 		stock,
 		is_choose
@@ -106,7 +114,6 @@
 		values
 		(
 		#{productName},
-		#{productCategoryId},
 		#{price},
 		#{stock},
 		#{choose}
@@ -116,16 +123,9 @@
 	<resultMap type="com.example.casemng.entity.Product" id="prod">
 		<id property="id" column="id" />
 		<result property="productName" column="product_name" />
-		<result property="productCategoryId" column="product_category_id" />
 		<result property="price" column="price" />
 		<result property="stock" column="stock" />
 		<result property="choose" column="is_choose" />
-		<association property="productCategory" columnPrefix="cate_" resultMap="cate" />
-	</resultMap>
-	
-	<resultMap type="com.example.casemng.entity.ProductCategory" id="cate">
-		<id property="id" column="id" />
-		<result property="categoryName" column="category_name" />
 	</resultMap>
 	
 </mapper>

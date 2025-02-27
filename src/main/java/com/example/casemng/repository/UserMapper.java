@@ -15,8 +15,8 @@ public interface UserMapper {
 	public List<User> findWithoutThisId(int id);
 	public void create(User user);
 	public void edit(User user);
+	public void editPassword(User user);
 	public void editExceptPassword(User user);
 	public void editLoginUser(User user);
-	public void editLoginUserExceptPassword(User user);
 	public void logicalDelete(int id);
 }

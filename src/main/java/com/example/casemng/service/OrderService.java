@@ -9,9 +9,10 @@ import com.example.casemng.form.FormOrderProduct;
 public interface OrderService {
 
 	public FormOrder findById(int id);
+	public Order findByCaseId(int id);
 	public void orderEdit(FormOrder form);
 	public List<Order> findAll();
-	public void create(FormOrder form);
-	public void logicalDelete(int id);
+	public int create(FormOrder form);
+	public void logicalDelete(FormOrder form);
 	public List<FormOrderProduct> generateProductList();
 }

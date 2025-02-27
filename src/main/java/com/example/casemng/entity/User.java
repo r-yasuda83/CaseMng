@@ -17,13 +17,9 @@ public class User {
 	
 	private String emailAddress;
 	
-	private int departmentId;
-	
 	private int role;
 	
 	private boolean deleted;
-	
-	private Department department;
 	
 	private Role roles;
 	

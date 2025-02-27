@@ -10,8 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.casemng.entity.User;
 import com.example.casemng.form.FormUser;
+import com.example.casemng.form.FormUserEditPassword;
 import com.example.casemng.form.FormUserForEdit;
-import com.example.casemng.repository.DepartmentMapper;
 import com.example.casemng.repository.UserMapper;
 
 @Service
@@ -40,22 +40,26 @@ public class UserServiceImpl implements UserService {
 		FormUser form = modelMapper.map(user, FormUser.class);
 		return form;
 	}
+	
+	public FormUserEditPassword findByIdPassword(int id) {
+		User user = userMapper.findById(id);
+		FormUserEditPassword form = modelMapper.map(user, FormUserEditPassword.class);
+		return form;
+	}
 
 	@Transactional
-	public void edit(FormUserForEdit form) {
+	public void edit(FormUser form) {
 		User user = modelMapper.map(form, User.class);
-		
-		if (user.getPassword() != "") {
-			String password = encoder.encode(user.getPassword());
-			user.setPassword(password);
-			userMapper.edit(user);
-		} else {
-			userMapper.editExceptPassword(user);
-		}
+		userMapper.edit(user);
 	}
 	
-	@Autowired
-	DepartmentMapper departmentMapper;
+	@Transactional
+	public void editPassword(FormUserEditPassword form) {
+		User user = modelMapper.map(form, User.class);
+		String password = encoder.encode(user.getPassword());
+		user.setPassword(password);
+		userMapper.editPassword(user);
+	}
 
 	@Transactional
 	public void create(FormUser form) {
@@ -69,14 +73,8 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public void editLoginUser(FormUserForEdit form) {
 		User user = modelMapper.map(form, User.class);
-		
-		if (user.getPassword() != "") {
-			String password = encoder.encode(user.getPassword());
-			user.setPassword(password);
+	
 			userMapper.editLoginUser(user);
-		} else {
-			userMapper.editLoginUserExceptPassword(user);
-		}
 	}
 	
 	@Transactional
@@ -96,7 +94,7 @@ public class UserServiceImpl implements UserService {
 		return errMsg;
 	}
 	
-	public String duplicatesUserIdWithoutId(FormUserForEdit form) {
+	public String duplicatesUserIdWithoutId(FormUser form) {
 		String errMsg = null;
 		List<User> userList = userMapper.findWithoutThisId(form.getId());
 		for(User user : userList) {

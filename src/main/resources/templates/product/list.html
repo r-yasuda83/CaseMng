@@ -26,9 +26,8 @@
 				<tr>
 					<th th:text="商品ID"></th>
 					<th th:text="商品名"></th>
-					<th th:text="商品カテゴリ"></th>
 					<th th:text="金額"></th>
-					<th th:text="在庫"></th>
+					<th th:text="在庫数"></th>
 					<th th:text="受注・見積登録"></th>
 				</tr>
 			</thead>
@@ -36,13 +35,6 @@
 				<tr th:each="item:${list}">
 					<td><a th:text="${item.id}" th:href="@{/product/{id}(id=${item.id})}"></a></td>
 					<td><a th:text="${item.productName}" th:href="@{/product/{id}(id=${item.id})}"></a></td>
-					<td>
-						<a th:href="@{/product/{id}(id=${item.id})}">
-							<th:block th:switch="${item.productCategoryId}" th:each="cate : ${category}">
-								<span th:case=${cate.id} th:text="${cate.categoryName}"></span>
-							</th:block>
-						</a>
-					</td>
 					<td><a th:text="${item.price}" th:href="@{/product/{id}(id=${item.id})}"></a></td>
 					<td><a th:text="${item.stock}" th:href="@{/product/{id}(id=${item.id})}"></a></td>
 					<td>

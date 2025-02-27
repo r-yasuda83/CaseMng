@@ -6,6 +6,7 @@
 	<select id="findById" resultMap="quot">
 		SELECT
 		quotation.id,
+		quotation.case_id,
 		quotation.quotation_date,
 		quotation.memo,
 
@@ -56,14 +57,11 @@
 	</update>
 	
 	<insert id="create" useGeneratedKeys="true" keyProperty="id">
-		insert into quotation
-		(
+		insert into quotation(
 		  case_id,
 		  quotation_date,
 		  memo
-		)
-		values
-		(
+		)values(
 		  #{caseId},
 		  #{quotationDate},
 		  #{memo}
@@ -73,13 +71,14 @@
 	<resultMap type="com.example.casemng.entity.Quotation"
 		id="quot">
 		<id property="id" column="id" />
+		<result property="caseId" column="case_id" />
 		<result property="quotationDate" column="quotation_date" />
 		<result property="memo" column="memo" />
-		<association property="cases" resultMap="case" columnPrefix="case_" />
+		<association property="cases" resultMap="cases" columnPrefix="case_" />
 		<collection property="quotationProduct" resultMap="quoPr" columnPrefix="quoPr_"/>
 	</resultMap>
 
-	<resultMap type="com.example.casemng.entity.Case" id="case">
+	<resultMap type="com.example.casemng.entity.Case" id="cases">
 		<id property="id" column="id" />
 		<result property="caseName" column="case_name" />
 		<result property="customerId" column="customer_id" />

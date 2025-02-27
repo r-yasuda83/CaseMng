@@ -8,8 +8,8 @@ public class FormOrderProduct {
 	private int id;
 
 	private int ordersId;
-
-	private int productId;
+	
+	private Integer productId;
 	
 	private Integer quantity;
 	
