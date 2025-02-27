@@ -5,6 +5,7 @@
 <head>
 	<meta charset="UTF-8">
 	<link rel="stylesheet" th:href="@{/css/edit.css}">
+	<script src="/js/formDoubleSubmission.js"></script>
 	<title th:text="${title}"></title>
 
 <body>
@@ -26,12 +27,12 @@
 						</tr>
 						<tr>
 							<th>姓</th>
-							<td><input type="text" th:field="*{lastName}" readonly style="background-color: #cfd7ee;">
+							<td><input type="text" th:field="*{lastName}">
 							</td>
 						</tr>
 						<tr>
 							<th>名</th>
-							<td><input type="text" th:field="*{firstName}" readonly style="background-color: #cfd7ee;">
+							<td><input type="text" th:field="*{firstName}">
 							</td>
 						</tr>
 						<tr>
@@ -40,37 +41,12 @@
 							<td th:if="${#fields.hasErrors('emailAddress')}" th:errors="*{emailAddress}"
 								th:errorclass="err"></td>
 						</tr>
-						<tr>
-							<th>パスワード</th>
-							<td><input type="password" th:field="*{password}"></td>
-							<td th:if="${#fields.hasErrors('password')}" th:errors="*{password}" th:errorclass="err">
-							</td>
-						</tr>
-						<tr>
-							<th>パスワード（確認用）</th>
-							<td><input type="password" th:field="*{passwordReenter}"></td>
-							<td th:if="${#fields.hasErrors('passwordReenter')}" th:errors="*{passwordReenter}"
-								th:errorclass="err">
-							</td>
-							<td th:if="${#fields.hasErrors('passwordValid')}" th:errors="*{passwordValid}"
-								th:errorclass="err">
-							</td>
-						</tr>
-						<tr>
-							<th>部署</th>
-							<td>
-								<select th:field="*{departmentId}">
-									<option th:each="item : ${departmentList}" th:value="${item.id}"
-										th:text="${item.departmentName}"
-										th:select="${item.id == formUserForEdit.departmentId}"></option>
-								</select>
-							</td>
-						</tr>
 					</table>
 
 					<input type="button" th:onclick="|location.href='@{/case}'|" value="取消">
 					<input type="submit" value="保存">
 				</form>
+				<a class="btn btn-secondary mt-3" th:href="@{/user/setting/password}">パスワード変更</a>
 			</div>
 
 		</div>

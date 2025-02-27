@@ -16,30 +16,32 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-		return http.formLogin(login -> login
-				.loginPage("/login").permitAll()
-				.loginProcessingUrl("/login").permitAll()
-				.failureUrl("/login?error")
-				.usernameParameter("userId")
-				.passwordParameter("password")
-				.failureUrl("/login")
-				.defaultSuccessUrl("/case", true))
-				
+		return http
+				.formLogin(login -> login
+						.loginPage("/login").permitAll()
+						.loginProcessingUrl("/login").permitAll()
+						.failureUrl("/login?error")
+						.usernameParameter("userId")
+						.passwordParameter("password")
+						.failureUrl("/login")
+						.defaultSuccessUrl("/case", true))
+
 				.logout(logout -> logout
 						.logoutUrl("/logout")
 						.logoutSuccessUrl("/login"))
-				
+
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers("/login", "/css/**").permitAll()
 						.requestMatchers(PathRequest.toH2Console()).permitAll()
 						.requestMatchers("/admin").hasAuthority("ROLE_ADMIN")
 						.anyRequest().authenticated())
-				
+
 				.headers(headers -> headers
 						.frameOptions(FrameOptionsConfig::disable))
-				
+
 				.csrf(csrf -> csrf
 						.ignoringRequestMatchers(PathRequest.toH2Console())
+
 				//.disable()
 				)
 				.build();

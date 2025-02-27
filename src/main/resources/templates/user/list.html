@@ -27,7 +27,6 @@
 					<th th:text="ユーザーID"></th>
 					<th th:text="ユーザー名"></th>
 					<th th:text="メールアドレス"></th>
-					<th th:text="部署"></th>
 					<th th:text="アカウント有効">
 				</tr>
 			</thead>
@@ -36,7 +35,6 @@
 					<td><a th:text="${item.id}" th:href="@{/admin/user/{id}(id=${item.id})}"></a></td>
 					<td><a th:text="${item.getFullName()}" th:href="@{/admin/user/{id}(id=${item.id})}"></a></td>
 					<td><a th:text="${item.emailAddress}" th:href="@{/admin/user/{id}(id=${item.id})}"></a></td>
-					<td><a th:text="${item.department.departmentName}" th:href="@{/admin/user/{id}(id=${item.id})}"></a></td>
 					<td><a th:text="${item.deleted}? '無効':'有効'" th:href="@{/admin/user/{id}(id=${item.id})}"></a></td>
 				</tr>
 			</tbody>

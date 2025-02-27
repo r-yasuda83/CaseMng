@@ -7,12 +7,16 @@
 	<link rel="stylesheet" th:href="@{/css/edit.css}">
 	<link rel="stylesheet" th:href="@{/css/popupForm.css}">
 	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-	<script th:src="@{/js/totalAmount.js}"></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0-rc.2/js/select2.min.js" defer></script>
+	<link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0-rc.2/css/select2.min.css" rel="stylesheet" />
+	<script src="/js/formDoubleSubmission.js"></script>
+	<script th:src="@{/js/productMng.js}"></script>
 	<script type="text/javascript" th:inline="javascript">
 		const productList = /*[[${productList}]]*/"productList";
-		selectPrice();
+		const distinction = /*[[${distinction}]]*/"distinction";
 	</script>
 	<title th:text="${title}"></title>
+</head>
 
 <body>
 	<div class="mt-3" style="width:90%; margin: 0 auto;" layout:fragment="content">
@@ -23,7 +27,7 @@
 			<div class="card-body">
 				<form th:action="@{/quotation/create/{caseId}(caseId=${formQuotation.caseId})}" method="post"
 					th:object="${formQuotation}">
-
+					<input type="hidden" th:field="*{caseId}">
 					<input type="hidden" th:field="*{cases.customerId}">
 
 					<th:block th:if="${errMsg}" th:each="text : ${errMsg}">
@@ -35,8 +39,12 @@
 						<div class="col-sm-2">
 							<input class="form-control" type="date" th:field="*{quotationDate}">
 						</div>
-						<span th:if="${#fields.hasErrors('quotationDate')}" th:errors="*{quotationDate}"
+						<span class="col" th:if="${#fields.hasErrors('quotationDate')}" th:errors="*{quotationDate}"
 							th:errorclass="err">
+					</div>
+
+					<div>
+						<span id="insert" class="btn btn-secondary">商品追加</span>
 					</div>
 
 					<div class="row mb-3">
@@ -50,30 +58,31 @@
 									<th>金額</th>
 								</tr>
 							</thead>
-							<tbody>
+							<tbody id="tbody">
 								<tr th:each="item, iterStat:*{quotationProduct}">
 									<td class="col-md-2">
 										<input type="hidden" th:field="*{quotationProduct[__${iterStat.index}__].id}">
-										<select class="product form-select"
+										<select class="product form-select select2"
 											th:field="*{quotationProduct[__${iterStat.index}__].productId}" />
+										<option value=""></option>
 										<option th:each="prod : ${productList}" th:value="${prod.id}"
 											th:text="${prod.productName}" th:selected="${prod.id == item.productId}">
 										</option>
 										</select>
 									</td>
 									<td class="col-md-1">
-										<span id="price">
+										<span class="price">
 									</td>
 									<td class="col-md-1">
-										<input class="form-control" id="quantity" type="number"
+										<input class="form-control quantity" type="number" min="0"
 											th:field="*{quotationProduct[__${iterStat.index}__].quantity}">
 									</td>
 									<td class="col-md-1">
-										<input class="form-control" id="discount" type="number"
+										<input class="form-control discount" type="number" min="0"
 											th:field="*{quotationProduct[__${iterStat.index}__].discount}">
 									</td>
 									<td class="col-md-1">
-										<span id="rowTotal">
+										<span class="rowTotal">
 									</td>
 									<td class="col-md-1">
 										<th:block th:with="key='quotationProduct[' + ${iterStat.index} + '].quantity'">
@@ -89,10 +98,10 @@
 						</table>
 					</div>
 
-					<div clas class="row mb-3">
+					<div class="row mb-3">
 						<label class="col-sm-2 col-form-label">合計金額</label>
 						<div class="col-sm-2 d-flex align-items-center">
-							<span id="totalPrice"></span>
+							<span class="totalPrice"></span>
 						</div>
 					</div>
 

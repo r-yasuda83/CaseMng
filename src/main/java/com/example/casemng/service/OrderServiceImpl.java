@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.casemng.entity.Order;
 import com.example.casemng.form.FormOrder;
 import com.example.casemng.form.FormOrderProduct;
+import com.example.casemng.repository.CaseMapper;
 import com.example.casemng.repository.OrderMapper;
 import com.example.casemng.repository.OrderProductMapper;
 
@@ -28,6 +29,11 @@ public class OrderServiceImpl implements OrderService {
 		FormOrder form = modelMapper.map(order, FormOrder.class);
 		return form;
 	}
+	
+	public Order findByCaseId(int id) {
+		Order order = orderMapper.findByCaseId(id);
+		return order;
+	}
 
 	@Transactional
 	public void orderEdit(FormOrder form) {
@@ -44,31 +50,22 @@ public class OrderServiceImpl implements OrderService {
 	OrderProductMapper orderProductMapper;
 
 	@Transactional
-	public void create(FormOrder form) {
+	public int create(FormOrder form) {
 		Order order = modelMapper.map(form, Order.class);
 		orderMapper.create(order);
-		/*
-		List<OrderProduct> validList = new ArrayList<>();
-		for (OrderProduct orpr : order.getOrderProduct()) {
-			if (orpr.getQuantity() <= 0) {
-				continue;
-			}
-			orpr.setOrdersId(order.getId());
-			validList.add(orpr);
-		}
-		
-		if(validList.isEmpty() == false) {
-			orderProductMapper.create(validList);
-		}
-		*/
+		return order.getId();
 	}
 	
-	public void logicalDelete(int id) {
-		orderMapper.logicalDelete(id);
+	@Autowired
+	CaseMapper caseMapper;
+	
+	public void logicalDelete(FormOrder form) {
+		orderMapper.logicalDelete(form.getId());
+		caseMapper.whenDeleteOrder(form.getCaseId());
 	}
 	
 	public List<FormOrderProduct> generateProductList(){
-		int ProductCount = 5;
+		int ProductCount = 1;
 		List<FormOrderProduct> orderProductList = new ArrayList<>();
 		for (int i = 0; i < ProductCount; i++) {
 			orderProductList.add(new FormOrderProduct());

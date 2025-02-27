@@ -32,7 +32,20 @@ public class OrderProductServiceImpl implements OrderProductService {
 
 	@Transactional
 	public void addOrderProduct(List<FormOrderProduct> list) {
-		orderProductMapper.addOrderProduct(list);
+		
+		List<FormOrderProduct> updateList = new ArrayList<>();
+		for (FormOrderProduct item : list) {
+			//商品の有無
+			if(item.getProductId() == null || item.getProductId() <= 0) {
+				continue;
+			}
+			//注文数の有無
+			if (item.getQuantity() == null || item.getQuantity() <= 0) {
+				continue;
+			}
+			updateList.add(item);
+		}
+		orderProductMapper.addOrderProduct(updateList);
 	}
 
 	public List<OrderProduct> findAllExport() {
@@ -42,76 +55,84 @@ public class OrderProductServiceImpl implements OrderProductService {
 	public OrderProduct findByIdAll(int id) {
 		return orderProductMapper.findByIdAll(id);
 	}
-	
-	public List<FormOrderProduct> setOrdersId(List<FormOrderProduct> list, int ordersId){
-		for(FormOrderProduct item : list) {
+
+	public List<FormOrderProduct> setOrdersId(List<FormOrderProduct> list, int ordersId) {
+		for (FormOrderProduct item : list) {
 			item.setOrdersId(ordersId);
 		}
 		return list;
 	}
-	
-	//個数が1以上のものは更新、0以下のものは論理削除
+
 	@Transactional
-	public void edit(List<FormOrderProduct> list) {
+	public void edit(List<FormOrderProduct> list, int orderId) {
 
 		List<FormOrderProduct> deleteList = new ArrayList<>();
 		List<FormOrderProduct> updateList = new ArrayList<>();
 
 		for (FormOrderProduct item : list) {
-			if (item.getQuantity() == null || item.getQuantity() <= 0) {
+			//商品の有無
+			if(item.getProductId() == null || item.getProductId() <= 0) {
+				if(item.getId() <= 0) {
+					continue;
+				}
 				deleteList.add(item);
-			} else {
-				updateList.add(item);
 			}
+			//注文数の有無
+			if (item.getQuantity() == null || item.getQuantity() <= 0) {
+				//
+				if(item.getId() <= 0) {
+					continue;
+				}
+				deleteList.add(item);
+			}
+			updateList.add(item);
 		}
 
 		List<OrderProduct> delete = List.of(modelMapper.map(deleteList, OrderProduct[].class));
 		List<OrderProduct> update = List.of(modelMapper.map(updateList, OrderProduct[].class));
-
+		
 		if (delete.size() > 0) {
 			orderProductMapper.logicalDelete(delete);
 		}
 
+		List<OrderProduct> editList = new ArrayList<>();
+		List<OrderProduct> createList = new ArrayList<>();
+		
 		if (update.size() > 0) {
-			orderProductMapper.edit(update);
+			for(OrderProduct item : update) {
+				if(item.getId() == 0) {
+					createList.add(item);
+				}else {
+					editList.add(item);
+				}
+			}
+		}
+		
+		if(editList.size() > 0) {
+			orderProductMapper.edit(editList);
+		}
+		if(createList.size() > 0) {
+			for (OrderProduct item : createList) {
+				if(item.getOrdersId() == 0) {
+					item.setOrdersId(orderId);
+				}
+			}
+			orderProductMapper.create(createList);
 		}
 	}
 	
-	public List<FormOrderProduct> organizeList(List<FormOrderProduct> list) {
-
-		List<FormOrderProduct> validOrderProductList = new ArrayList<>();
-		for (FormOrderProduct fop : list) {
-			if (fop.getQuantity() == null || fop.getQuantity() <= 0) {
-				continue;
-			}
-			validOrderProductList.add(fop);
-		}
-		return validOrderProductList;
-	}
-
-	public List<FormOrderProduct> organizeList(List<FormOrderProduct> list, int ordersId) {
-		if (ordersId > 0) {
-			for (FormOrderProduct item : list) {
-				item.setOrdersId(ordersId);
-			}
-		}
-		List<FormOrderProduct> validOrderProductList = new ArrayList<>();
-		for (FormOrderProduct fop : list) {
-			if (fop.getQuantity() == null || fop.getQuantity() <= 0) {
-				continue;
-			}
-			validOrderProductList.add(fop);
-		}
-		return validOrderProductList;
-	}
-
 	//商品個数が在庫数を上回るかのチェック
 	public List<String> comparisonStock(List<FormOrderProduct> list) {
+		
 		List<String> quantityErrMsgs = new ArrayList<String>();
 		List<Product> productList = productMapper.findAll();
 		int zeroQuantityCount = 0;
-		
+
 		for (FormOrderProduct order : list) {
+			if (order.getProductId() == null || order.getProductId() <= 0) {
+				zeroQuantityCount++;
+				continue;
+			}
 			if (order.getQuantity() == null || order.getQuantity() <= 0) {
 				zeroQuantityCount++;
 				continue;
@@ -125,7 +146,7 @@ public class OrderProductServiceImpl implements OrderProductService {
 		}
 
 		if (zeroQuantityCount == list.size()) {
-			quantityErrMsgs.add("個数が1以上の商品を最低1件登録してください");
+			quantityErrMsgs.add("商品を選択、尚且つ個数が1以上の商品を最低1件登録してください");
 		}
 
 		return quantityErrMsgs;

@@ -5,13 +5,14 @@
 <head>
 	<meta charset="UTF-8">
 	<link rel="stylesheet" th:href="@{/css/edit.css}">
+	<script src="/js/formDoubleSubmission.js"></script>
 	<title th:text="${title}"></title>
 
 <body>
 	<div class="mt-3" style="width:90%; margin: 0 auto;" layout:fragment="content">
 		<div class="card m-3">
 			<div class="card-header">
-				<div th:text="${'ID：' + formUserForEdit.id + '　'+ formUserForEdit.getFullName()}"></div>
+				<div th:text="${'ID：' + formUser.id + '　'+ formUser.getFullName()}"></div>
 			</div>
 			<div class="card-body">
 
@@ -19,8 +20,8 @@
 					<p class="err" th:text="${text}"></p>
 				</th:block>
 
-				<form th:action="@{/admin/user/{id}(id=${formUserForEdit.id})}" method="post"
-					th:object="${formUserForEdit}">
+				<form th:action="@{/admin/user/{id}(id=${formUser.id})}" method="post"
+					th:object="${formUser}">
 					<input type="hidden" th:field="*{id}">
 
 					<div class="row mb-3">
@@ -57,40 +58,24 @@
 					</div>
 
 					<div class="row mb-3">
-						<label class="col-sm-2 col-form-label">パスワード</label>
-						<div class="col-sm-3">
-							<input class="form-control" type="password" th:field="*{password}">
-						</div>
-						<span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" th:errorclass="err">
-					</div>
-
-					<div class="row mb-3">
-						<label class="col-sm-2 col-form-label">パスワード（確認用）</label>
-						<div class="col-sm-3">
-							<input class="form-control" type="password" th:field="*{passwordReenter}">
-						</div>
-						<span th:if="${#fields.hasErrors('passwordValid')}" th:errors="*{passwordValid}"
-							th:errorclass="err">
-					</div>
-
-					<div class="row mb-3">
-						<label class="col-sm-2 col-form-label">部署</label>
-						<div class="col-sm-2">
-							<select class="form-select" th:field="*{departmentId}">
-								<option th:each="item : ${departmentList}" th:value="${item.id}"
-									th:text="${item.departmentName}" th:select="${item.id == formUserForEdit.departmentId}">
-								</option>
-							</select>
-						</div>
-					</div>
-
-					<div class="row mb-3">
 						<label class="col-sm-2 col-form-label">ロール</label>
 						<div class="col-sm-2">
 							<select class="form-select" th:field="*{role}">
 								<option th:each="item : ${roleList}" th:value="${item.id}" th:text="${item.roleName}"
-									th:select="${item.id == formUserForEdit.role}"></option>
+									th:select="${item.id == formUser.role}"></option>
 							</select>
+						</div>
+					</div>
+
+					<div class="row mb-3">
+						<label class="col-sm-2 col-form-label">アカウント有効・無効</label>
+						<div class="col-sm-2">
+							<input class="form-check-input" type="radio" th:field="*{deleted}" th:value="false"
+								th:checked="${formUser.deleted == false}">
+							<label th:text="有効"></label>
+							<input class="form-check-input" type="radio" th:field="*{deleted}" th:value="true"
+								th:checked="${formUser.deleted == true}">
+							<label th:text="無効"></label>
 						</div>
 					</div>
 
@@ -99,6 +84,7 @@
 						<input type="submit" value="保存">
 					</div>
 				</form>
+				<a class="btn btn-secondary mt-3" th:href="@{/admin/user/{id}/password(id=${formUser.id})}">パスワード変更</a>
 			</div>
 		</div>
 	</div>

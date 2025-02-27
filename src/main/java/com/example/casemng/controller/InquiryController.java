@@ -42,7 +42,7 @@ public class InquiryController {
 			return "inquiry/edit";
 		}
 		inquiryService.inquiryEdit(form);
-		return customerCtrl.getDetails(form.getCases().getCustomerId(), form.getCaseId(), null, id, model);
+		return "redirect:/customer/" + form.getCases().getCustomerId() + "?caseId=" + form.getCaseId() + "&inquiryId=" + id;
 	}
 	
 	@Autowired
@@ -72,13 +72,13 @@ public class InquiryController {
 			return "inquiry/create";
 		}
 		int inquiryId = inquiryService.create(form);
-		return customerCtrl.getDetails(form.getCases().getCustomerId(), form.getCaseId(), null, inquiryId, model);
+		return "redirect:/customer/" + form.getCases().getCustomerId() + "?caseId=" + form.getCaseId() + "&inquiryId=" + inquiryId;
 	}
 	
 	@PostMapping("/inquiry/delete/{id}")
 	public String postDelete(@PathVariable("id")int id, Model model) {
 		FormInquiry form = inquiryService.findById(id);
 		inquiryService.logicalDelete(id);
-		return customerCtrl.getDetails(form.getCases().getCustomerId(), form.getCaseId(), null, null, model);
+		return "redirect:/customer/" + form.getCases().getCustomerId() + "?caseId=" + form.getCaseId();
 	}
 }

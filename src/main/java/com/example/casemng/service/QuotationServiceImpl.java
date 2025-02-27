@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.casemng.entity.Quotation;
-import com.example.casemng.entity.QuotationProduct;
 import com.example.casemng.form.FormQuotation;
 import com.example.casemng.form.FormQuotationProduct;
 import com.example.casemng.repository.QuotationMapper;
@@ -42,21 +41,7 @@ public class QuotationServiceImpl implements QuotationService{
 	@Transactional
 	public int create(FormQuotation form) {
 		Quotation quotation = modelMapper.map(form, Quotation.class);
-		quotationMapper.create(quotation);
-		
-		List<QuotationProduct> validList = new ArrayList<>();
-		for (QuotationProduct orpr : quotation.getQuotationProduct()) {
-			if (orpr.getQuantity() <= 0) {
-				continue;
-			}
-			orpr.setQuotationId(quotation.getId());
-			validList.add(orpr);
-		}
-		
-		if(validList.isEmpty() == false) {
-			quotationProductMapper.create(validList);
-		}
-		
+		quotationMapper.create(quotation);		
 		return quotation.getId();
 	}
 	
@@ -65,7 +50,7 @@ public class QuotationServiceImpl implements QuotationService{
 	}
 	
 	public List<FormQuotationProduct> generateProductList(){
-		int ProductCount = 5;
+		int ProductCount = 1;
 		List<FormQuotationProduct> quotationProductList = new ArrayList<>();
 		for (int i = 0; i < ProductCount; i++) {
 			quotationProductList.add(new FormQuotationProduct());
