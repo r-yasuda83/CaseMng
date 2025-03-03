@@ -5,6 +5,7 @@ import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,12 +15,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.casemng.entity.CustomUserDetails;
 import com.example.casemng.entity.Role;
+import com.example.casemng.form.FormSearch;
 import com.example.casemng.form.FormUser;
 import com.example.casemng.form.FormUserEditPassword;
-import com.example.casemng.form.FormUserForEdit;
+import com.example.casemng.form.FormUserRegistration;
 import com.example.casemng.service.RoleService;
 import com.example.casemng.service.UserService;
 
@@ -28,12 +31,14 @@ public class UserController {
 
 	@Autowired
 	UserService userService;
-
+	
 	@GetMapping("/admin/user")
-	public String getList(Model model) {
-
-		model.addAttribute("list", userService.findAll());
-		return "user/list";
+	public String getList(@ModelAttribute("search") FormSearch form,
+			@RequestParam(name = "displayedNum", required = false) Integer displayedNum,
+			@RequestParam(name = "sortKey", required = false) String sortKey,
+			@RequestParam(name = "sortDirection", required = false) String sortDirection,
+			@PageableDefault(size = 5) Pageable pageable, Model model) {
+		return userService.pagenation(form.getKeyword(), displayedNum, sortKey, sortDirection, pageable, model);
 	}
 
 	@Autowired
@@ -100,10 +105,9 @@ public class UserController {
 	}
 
 	@GetMapping("/admin/user/create")
-	public String getCreate(Model model) {
+	public String getCreate(@ModelAttribute("formUserRegistration")FormUserRegistration form, Model model) {
 
-		FormUser form = new FormUser();
-		model.addAttribute("formUser", form);
+		model.addAttribute("FormUserRegistration", form);
 
 		List<Role> roleList = roleService.findAll();
 		model.addAttribute("roleList", roleList);
@@ -111,7 +115,7 @@ public class UserController {
 	}
 
 	@PostMapping("/admin/user/create")
-	public String postCreate(@ModelAttribute("formUser") @Validated FormUser form, BindingResult result, Model model) {
+	public String postCreate(@ModelAttribute("formUserRegistration") @Validated FormUserRegistration form, BindingResult result, Model model) {
 
 		String errMsg = userService.duplicatesUserId(form.getUserId());
 
@@ -126,6 +130,13 @@ public class UserController {
 		userService.create(form);
 		return "redirect:/admin/user";
 	}
+	
+	@PostMapping("/admin/user/{id}/delete")
+	public String postDelete(@PathVariable("id") int id, Model model) {
+
+		userService.logicalDelete(id);
+		return "redirect:/admin/user";
+	}
 
 	@GetMapping("/user/setting")
 	public String getSetting(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
@@ -137,7 +148,7 @@ public class UserController {
 	}
 
 	@PostMapping("/user/setting")
-	public String postSetting(@ModelAttribute("formUserForEdit") @Validated FormUserForEdit form, BindingResult result,
+	public String postSetting(@ModelAttribute("formUserForEdit") @Validated FormUserRegistration form, BindingResult result,
 			Model model, Pageable pageable) {
 
 		if (result.hasErrors()) {
@@ -166,12 +177,5 @@ public class UserController {
 		}
 		userService.editPassword(form);
 		return "redirect:/user/setting";
-	}
-
-	@PostMapping("/admin/user/{id}/delete")
-	public String postDelete(@PathVariable("id") int id, Model model) {
-
-		userService.logicalDelete(id);
-		return "redirect:/admin/user";
 	}
 }

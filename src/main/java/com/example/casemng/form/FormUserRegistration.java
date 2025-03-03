@@ -6,22 +6,34 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class FormUserEditPassword {
+public class FormUserRegistration {
 
 	private int id;
 	
+	@NotBlank
+	private String userId;
+
+	@NotBlank
 	private String lastName;
 
+	@NotBlank
 	private String firstName;
+
+	@NotBlank
+	private String emailAddress;
 	
 	@NotBlank
 	private String password;
 	
 	@NotBlank
 	private String passwordReenter;
-	
+
+	private int role;
+
+	private boolean deleted;
+
 	public String getFullName() {
-		return lastName + " " + firstName;
+		return this.lastName + " " + this.firstName;
 	}
 	
 	@AssertTrue(message = "パスワードとパスワード（確認用）は同一にしてください。")

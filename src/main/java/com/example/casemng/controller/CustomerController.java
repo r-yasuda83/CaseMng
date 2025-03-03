@@ -30,6 +30,7 @@ public class CustomerController {
 			@RequestParam(name = "sortKey", required = false) String sortKey,
 			@RequestParam(name = "sortDirection", required = false) String sortDirection,
 			@PageableDefault(size = 5) Pageable pageable, Model model) {
+		
 		return customerService.pagenation(form.getKeyword(), displayedNum, sortKey, sortDirection, pageable, model);
 	}
 

@@ -4,16 +4,6 @@
 
 <head>
 	<meta charset="UTF-8">
-
-	<link rel="stylesheet" href="https://cdn.datatables.net/2.2.1/css/dataTables.dataTables.css">
-	<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
-	<script src="https://code.jquery.com/jquery-3.7.1.js" defer></script>
-	<script src="https://cdn.datatables.net/2.2.1/js/dataTables.js" defer></script>
-	<script src="https://cdn.datatables.net/buttons/3.2.0/js/dataTables.buttons.js" defer></script>
-	<script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.dataTables.js" defer></script>
-	<script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.html5.min.js" defer></script>
-
-	<script th:src="@{/js/datatables.js}" defer></script>
 	<title th:text="${title}"></title>
 </head>
 
@@ -21,17 +11,72 @@
 	<div class="mt-3" layout:fragment="content">
 		<p class="lead" th:text="${title}"></p>
 		<a class="btn btn-secondary" th:href="@{/admin/user/create}" th:text="アカウント追加"></a>
+
+		<div class="d-flex justify-content-between">
+			<form name="formlink" class="d-flex align-items-end">
+				<label class="align-bottom mx-2" th:text="表示件数"></label>
+				<select name="selectlink" class="selectlink"
+					onchange="if(document.formlink.selectlink.value){location.href=document.formlink.selectlink.value;}">
+					<option
+						th:value="@{/admin/user(keyword=${search.keyword}, sortKey=${search.sortKey}, sortDirection=${search.sortDirection}, displayedNum=${5})}"
+						th:selected="${search.displayedNum==5}">
+						5</option>
+					<option
+						th:value="@{/admin/user(keyword=${search.keyword}, sortKey=${search.sortKey}, sortDirection=${search.sortDirection}, displayedNum=${10})}"
+						th:selected="${search.displayedNum==10}">
+						10</option>
+					<option
+						th:value="@{/admin/user(keyword=${search.keyword}, sortKey=${search.sortKey}, sortDirection=${search.sortDirection}, displayedNum=${20})}"
+						th:selected="${search.displayedNum==20}">
+						20</option>
+				</select>
+			</form>
+
+			<form th:action="@{/admin/user}" method="get" th:object="${search}" class="d-flex">
+				<input class="form-control mx-2" type="text" th:field="*{keyword}">
+				<input type="submit" value="検索">
+
+				<input type="hidden" th:field="*{displayedNum}">
+				<input type="hidden" th:field="*{sortKey}">
+				<input type="hidden" th:field="*{sortDirection}">
+			</form>
+		</div>
+
 		<table id="list" class="table table-striped">
 			<thead>
 				<tr>
-					<th th:text="ユーザーID"></th>
-					<th th:text="ユーザー名"></th>
-					<th th:text="メールアドレス"></th>
-					<th th:text="アカウント有効">
+					<th>
+						<a
+							th:href="${search.sortKey == 'id' and search.sortDirection == 'ASC'}?
+									 @{/admin/user(keyword=${search.keyword}, sortKey=${'id'}, sortDirection=${'DESC'}, displayedNum=${search.displayedNum})} :
+									 @{/admin/user(keyword=${search.keyword}, sortKey=${'id'}, sortDirection=${'ASC'}, displayedNum=${search.displayedNum})}">
+							ユーザID</a>
+					</th>
+					<th>
+						<a
+							th:href="${search.sortKey == 'last_name' and search.sortDirection == 'ASC'}?
+									 @{/admin/user(keyword=${search.keyword}, sortKey=${'last_name'}, sortDirection=${'DESC'}, displayedNum=${search.displayedNum})} :
+									 @{/admin/user(keyword=${search.keyword}, sortKey=${'last_name'}, sortDirection=${'ASC'}, displayedNum=${search.displayedNum})}">
+							ユーザー名</a>
+					</th>
+					<th>
+						<a
+							th:href="${search.sortKey == 'email_address' and search.sortDirection == 'ASC'}?
+									 @{/admin/user(keyword=${search.keyword}, sortKey=${'email_address'}, sortDirection=${'DESC'}, displayedNum=${search.displayedNum})} :
+									 @{/admin/user(keyword=${search.keyword}, sortKey=${'email_address'}, sortDirection=${'ASC'}, displayedNum=${search.displayedNum})}">
+							メールアドレス</a>
+					</th>
+					<th>
+						<a
+							th:href="${search.sortKey == 'is_deleted' and search.sortDirection == 'ASC'}?
+									 @{/admin/user(keyword=${search.keyword}, sortKey=${'is_deleted'}, sortDirection=${'DESC'}, displayedNum=${search.displayedNum})} :
+									 @{/admin/user(keyword=${search.keyword}, sortKey=${'is_deleted'}, sortDirection=${'ASC'}, displayedNum=${search.displayedNum})}">
+							アカウント有効</a>
+					</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:each="item:${list}">
+				<tr th:each="item:${page}">
 					<td><a th:text="${item.id}" th:href="@{/admin/user/{id}(id=${item.id})}"></a></td>
 					<td><a th:text="${item.getFullName()}" th:href="@{/admin/user/{id}(id=${item.id})}"></a></td>
 					<td><a th:text="${item.emailAddress}" th:href="@{/admin/user/{id}(id=${item.id})}"></a></td>
@@ -40,6 +85,41 @@
 			</tbody>
 		</table>
 
+		<div th:if="${page.totalPages > 0}" class="col-auto">
+			<nav>
+				<ul class="pagination">
+					<!-- 前へ -->
+					<li th:if="${page.hasPrevious()}" class="page-item">
+						<a class="page-link"
+							th:href="@{/admin/user(keyword=${search.keyword}, sortKey=${search.sortKey}, sortDirection=${search.sortDirection}, displayedNum=${search.displayedNum}, page=${page.number - 1})}">
+							前へ
+						</a>
+					</li>
+
+					<!-- ページ番号 -->
+					<th:block th:each="i: ${#numbers.sequence(0, page.totalPages - 1)}" th:switch="${page.number}">
+						<li th:case="${i}" class="page-item active">
+							<a class="page-link" th:text="${i + 1}">
+							</a>
+						</li>
+						<li th:case="*" class="page-item">
+							<a class="page-link"
+								th:href="@{/admin/user(keyword=${search.keyword}, sortKey=${search.sortKey}, sortDirection=${search.sortDirection}, displayedNum=${search.displayedNum}, page=${i})}"
+								th:text="${i + 1}">
+							</a>
+						</li>
+					</th:block>
+
+					<!-- 次へ -->
+					<li th:if="${page.hasNext()}" class="page-item">
+						<a class="page-link"
+							th:href="@{/admin/user(keyword=${search.keyword}, sortKey=${search.sortKey}, sortDirection=${search.sortDirection}, displayedNum=${search.displayedNum}, page=${page.number + 1})}">
+							次へ
+						</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
 	</div>
 </body>
 

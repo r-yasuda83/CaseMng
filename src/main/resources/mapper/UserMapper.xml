@@ -4,6 +4,10 @@
 
 <mapper namespace="com.example.casemng.repository.UserMapper">
 
+	<select id="count" resultType="Long">
+		SELECT COUNT(*) FROM users
+	</select>
+	
 	<select id="findByUsername" resultMap="user">
 		select
 		users.id,
@@ -65,6 +69,35 @@
 		users
 		where
 		users.id = #{id}
+	</select>
+	
+	<select id="findByKeyword" resultMap="user">
+		select
+		users.id,
+		users.user_id,
+		users.password,
+		users.last_name,
+		users.first_name,
+		users.email_address,
+		users.roles_id,
+		users.is_deleted
+		
+		from
+		users
+		where
+		concat(users.id, users.last_name, users.email_address, users.is_deleted) like #{searchKey}
+		<choose>
+            <when test="!pageable.sort.isEmpty()">
+                ORDER BY
+                <foreach item="order" collection="pageable.sort" separator=",">
+                    ${order.property}
+                    ${order.direction}
+                </foreach>
+            </when>
+            <otherwise>
+                ORDER BY id
+            </otherwise>
+        </choose>
 	</select>
 	
 	<update id="edit">

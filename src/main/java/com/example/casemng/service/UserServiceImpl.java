@@ -2,16 +2,24 @@ package com.example.casemng.service;
 
 import java.util.List;
 
+import org.apache.ibatis.session.RowBounds;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 
 import com.example.casemng.entity.User;
 import com.example.casemng.form.FormUser;
 import com.example.casemng.form.FormUserEditPassword;
-import com.example.casemng.form.FormUserForEdit;
+import com.example.casemng.form.FormUserRegistration;
 import com.example.casemng.repository.UserMapper;
 
 @Service
@@ -46,6 +54,15 @@ public class UserServiceImpl implements UserService {
 		FormUserEditPassword form = modelMapper.map(user, FormUserEditPassword.class);
 		return form;
 	}
+	
+	public Page<User> findByKeyword(Pageable pageable, String searchKey) {
+		RowBounds rowBounds = new RowBounds(
+				(int) pageable.getOffset(), pageable.getPageSize());
+		List<User> users = userMapper.findByKeyword(rowBounds, searchKey, pageable);
+
+		Long total = userMapper.count();
+		return new PageImpl<>(users, pageable, total);
+	}
 
 	@Transactional
 	public void edit(FormUser form) {
@@ -62,7 +79,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Transactional
-	public void create(FormUser form) {
+	public void create(FormUserRegistration form) {
 		User user = modelMapper.map(form, User.class);
 		String password = encoder.encode(user.getPassword());
 		user.setPassword(password);
@@ -71,7 +88,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Transactional
-	public void editLoginUser(FormUserForEdit form) {
+	public void editLoginUser(FormUserRegistration form) {
 		User user = modelMapper.map(form, User.class);
 	
 			userMapper.editLoginUser(user);
@@ -104,5 +121,30 @@ public class UserServiceImpl implements UserService {
 			}
 		}
 		return errMsg;
+	}
+	
+	public String pagenation(String searchKey, Integer displayedNum, String sortKey, String sortDirection, Pageable pageable, Model model) {
+		if (searchKey == null) {
+			searchKey = "";
+		}
+		Sort sort = null;
+		if (StringUtils.hasLength(sortDirection)) {
+			String sd = sortDirection.equals(Sort.Direction.ASC.name()) ? Sort.Direction.ASC.name() : Sort.Direction.DESC.name();
+			String si = sortKey;
+			model.addAttribute("sortKey", si);
+
+			sort = Sort.by(Sort.Direction.fromString(sd), si);
+			model.addAttribute("sortDirection", sd);
+		}else {
+			sort = Sort.by(Sort.Direction.ASC, "id");
+		}
+		if(displayedNum == null) {
+			displayedNum = 5;
+		}
+		Pageable p = sort == null ? pageable : PageRequest.of(pageable.getPageNumber(), displayedNum, sort);
+		Page<User> user = findByKeyword(p, "%" + searchKey + "%");
+		model.addAttribute("page", user);
+		
+		return "user/list";
 	}
 }
