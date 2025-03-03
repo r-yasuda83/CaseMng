@@ -146,7 +146,6 @@
 		<result property="isDeleted" column="is_deleted" />
 	</resultMap>
 	
-	<!-- h2 -->
 	<update id="edit" parameterType="java.util.List">
 		<foreach collection="list" item="item" separator=";">
 			UPDATE order_product
@@ -158,50 +157,6 @@
 			id = #{item.id}
 		</foreach>
 	</update>
-	
-	<!-- MySQL
-	<update id="edit" parameterType="java.util.List">
-		update order_product
-		set
-		product_id = elt(field(id,
-		<foreach collection="list" item="item" separator=",">
-			#{item.id}
-		</foreach>
-		),
-		<foreach collection="list" item="item" separator=",">
-			#{item.productId}
-		</foreach>
-		),
-
-		quantity = elt(field(id,
-		<foreach collection="list" item="item" separator=",">
-			#{item.id}
-		</foreach>
-		),
-		<foreach collection="list" item="item" separator=",">
-			#{item.quantity}
-		</foreach>
-		),
-
-		discount = elt(field(id,
-		<foreach collection="list" item="item" separator=",">
-			#{item.id}
-		</foreach>
-		),
-		<foreach collection="list" item="item" separator=",">
-			#{item.discount}
-		</foreach>
-		)
-
-		where
-		id IN
-		(
-		<foreach collection="list" item="item" separator=",">
-			#{item.id}
-		</foreach>
-		)
-	</update>
-	 -->
 	
 	<insert id="addOrderProduct" parameterType="java.util.List">
 		insert into
@@ -237,7 +192,6 @@
 		</foreach>
 	</insert>
 	
-	<!-- h2 -->
 	<update id="logicalDelete" parameterType="java.util.List">
 		<foreach collection="list" item="item" separator=";">
 			UPDATE order_product
@@ -250,58 +204,5 @@
 			id = #{item.id}
 		</foreach>
 	</update>
-	<!-- MySQL
-	<update id="logicalDelete" parameterType="java.util.List">
-		update order_product
-		set
-		product_id = elt(field(id,
-		<foreach collection="list" item="item" separator=",">
-			#{item.id}
-		</foreach>
-		),
-		<foreach collection="list" item="item" separator=",">
-			#{item.productId}
-		</foreach>
-		),
-
-		quantity = elt(field(id,
-		<foreach collection="list" item="item" separator=",">
-			#{item.id}
-		</foreach>
-		),
-		<foreach collection="list" item="item" separator=",">
-			#{item.quantity}
-		</foreach>
-		),
-
-		discount = elt(field(id,
-		<foreach collection="list" item="item" separator=",">
-			#{item.id}
-		</foreach>
-		),
-		<foreach collection="list" item="item" separator=",">
-			#{item.discount}
-		</foreach>
-		),
-
-		is_deleted = elt(field(id,
-		<foreach collection="list" item="item" separator=",">
-			#{item.id}
-		</foreach>
-		),
-		<foreach collection="list" item="item" separator=",">
-			1
-		</foreach>
-		)
-
-		where
-		id IN
-		(
-		<foreach collection="list" item="item" separator=",">
-			#{item.id}
-		</foreach>
-		)
-	</update>
-	 -->
 
 </mapper>

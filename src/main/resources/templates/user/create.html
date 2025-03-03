@@ -7,7 +7,7 @@
 	<link rel="stylesheet" th:href="@{/css/edit.css}">
 	<script src="/js/formDoubleSubmission.js"></script>
 	<title th:text="${title}"></title>
-
+</head>
 <body>
 	<div class="mt-3" style="width:90%; margin: 0 auto;" layout:fragment="content">
 		<div class="card m-3">
@@ -20,7 +20,7 @@
 					<p class="err" th:text="${text}"></p>
 				</th:block>
 
-				<form th:action="@{/admin/user/create}" method="post" th:object="${formUser}">
+				<form th:action="@{/admin/user/create}" method="post" th:object="${formUserRegistration}">
 
 					<div class="row mb-3">
 						<label class="col-sm-2 col-form-label">ユーザーID</label>
@@ -76,8 +76,10 @@
 						<label class="col-sm-2 col-form-label">ロール</label>
 						<div class="col-sm-2">
 							<select class="form-select" th:field="*{role}">
-								<option th:each="item : ${roleList}" th:value="${item.id}" th:text="${item.roleName}"
-									th:select="${item.id == formUser.role}"></option>
+								<option th:each="item : ${roleList}" th:value="${item.id}"
+									th:select="${item.id == formUserRegistration.role}">
+									<span th:text="${item.id == 1}? '管理者' : 'ユーザー'"></span>
+								</option>
 							</select>
 						</div>
 					</div>

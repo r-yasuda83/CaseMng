@@ -2,6 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.casemng.repository.ProductMapper">
 
+	<select id="count" resultType="Long">
+		SELECT COUNT(*) FROM product
+	</select>
+	
 	<select id="findAll" resultMap="prod">
 		select
 		product.id,
@@ -9,11 +13,11 @@
 		product.price,
 		product.stock,
 		product.is_choose
-		
+
 		from
 		product
 	</select>
-	
+
 	<select id="findAllForSelect" resultMap="prod">
 		select
 		product.id,
@@ -21,13 +25,13 @@
 		product.price,
 		product.stock,
 		product.is_choose
-		
+
 		from
 		product
 		where
 		product.is_choose = 0
 	</select>
-	
+
 	<select id="findAllForSelectStock" resultMap="prod">
 		select
 		product.id,
@@ -35,14 +39,14 @@
 		product.price,
 		product.stock,
 		product.is_choose
-		
+
 		from
 		product
 		where
 		product.is_choose = 0
 		and product.stock > 0
 	</select>
-	
+
 	<select id="findById" resultMap="prod">
 		select
 		product.id,
@@ -50,28 +54,57 @@
 		product.price,
 		product.stock,
 		product.is_choose
-		
+
 		from
 		product
 		where
 		product.id = #{id}
 	</select>
-	
+
+	<select id="findByKeyword" resultMap="prod">
+		select
+		product.id,
+		product.product_name,
+		product.price,
+		product.stock,
+		product.is_choose
+
+		from
+		product
+		where
+		concat(product.id, product.product_name, product.price, product.stock, product.is_choose) like #{searchKey}
+		<choose>
+			<when test="!pageable.sort.isEmpty()">
+				ORDER BY
+				<foreach item="order" collection="pageable.sort"
+					separator=",">
+					${order.property}
+					${order.direction}
+				</foreach>
+			</when>
+			<otherwise>
+				ORDER BY id
+			</otherwise>
+		</choose>
+	</select>
+
 	<update id="edit">
 		update product
 		set
 		product_name = #{productName},
-		price = #{price},
+		price
+		= #{price},
 		stock = #{stock},
 		is_choose = #{choose}
 		where
 		id = #{id}
 	</update>
-	
+
 	<!-- h2 -->
 	<update id="editStock" parameterType="java.util.List">
 		<foreach collection="list" item="item" separator=";">
-			UPDATE product
+			UPDATE
+			product
 			SET
 			id = #{item.productId},
 			stock = stock - #{item.quantity}
@@ -79,30 +112,14 @@
 			id = #{item.id}
 		</foreach>
 	</update>
-	
-	<!-- MySQL
-	<update id="editStock" parameterType="java.util.List">
-		update product
-		set
-		stock = elt(field(id,
-		<foreach collection="list" item="item" separator=",">
-			#{item.id}
-		</foreach>
-		),
-		<foreach collection="list" item="item" separator=",">
-			stock - #{item.quantity}
-		</foreach>
-		)
-		where
-		id IN
-		(
-		<foreach collection="list" item="item" separator=",">
-			#{item.productId}
-		</foreach>
-		)
-	</update>
-	 -->
-	
+
+	<!-- MySQL <update id="editStock" parameterType="java.util.List"> update 
+		product set stock = elt(field(id, <foreach collection="list" item="item" 
+		separator=","> #{item.id} </foreach> ), <foreach collection="list" item="item" 
+		separator=","> stock - #{item.quantity} </foreach> ) where id IN ( <foreach 
+		collection="list" item="item" separator=","> #{item.productId} </foreach> 
+		) </update> -->
+
 	<insert id="create">
 		insert into product
 		(
@@ -119,13 +136,14 @@
 		#{choose}
 		)
 	</insert>
-	
-	<resultMap type="com.example.casemng.entity.Product" id="prod">
+
+	<resultMap type="com.example.casemng.entity.Product"
+		id="prod">
 		<id property="id" column="id" />
 		<result property="productName" column="product_name" />
 		<result property="price" column="price" />
 		<result property="stock" column="stock" />
 		<result property="choose" column="is_choose" />
 	</resultMap>
-	
+
 </mapper>

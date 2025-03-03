@@ -1,8 +1,8 @@
 package com.example.casemng.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -11,9 +11,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.casemng.entity.Product;
 import com.example.casemng.form.FormProduct;
+import com.example.casemng.form.FormSearch;
 import com.example.casemng.service.ProductService;
 
 @Controller
@@ -23,11 +24,14 @@ public class ProductController {
 	ProductService productService;
 
 	@GetMapping("/product")
-	public String getList(Model model) {
-		List<Product> productList = productService.findAll();
-		model.addAttribute("list", productList);
-		return "product/list";
+	public String getList(@ModelAttribute("search") FormSearch form,
+			@RequestParam(name = "displayedNum", required = false) Integer displayedNum,
+			@RequestParam(name = "sortKey", required = false) String sortKey,
+			@RequestParam(name = "sortDirection", required = false) String sortDirection,
+			@PageableDefault(size = 5) Pageable pageable, Model model) {
+		return productService.pagenation(form.getKeyword(), displayedNum, sortKey, sortDirection, pageable, model);
 	}
+	
 	
 	@GetMapping("/product/{id}")
 	public String getEdit(@PathVariable("id") int id, Model model) {

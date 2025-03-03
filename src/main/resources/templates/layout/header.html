@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{layout/layout}">
+	layout:decorate="~{layout/layout}" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
 	<meta charset="UTF-8">
@@ -13,24 +13,28 @@
 		<span class="navbar-brand">受注管理アプリ</span>
 		<a class="btn btn-outline-secondary" th:href="@{/case}">案件一覧</a>
 		<a class="btn btn-outline-secondary" th:href="@{/customer}">顧客一覧</a>
-		
+
 		<div class="dropdown">
-		  <button class="btn dropdown-toggle btn btn-outline-secondary" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-		    csv出力
-		  </button>
-		  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-		    <li><a class="dropdown-item" th:href="@{/export/customer}">顧客</a></li>
-		    <li><a class="dropdown-item" th:href="@{/export/cases}">案件</a></li>
-			<li><a class="dropdown-item" th:href="@{/export/orders}">受注</a></li>
-			<li><a class="dropdown-item" th:href="@{/export/quotation}">見積</a></li>
-			<li><a class="dropdown-item" th:href="@{/export/inquiry}">問い合わせ</a></li>
-		  </ul>
+			<button class="btn dropdown-toggle btn btn-outline-secondary" type="button" id="dropdownMenuButton"
+				data-bs-toggle="dropdown" aria-expanded="false">
+				csv出力
+			</button>
+			<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+				<li><a class="dropdown-item" th:href="@{/export/customer}">顧客</a></li>
+				<li><a class="dropdown-item" th:href="@{/export/cases}">案件</a></li>
+				<li><a class="dropdown-item" th:href="@{/export/orders}">受注</a></li>
+				<li><a class="dropdown-item" th:href="@{/export/quotation}">見積</a></li>
+				<li><a class="dropdown-item" th:href="@{/export/inquiry}">問い合わせ</a></li>
+			</ul>
 		</div>
-		
+
 		<a class="btn btn-outline-secondary" th:href="@{/product}">商品管理</a>
 		<a class="btn btn-outline-secondary" th:href="@{/user/setting}">アカウント設定</a>
-		<a class="btn btn-outline-secondary" sec:authorize="hasAuthority('ROLE_ADMIN')" th:href="@{/admin/user}">アカウント管理</a>
-		<form th:action="@{/logout}" method="post"><input type="submit" class="btn btn-outline-secondary" value="ログアウト" /></form>
+		<a class="btn btn-outline-secondary" sec:authorize="hasAuthority('ROLE_ADMIN')"
+			th:href="@{/admin/user}">アカウント管理</a>
+		<form th:action="@{/logout}" method="post"><input type="submit" class="btn btn-outline-secondary"
+				value="ログアウト" /></form>
+		<h><span sec:authentication="principal.fullname"></span> さん<br>ようこそ</h>
 	</nav>
 </body>
 
