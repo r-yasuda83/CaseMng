@@ -5,7 +5,13 @@
 <mapper namespace="com.example.casemng.repository.UserMapper">
 
 	<select id="count" resultType="Long">
-		SELECT COUNT(*) FROM users
+		select
+		count(users.id)
+		
+		from
+		users
+		where
+		concat(users.id, users.last_name, users.email_address, users.is_deleted) like #{searchKey}
 	</select>
 	
 	<select id="findByUsername" resultMap="user">

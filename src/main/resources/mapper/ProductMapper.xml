@@ -3,7 +3,13 @@
 <mapper namespace="com.example.casemng.repository.ProductMapper">
 
 	<select id="count" resultType="Long">
-		SELECT COUNT(*) FROM product
+		select
+		count(product.id)
+
+		from
+		product
+		where
+		concat(product.id, product.product_name, product.price, product.stock, product.is_choose) like #{searchKey}
 	</select>
 	
 	<select id="findAll" resultMap="prod">

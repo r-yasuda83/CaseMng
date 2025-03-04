@@ -60,9 +60,9 @@
 					</th>
 					<th>
 						<a
-							th:href="${search.sortKey == 'last_name' and search.sortDirection == 'ASC'}?
-									@{/case(keyword=${search.keyword}, sortKey=${'last_name'}, sortDirection=${'DESC'}, displayedNum=${search.displayedNum})} :
-									@{/case(keyword=${search.keyword}, sortKey=${'last_name'}, sortDirection=${'ASC'}, displayedNum=${search.displayedNum})}">
+							th:href="${search.sortKey == 'cust_last_name' and search.sortDirection == 'ASC'}?
+									@{/case(keyword=${search.keyword}, sortKey=${'cust_last_name'}, sortDirection=${'DESC'}, displayedNum=${search.displayedNum})} :
+									@{/case(keyword=${search.keyword}, sortKey=${'cust_last_name'}, sortDirection=${'ASC'}, displayedNum=${search.displayedNum})}">
 							顧客名</a>
 					</th>
 					<th>

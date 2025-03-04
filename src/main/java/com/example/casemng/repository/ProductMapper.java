@@ -17,7 +17,7 @@ public interface ProductMapper {
 	public List<Product> findAllForSelectStock();
 	public List<Product> findByKeyword(RowBounds rowBounds, String searchKey, Pageable pageable);
 	public Product findById(int id);
-	public Long count();
+	public Long count(String searchKey);
 	public void edit(Product product);
 	public void editStock(List<OrderProduct> list);
 	public void create(Product product);

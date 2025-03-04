@@ -100,6 +100,6 @@ public class CaseController {
 		int customerId = caseService.findById(id).getCustomerId();
 		caseService.logicalDelete(id);
 		
-		return "redirect://customer/" + customerId;
+		return "redirect:/customer/" + customerId;
 	}
 }

@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService {
 				(int) pageable.getOffset(), pageable.getPageSize());
 		List<User> users = userMapper.findByKeyword(rowBounds, searchKey, pageable);
 
-		Long total = userMapper.count();
+		Long total = userMapper.count(searchKey);
 		return new PageImpl<>(users, pageable, total);
 	}
 

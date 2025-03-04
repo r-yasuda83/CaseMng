@@ -34,7 +34,7 @@ public class CustomerServiceImpl implements CustomerService{
 				(int) pageable.getOffset(), pageable.getPageSize());
 		List<Customer> customer = customerMapper.findByKeyword(rowBounds, searchKey, pageable);
 
-		Long total = customerMapper.count();
+		Long total = customerMapper.count(searchKey);
 		return new PageImpl<>(customer, pageable, total);
 	}
 

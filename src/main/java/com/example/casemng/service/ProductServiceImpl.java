@@ -50,7 +50,7 @@ public class ProductServiceImpl implements ProductService{
 		RowBounds rowBounds = new RowBounds(
 				(int) pageable.getOffset(), pageable.getPageSize());
 		List<Product> product = mapper.findByKeyword(rowBounds, searchKey, pageable);
-		Long total = mapper.count();
+		Long total = mapper.count(searchKey);
 		return new PageImpl<>(product, pageable, total);
 	}
 	
