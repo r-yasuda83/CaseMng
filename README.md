@@ -3,14 +3,14 @@
 
 # 使用技術
 - Java
+- JavaScript
 - Spring Boot
 - Spring Security
 - MyBatis
 - Thymeleaf
-- DataTables
-- MySql
-  - H2 Database(動作確認用として実装)
-- JavaScript
+- MySQL
+- H2 Database
+
 
 # 機能一覧
 - ログイン機能
