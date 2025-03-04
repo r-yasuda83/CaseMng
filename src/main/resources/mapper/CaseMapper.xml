@@ -4,9 +4,23 @@
 
 <mapper namespace="com.example.casemng.repository.CaseMapper">
 
-	<!-- COUNTを追加 -->
 	<select id="count" resultType="Long">
-		SELECT COUNT(*) FROM cases
+		SELECT
+		count(cases.id)
+
+		FROM
+		cases
+		LEFT JOIN customer on cases.customer_id = customer.id
+		LEFT JOIN orders on cases.id = orders.case_id AND orders.is_deleted = 0
+		LEFT JOIN quotation on cases.id = quotation.case_id AND quotation.is_deleted = 0
+		LEFT JOIN inquiry ON cases.id = inquiry.case_id AND inquiry.is_deleted = 0
+		
+		WHERE
+		cases.is_deleted = 0 AND (orders.is_deleted = 0 OR orders.is_deleted IS NULL)
+		AND (quotation.is_deleted = 0 OR quotation.is_deleted IS NULL)
+		AND (inquiry.is_deleted = 0 OR inquiry.is_deleted IS NULL)
+		AND customer.is_deleted = 0
+		AND concat(cases.id, case_name, customer.last_name, customer.first_name) like #{searchKey}
 	</select>
 
 	<select id="findAll" resultMap="case">
@@ -60,41 +74,53 @@
 	</select>
 
 	<select id="findByKeyword" resultMap="caseList">
-		SELECT
-		cases.id,
-		cases.case_name,
-		cases.customer_id,
-		cases.case_date,
-		case when cases.shipping_status = 1 then '支払待ち'
-			 when cases.shipping_status = 2 then '発送待ち'
-			 when cases.shipping_status = 3 then '発送済み'
-			 when (cases.shipping_status = 0 AND orders.id IS NOT NULL) then '受注'
-			 when (cases.shipping_status = 0 AND orders.id IS NULL AND quotation.id IS NOT NULL) then '見積'
-			 when (cases.shipping_status = 0 AND orders.id IS NULL AND quotation.id IS NULL AND inquiry.id IS NOT NULL) then '問い合わせ'
-		END AS status,
-		cases.shipping_stock_flg,
-
-		customer.id as cust_id,
-		customer.last_name as cust_last_name,
-		customer.first_name as cust_first_name,
-
-		orders.id as order_id,
-		quotation.id as quot_id,
-		inquiry.id as inqu_id
-
-		FROM
-		cases
-		LEFT JOIN customer on cases.customer_id = customer.id
-		LEFT JOIN orders on cases.id = orders.case_id AND orders.is_deleted = 0
-		LEFT JOIN quotation on cases.id = quotation.case_id AND quotation.is_deleted = 0
-		LEFT JOIN inquiry ON cases.id = inquiry.case_id AND inquiry.is_deleted = 0
-		
-		WHERE
-		cases.is_deleted = 0 AND (orders.is_deleted = 0 OR orders.is_deleted IS NULL)
-		AND (quotation.is_deleted = 0 OR quotation.is_deleted IS NULL)
-		AND (inquiry.is_deleted = 0 OR inquiry.is_deleted IS NULL)
-		AND customer.is_deleted = 0
-		AND concat(cases.id, case_name, customer.last_name, customer.first_name) like #{searchKey}
+	SELECT
+        id,
+        case_name,
+        customer_id,
+        case_date,
+        status,
+        shipping_stock_flg,
+        cust_id,
+        cust_last_name,
+        cust_first_name,
+        order_id,
+        quot_id,
+        inqu_id
+    FROM
+        (
+            SELECT
+                cases.*,
+                customer.id as cust_id,
+                customer.last_name as cust_last_name,
+                customer.first_name as cust_first_name,
+                orders.id as order_id,
+                quotation.id as quot_id,
+                inquiry.id as inqu_id,
+                CASE 
+                    WHEN cases.shipping_status = 1 THEN '支払待ち'
+                    WHEN cases.shipping_status = 2 THEN '発送待ち'
+                    WHEN cases.shipping_status = 3 THEN '発送済み'
+                    WHEN (cases.shipping_status = 0 AND orders.id IS NOT NULL) THEN '受注'
+                    WHEN (cases.shipping_status = 0 AND orders.id IS NULL AND quotation.id IS NOT NULL) THEN '見積'
+                    WHEN (cases.shipping_status = 0 AND orders.id IS NULL AND quotation.id IS NULL AND inquiry.id IS NOT NULL) THEN '問い合わせ'
+                    ELSE ''
+                END AS status
+            FROM
+                cases
+                LEFT JOIN customer on cases.customer_id = customer.id
+                LEFT JOIN orders on cases.id = orders.case_id AND orders.is_deleted = 0
+                LEFT JOIN quotation on cases.id = quotation.case_id AND quotation.is_deleted = 0
+                LEFT JOIN inquiry ON cases.id = inquiry.case_id AND inquiry.is_deleted = 0
+            WHERE
+                cases.is_deleted = 0 
+                AND (orders.is_deleted = 0 OR orders.is_deleted IS NULL)
+                AND (quotation.is_deleted = 0 OR quotation.is_deleted IS NULL)
+                AND (inquiry.is_deleted = 0 OR inquiry.is_deleted IS NULL)
+                AND customer.is_deleted = 0
+        ) AS subquery
+    WHERE
+        concat(subquery.id, subquery.case_name, subquery.cust_last_name, subquery.cust_first_name, subquery.status) LIKE #{searchKey}
 		<choose>
             <when test="!pageable.sort.isEmpty()">
                 ORDER BY
@@ -185,7 +211,7 @@
 		<id property="id" column="id" />
 		<result property="caseName" column="case_name" />
 		<result property="customerId" column="customer_id" />
-		<result property="caseDate" column="case_Date" />
+		<result property="caseDate" column="case_date" />
 		<result property="shippingStatus" column="shipping_status" />
 		<result property="shippingStockFlg" column="shipping_stock_flg" />
 		<result property="memo" column="memo" />
@@ -204,7 +230,7 @@
 		<id property="id" column="id" />
 		<result property="caseName" column="case_name" />
 		<result property="customerId" column="customer_id" />
-		<result property="caseDate" column="case_Date" />
+		<result property="caseDate" column="case_date" />
 		<result property="status" column="status" />
 		<result property="shippingStockFlg" column="shipping_stock_flg" />
 		<association property="customer" resultMap="cust"

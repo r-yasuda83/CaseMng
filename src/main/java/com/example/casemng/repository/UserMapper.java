@@ -22,5 +22,5 @@ public interface UserMapper {
 	public void editExceptPassword(User user);
 	public void editLoginUser(User user);
 	public void logicalDelete(int id);
-	public Long count();
+	public Long count(String searchKey);
 }

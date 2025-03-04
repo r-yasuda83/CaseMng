@@ -5,7 +5,13 @@
 <mapper namespace="com.example.casemng.repository.CustomerMapper">
 
 	<select id="count" resultType="Long">
-		SELECT COUNT(*) FROM customer
+		select
+		count(customer.id)
+		from
+		customer
+		where
+		customer.is_deleted = 0
+		AND concat(customer.id, customer.last_name, customer.first_name, customer.address, customer.phone_number) like #{searchKey}
 	</select>
 	
 	<select id="findAll" resultMap="cust">
@@ -40,7 +46,7 @@
 		customer
 		where
 		customer.is_deleted = 0
-		AND concat(customer.id, customer.last_name, customer.first_name, customer.address) like #{searchKey}
+		AND concat(customer.id, customer.last_name, customer.first_name, customer.address, customer.phone_number) like #{searchKey}
 		<choose>
             <when test="!pageable.sort.isEmpty()">
                 ORDER BY

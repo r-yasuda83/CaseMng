@@ -14,7 +14,7 @@ public interface CustomerMapper {
 	public List<Customer> findAll();
 	public List<Customer> findByKeyword(RowBounds rowBounds, String searchKey, Pageable pageable);
 	public Customer findById(int id);
-	public Long count();
+	public Long count(String searchKey);
 	public void customerEdit(Customer customer);
 	public void create(Customer customer);
 	public void logicalDelete(int id);

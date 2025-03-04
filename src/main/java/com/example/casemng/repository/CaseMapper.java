@@ -14,7 +14,7 @@ public interface CaseMapper {
 
 	public List<Case> findAll(RowBounds rowBounds);
 	public List<CaseForList> findByKeyword(RowBounds rowBounds, String searchKey, Pageable pageable);
-	public Long count();
+	public Long count(String searchKey);
 	public Case findById(int id);
 	public void caseEdit(Case cases);
 	public void create(Case cases);

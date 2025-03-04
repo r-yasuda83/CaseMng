@@ -66,6 +66,13 @@
 									 @{/customer(keyword=${search.keyword}, sortKey=${'address'}, sortDirection=${'ASC'}, displayedNum=${search.displayedNum})}">
 							住所</a>
 					</th>
+					<th>
+						<a
+							th:href="${search.sortKey == 'phone_number' and search.sortDirection == 'ASC'}?
+									 @{/customer(keyword=${search.keyword}, sortKey=${'phone_number'}, sortDirection=${'DESC'}, displayedNum=${search.displayedNum})} :
+									 @{/customer(keyword=${search.keyword}, sortKey=${'phone_number'}, sortDirection=${'ASC'}, displayedNum=${search.displayedNum})}">
+							電話番号</a>
+					</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -73,6 +80,7 @@
 					<td><a th:text="${item.id}" th:href="@{/customer/{id}(id=${item.id})}"></a></td>
 					<td><a th:text="${item.getFullName()}" th:href="@{/customer/{id}(id=${item.id})}"></a></td>
 					<td><a th:text="${item.address}" th:href="@{/customer/{id}(id=${item.id})}"></a></td>
+					<td><a th:text="${item.phoneNumber}" th:href="@{/customer/{id}(id=${item.id})}"></a></td>
 				</tr>
 			</tbody>
 		</table>

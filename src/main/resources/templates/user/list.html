@@ -48,8 +48,8 @@
 					<th>
 						<a
 							th:href="${search.sortKey == 'id' and search.sortDirection == 'ASC'}?
-									 @{/admin/user(keyword=${search.keyword}, sortKey=${'id'}, sortDirection=${'DESC'}, displayedNum=${search.displayedNum})} :
-									 @{/admin/user(keyword=${search.keyword}, sortKey=${'id'}, sortDirection=${'ASC'}, displayedNum=${search.displayedNum})}">
+									@{/admin/user(keyword=${search.keyword}, sortKey=${'id'}, sortDirection=${'DESC'}, displayedNum=${search.displayedNum})} :
+									@{/admin/user(keyword=${search.keyword}, sortKey=${'id'}, sortDirection=${'ASC'}, displayedNum=${search.displayedNum})}">
 							ユーザID</a>
 					</th>
 					<th>
