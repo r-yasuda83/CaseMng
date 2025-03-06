@@ -31,6 +31,4 @@ public class Case {
 	private List<Quotation> quotation;
 	
 	private List<Inquiry> inquiry;
-	
-	private int orderStatus;
 }

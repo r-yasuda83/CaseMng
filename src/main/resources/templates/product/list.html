@@ -4,6 +4,7 @@
 
 <head>
 	<meta charset="UTF-8">
+	<link rel="stylesheet" th:href="@{/css/list.css}">
 	<title th:text="${title}"></title>
 </head>
 
@@ -87,7 +88,7 @@
 					<td><a th:text="${item.id}" th:href="@{/product/{id}(id=${item.id})}"></a></td>
 					<td><a th:text="${item.productName}" th:href="@{/product/{id}(id=${item.id})}"></a></td>
 					<td><a th:text="${item.price}" th:href="@{/product/{id}(id=${item.id})}"></a></td>
-					<td><a th:text="${item.stock}" th:href="@{/product/{id}(id=${item.id})}"></a></td>
+					<td><a th:classappend="${item.stock == 0} ? 'stock0'" th:text="${item.stock}" th:href="@{/product/{id}(id=${item.id})}"></a></td>
 					<td>
 						<a th:if="${item.choose}" th:text="不可" th:href="@{/product/{id}(id=${item.id})}"></a>
 						<a th:unless="${item.choose}" th:text="可" th:href="@{/product/{id}(id=${item.id})}"></a>

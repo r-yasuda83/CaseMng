@@ -63,14 +63,17 @@ public class QuotationController {
 			return "quotation/edit";
 		}
 		
-		List<String> quantityErrMsgs = quotationProductService.comparisonStock(form.getQuotationProduct());
-		
-		if (quantityErrMsgs.isEmpty()) {
+		List<String> errMsgs = quotationProductService.comparisonStock(form.getQuotationProduct());
+		String discountErr = quotationProductService.checkDiscount(form.getQuotationProduct());
+		if (discountErr.isBlank() == false) {
+			errMsgs.add(discountErr);
+		}
+		if (errMsgs.isEmpty()) {
 			quotationService.quotationEdit(form);
 			quotationProductService.edit(form.getQuotationProduct(), form.getId());
 			return "redirect:/customer/" + form.getCases().getCustomerId() + "?caseId=" + form.getCaseId() + "&quotationId=" + form.getId();
 		} else {
-			model.addAttribute("errMsg", quantityErrMsgs);
+			model.addAttribute("errMsg", errMsgs);
 
 			List<Product> productList = productService.findAllForSelectStock();
 			model.addAttribute("productList", productList);
@@ -113,15 +116,20 @@ public class QuotationController {
 			return "quotation/create";
 		}
 		
-		List<String> quantityErrMsgs = quotationProductService.comparisonStock(form.getQuotationProduct());
-		if (quantityErrMsgs.isEmpty()) {
+		List<String> errMsgs = quotationProductService.comparisonStock(form.getQuotationProduct());
+		String discountErr = quotationProductService.checkDiscount(form.getQuotationProduct());
+		if (discountErr.isBlank() == false) {
+			errMsgs.add(discountErr);
+		}
+		
+		if (errMsgs.isEmpty()) {
 			int quotationId = quotationService.create(form);
 			List<FormQuotationProduct> list = quotationProductService.setQuotationId(form.getQuotationProduct(), quotationId);
 			quotationProductService.addQuotationProduct(list);
 			
 			return "redirect:/customer/" + form.getCases().getCustomerId() + "?caseId=" + form.getCaseId() + "&quotationId=" + quotationId;
 		} else {
-			model.addAttribute("errMsg", quantityErrMsgs);
+			model.addAttribute("errMsg", errMsgs);
 
 			List<Product> productList = productService.findAllForSelectStock();
 			model.addAttribute("productList", productList);

@@ -13,6 +13,6 @@ public interface OrderProductService {
 	public List<OrderProduct> findAllExport();
 	public OrderProduct findByIdAll(int id);
 	public List<String> comparisonStock(List<FormOrderProduct> list);
-	//public List<FormOrderProduct> organizeList(List<FormOrderProduct> list, int id);
 	public List<FormOrderProduct> setOrdersId(List<FormOrderProduct> list, int ordersId);
+	public String checkDiscount(List<FormOrderProduct> list);
 }

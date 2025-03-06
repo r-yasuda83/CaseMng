@@ -32,11 +32,11 @@ public class QuotationProductServiceImpl implements QuotationProductService {
 
 	@Transactional
 	public void addQuotationProduct(List<FormQuotationProduct> list) {
-		
+
 		List<FormQuotationProduct> updateList = new ArrayList<>();
 		for (FormQuotationProduct item : list) {
 			//商品の有無
-			if(item.getProductId() == null || item.getProductId() <= 0) {
+			if (item.getProductId() == null || item.getProductId() <= 0) {
 				continue;
 			}
 			//注文数の有無
@@ -71,8 +71,8 @@ public class QuotationProductServiceImpl implements QuotationProductService {
 
 		for (FormQuotationProduct item : list) {
 			//商品の有無
-			if(item.getProductId() == null || item.getProductId() <= 0) {
-				if(item.getId() <= 0) {
+			if (item.getProductId() == null || item.getProductId() <= 0) {
+				if (item.getId() <= 0) {
 					continue;
 				}
 				deleteList.add(item);
@@ -80,7 +80,7 @@ public class QuotationProductServiceImpl implements QuotationProductService {
 			//注文数の有無
 			if (item.getQuantity() == null || item.getQuantity() <= 0) {
 				//
-				if(item.getId() <= 0) {
+				if (item.getId() <= 0) {
 					continue;
 				}
 				deleteList.add(item);
@@ -108,12 +108,12 @@ public class QuotationProductServiceImpl implements QuotationProductService {
 			}
 		}
 
-		if(editList.size() > 0) {
+		if (editList.size() > 0) {
 			quotationMapper.edit(editList);
 		}
-		if(createList.size() > 0) {
+		if (createList.size() > 0) {
 			for (QuotationProduct item : createList) {
-				if(item.getQuotationId() == 0) {
+				if (item.getQuotationId() == 0) {
 					item.setQuotationId(quotationId);
 				}
 			}
@@ -126,17 +126,37 @@ public class QuotationProductServiceImpl implements QuotationProductService {
 		
 		List<String> quantityErrMsgs = new ArrayList<String>();
 		List<Product> productList = productMapper.findAll();
-		int zeroQuantityCount = 0;
 
-		for (FormQuotationProduct quotation : list) {
-			if (quotation.getProductId() == null || quotation.getProductId() <= 0) {
-				zeroQuantityCount++;
+		List<FormQuotationProduct> cloneList = new ArrayList<>();
+
+		for (FormQuotationProduct sub : list) {
+			if(sub.getProductId() == null || sub.getQuantity() == null) {
 				continue;
 			}
-			if (quotation.getQuantity() == null || quotation.getQuantity() <= 0) {
-				zeroQuantityCount++;
+			if(sub.getProductId() == 0 || sub.getQuantity() == 0) {
 				continue;
 			}
+			FormQuotationProduct copy = new FormQuotationProduct(sub);
+			cloneList.add(copy);
+		}
+
+		List<FormQuotationProduct> checkList = new ArrayList<>();
+
+		for (FormQuotationProduct product : cloneList) {
+			boolean found = false;
+			for (FormQuotationProduct combinedProduct : checkList) {
+				if (combinedProduct.getProductId() == product.getProductId()) {
+					combinedProduct.setQuantity(combinedProduct.getQuantity() + product.getQuantity());
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				checkList.add(product);
+			}
+		}
+		
+		for (FormQuotationProduct quotation : checkList) {
 			for (Product product : productList) {
 				if (quotation.getProductId() == product.getId() && quotation.getQuantity() > product.getStock()) {
 					String msg = product.getProductName() + "の見積個数が在庫数を超えています。在庫数：" + product.getStock();
@@ -145,10 +165,37 @@ public class QuotationProductServiceImpl implements QuotationProductService {
 			}
 		}
 
-		if (zeroQuantityCount == list.size()) {
-			quantityErrMsgs.add("個数が1以上の商品を最低1件登録してください");
+		if (checkList.isEmpty()) {
+			quantityErrMsgs.add("商品を選択、尚且つ個数が1以上の商品を最低1件登録してください");
 		}
 
 		return quantityErrMsgs;
+	}
+	
+	public String checkDiscount(List<FormQuotationProduct> list) {
+		
+		String msg = "";
+		List<Product> productList = productMapper.findAll();
+		
+		for(FormQuotationProduct item : list) {
+			if(item.getProductId() == null || item.getProductId() == 0) {
+				continue;
+			}
+			if(item.getDiscount() == null || item.getDiscount() == 0) {
+				continue;
+			}
+			if(item.getQuantity() == null || item.getQuantity() == 0) {
+				continue;
+			}
+			for(Product product : productList) {
+				if(item.getProductId() == product.getId()) {
+					if(item.getQuantity() * product.getPrice() < item.getDiscount()) {
+						msg = "商品の金額より値引きの金額が上回っています";
+					}
+				}
+			}
+		}
+
+		return msg;
 	}
 }

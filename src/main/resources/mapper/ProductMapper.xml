@@ -106,25 +106,16 @@
 		id = #{id}
 	</update>
 
-	<!-- h2 -->
 	<update id="editStock" parameterType="java.util.List">
 		<foreach collection="list" item="item" separator=";">
 			UPDATE
 			product
 			SET
-			id = #{item.productId},
 			stock = stock - #{item.quantity}
 			WHERE
-			id = #{item.id}
+			id = #{item.productId}
 		</foreach>
 	</update>
-
-	<!-- MySQL <update id="editStock" parameterType="java.util.List"> update 
-		product set stock = elt(field(id, <foreach collection="list" item="item" 
-		separator=","> #{item.id} </foreach> ), <foreach collection="list" item="item" 
-		separator=","> stock - #{item.quantity} </foreach> ) where id IN ( <foreach 
-		collection="list" item="item" separator=","> #{item.productId} </foreach> 
-		) </update> -->
 
 	<insert id="create">
 		insert into product

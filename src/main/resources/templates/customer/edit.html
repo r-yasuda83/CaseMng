@@ -39,7 +39,7 @@
 					<div class="row mb-3">
 						<label class="col-sm-2 col-form-label">〒</label>
 						<div class="col-sm-2">
-							<input class="form-control" type="text" th:field="*{zipcode}">
+							<input class="form-control" type="text" th:field="*{zipcode}" placeholder="-を除いた数字のみ">
 						</div>
 						<span th:if="${#fields.hasErrors('zipcode')}" th:errors="*{zipcode}" th:errorclass="err">
 					</div>
@@ -55,8 +55,7 @@
 					<div class="row mb-3">
 						<label class="col-sm-2 col-form-label">電話番号</label>
 						<div class="col-sm-2">
-							<input class="form-control" type="tel" th:field="*{phoneNumber}"
-								pattern="\d{2,4}-\d{3,4}-\d{3,4}">
+							<input class="form-control" type="tel" th:field="*{phoneNumber}" placeholder="-を除いた数字のみ">
 						</div>
 						<span th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"
 							th:errorclass="err">
