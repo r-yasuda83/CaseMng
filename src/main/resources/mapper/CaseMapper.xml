@@ -6,21 +6,41 @@
 
 	<select id="count" resultType="Long">
 		SELECT
-		count(cases.id)
-
-		FROM
-		cases
-		LEFT JOIN customer on cases.customer_id = customer.id
-		LEFT JOIN orders on cases.id = orders.case_id AND orders.is_deleted = 0
-		LEFT JOIN quotation on cases.id = quotation.case_id AND quotation.is_deleted = 0
-		LEFT JOIN inquiry ON cases.id = inquiry.case_id AND inquiry.is_deleted = 0
-		
-		WHERE
-		cases.is_deleted = 0 AND (orders.is_deleted = 0 OR orders.is_deleted IS NULL)
-		AND (quotation.is_deleted = 0 OR quotation.is_deleted IS NULL)
-		AND (inquiry.is_deleted = 0 OR inquiry.is_deleted IS NULL)
-		AND customer.is_deleted = 0
-		AND concat(cases.id, case_name, customer.last_name, customer.first_name) like #{searchKey}
+			count(distinct id)
+    	FROM
+        	(
+            SELECT
+                cases.*,
+                customer.id as cust_id,
+                customer.last_name as cust_last_name,
+                customer.first_name as cust_first_name,
+                orders.id as order_id,
+                quotation.id as quot_id,
+                inquiry.id as inqu_id,
+                CASE 
+                    WHEN cases.shipping_status = 1 THEN '支払待ち'
+                    WHEN cases.shipping_status = 2 THEN '発送待ち'
+                    WHEN cases.shipping_status = 3 THEN '発送済み'
+                    WHEN (cases.shipping_status = 0 AND orders.id IS NOT NULL) THEN '受注'
+                    WHEN (cases.shipping_status = 0 AND orders.id IS NULL AND quotation.id IS NOT NULL) THEN '見積'
+                    WHEN (cases.shipping_status = 0 AND orders.id IS NULL AND quotation.id IS NULL AND inquiry.id IS NOT NULL) THEN '問い合わせ'
+                    ELSE ''
+                END AS status
+            FROM
+                cases
+                LEFT JOIN customer on cases.customer_id = customer.id
+                LEFT JOIN orders on cases.id = orders.case_id AND orders.is_deleted = 0
+                LEFT JOIN quotation on cases.id = quotation.case_id AND quotation.is_deleted = 0
+                LEFT JOIN inquiry ON cases.id = inquiry.case_id AND inquiry.is_deleted = 0
+            WHERE
+                cases.is_deleted = 0 
+                AND (orders.is_deleted = 0 OR orders.is_deleted IS NULL)
+                AND (quotation.is_deleted = 0 OR quotation.is_deleted IS NULL)
+                AND (inquiry.is_deleted = 0 OR inquiry.is_deleted IS NULL)
+                AND customer.is_deleted = 0
+        ) AS subquery
+    	WHERE
+        	concat(subquery.id, subquery.case_name, subquery.cust_last_name, subquery.cust_first_name, subquery.status) LIKE #{searchKey}
 	</select>
 
 	<select id="findAll" resultMap="case">

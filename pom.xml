@@ -100,20 +100,6 @@
 			<artifactId>thymeleaf-layout-dialect</artifactId>
 		</dependency>
 
-		<!-- datatales -->
-		<dependency>
-			<groupId>org.webjars</groupId>
-			<artifactId>datatables</artifactId>
-			<version>1.10.21</version>
-		</dependency>
-		<!-- datatables-plugins -->
-		<dependency>
-			<groupId>org.webjars</groupId>
-			<artifactId>datatables-plugins</artifactId>
-			<version>1.10.21</version>
-			<scope>runtime</scope>
-		</dependency>
-
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>

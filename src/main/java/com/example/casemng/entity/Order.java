@@ -1,12 +1,13 @@
 package com.example.casemng.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
 import lombok.Data;
 
 @Data
-public class Order {
+public class Order implements Serializable{
 
 	private int id;
 	

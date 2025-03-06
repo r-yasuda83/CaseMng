@@ -50,6 +50,7 @@ public class CaseServiceImpl implements CaseService {
 				(int) pageable.getOffset(), pageable.getPageSize());
 		List<CaseForList> cases = caseMapper.findByKeyword(rowBounds, searchKey, pageable);
 		Long total = caseMapper.count(searchKey);
+		
 		return new PageImpl<>(cases, pageable, total);
 	}
 

@@ -20,6 +20,8 @@ public class FormCustomer {
 	@NotBlank
 	private String address;
 	@NotBlank
+	@Size(min=10, max=11, message = "10 から 11 の間の桁で入力してください")
+	@Pattern(regexp = "^\\d+$", message = "半角数字のみで入力してください")
 	private String phoneNumber;
 
 	private String memo;
