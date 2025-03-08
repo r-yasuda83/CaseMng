@@ -1,6 +1,7 @@
 package com.example.casemng.controller;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -59,8 +60,16 @@ public class CaseController {
 		if (result.hasErrors()) {
 			return "case/edit";
 		}
-		caseService.caseEdit(form);
-
+		List<String> errMsg =  caseService.caseEdit(form);
+		
+		if(errMsg.isEmpty()==false) {
+			model.addAttribute("errMsg", errMsg);
+			
+			FormCase data = caseService.findById(id);
+			model.addAttribute("formCase", data);
+			return "case/edit";
+		}
+		
 		int customerId = form.getCustomerId();
 		return "redirect:/customer/" + customerId + "?caseId=" + form.getId();
 	}
