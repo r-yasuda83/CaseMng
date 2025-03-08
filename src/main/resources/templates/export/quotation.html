@@ -30,10 +30,10 @@
 					<th th:text="案件名"></th>
 					<th th:text="顧客ID"></th>
 					<th th:text="顧客名"></th>
+					<th th:text="見積商品ID"></th>
 					<th th:text="商品ID"></th>
 					<th th:text="商品名"></th>
 					<th th:text="値段"></th>
-					<th th:text="見積商品ID"></th>
 					<th th:text="数量"></th>
 					<th th:text="値引き"></th>
 				</tr>
@@ -46,10 +46,10 @@
 					<td th:text="${item.quotation.cases.caseName}"></td>
 					<td th:text="${item.quotation.cases.customer.id}"></td>
 					<td th:text="${item.quotation.cases.customer.getFullName()}"></td>
+					<td th:text="${item.id}"></td>
 					<td th:text="${item.product.id}"></td>
 					<td th:text="${item.product.productName}"></td>
 					<td th:text="${item.product.price}"></td>
-					<td th:text="${item.id}"></td>
 					<td th:text="${item.quantity}"></td>
 					<td th:text="${item.discount}"></td>
 				</tr>

@@ -25,15 +25,16 @@
 			<thead>
 				<tr>
 					<th th:text="受注ID"></th>
+					<th th:text="ステータス"></th>
 					<th th:text="受注日"></th>
 					<th th:text="案件ID"></th>
 					<th th:text="案件名"></th>
 					<th th:text="顧客ID"></th>
 					<th th:text="顧客名"></th>
+					<th th:text="受注商品ID"></th>
 					<th th:text="商品ID"></th>
 					<th th:text="商品名"></th>
 					<th th:text="値段"></th>
-					<th th:text="受注商品ID"></th>
 					<th th:text="数量"></th>
 					<th th:text="値引き"></th>
 				</tr>
@@ -41,15 +42,22 @@
 			<tbody>
 				<tr th:each="item:${list}">
 					<td th:text="${item.orders.id}"></td>
+					<td>
+						<span th:if="${item.orders.cases.shippingStatus == 1}" th:text="支払待ち"></span>
+						<span th:if="${item.orders.cases.shippingStatus == 2}" th:text="発送待ち"></span>
+						<span th:if="${item.orders.cases.shippingStatus == 3}" th:text="発送済み"></span>
+						<span th:if="${item.orders.cases.shippingStatus == 4}" th:text="キャンセル"></span>
+						<span th:if="${item.orders.cases.shippingStatus == 0}" th:text="受注"></span>
+					</td>
 					<td th:text="${#dates.format(item.orders.orderDate, 'yyyy-MM-dd')}"></td>
 					<td th:text="${item.orders.cases.id}"></td>
 					<td th:text="${item.orders.cases.caseName}"></td>
 					<td th:text="${item.orders.cases.customer.id}"></td>
 					<td th:text="${item.orders.cases.customer.getFullName()}"></td>
+					<td th:text="${item.id}"></td>
 					<td th:text="${item.product.id}"></td>
 					<td th:text="${item.product.productName}"></td>
 					<td th:text="${item.product.price}"></td>
-					<td th:text="${item.id}"></td>
 					<td th:text="${item.quantity}"></td>
 					<td th:text="${item.discount}"></td>
 				</tr>

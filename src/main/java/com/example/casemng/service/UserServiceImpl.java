@@ -10,12 +10,17 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 
+import com.example.casemng.entity.CustomUserDetails;
 import com.example.casemng.entity.User;
 import com.example.casemng.form.FormUser;
 import com.example.casemng.form.FormUserEditPassword;
@@ -48,13 +53,13 @@ public class UserServiceImpl implements UserService {
 		FormUser form = modelMapper.map(user, FormUser.class);
 		return form;
 	}
-	
+
 	public FormUserEditPassword findByIdPassword(int id) {
 		User user = userMapper.findById(id);
 		FormUserEditPassword form = modelMapper.map(user, FormUserEditPassword.class);
 		return form;
 	}
-	
+
 	public Page<User> findByKeyword(Pageable pageable, String searchKey) {
 		RowBounds rowBounds = new RowBounds(
 				(int) pageable.getOffset(), pageable.getPageSize());
@@ -69,7 +74,7 @@ public class UserServiceImpl implements UserService {
 		User user = modelMapper.map(form, User.class);
 		userMapper.edit(user);
 	}
-	
+
 	@Transactional
 	public void editPassword(FormUserEditPassword form) {
 		User user = modelMapper.map(form, User.class);
@@ -83,68 +88,79 @@ public class UserServiceImpl implements UserService {
 		User user = modelMapper.map(form, User.class);
 		String password = encoder.encode(user.getPassword());
 		user.setPassword(password);
-		
+
 		userMapper.create(user);
 	}
 
 	@Transactional
-	public void editLoginUser(FormUserRegistration form) {
+	public void editLoginUser(FormUser form) {
 		User user = modelMapper.map(form, User.class);
-	
-			userMapper.editLoginUser(user);
+		userMapper.editLoginUser(user);
+		
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User users = userMapper.findByUsername(form.getUserId());
+		UserDetails userDetails = new CustomUserDetails(users);
+		
+		UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(
+				userDetails,
+				authentication.getCredentials(),
+				userDetails.getAuthorities());
+		SecurityContextHolder.getContext().setAuthentication(newAuth);
 	}
-	
+
 	@Transactional
 	public void logicalDelete(int id) {
 		userMapper.logicalDelete(id);
 	}
-	
+
 	public String duplicatesUserId(String userId) {
 		String errMsg = null;
 		List<User> userList = userMapper.findAll();
-		for(User user : userList) {
-			if(user.getUserId().equals(userId)) {
+		for (User user : userList) {
+			if (user.getUserId().equals(userId)) {
 				errMsg = "このユーザーIDは既に使われています";
 				break;
 			}
 		}
 		return errMsg;
 	}
-	
+
 	public String duplicatesUserIdWithoutId(FormUser form) {
 		String errMsg = null;
 		List<User> userList = userMapper.findWithoutThisId(form.getId());
-		for(User user : userList) {
-			if(user.getUserId().equals(form.getUserId())) {
+		for (User user : userList) {
+			if (user.getUserId().equals(form.getUserId())) {
 				errMsg = "このユーザーIDは既に使われています";
 				break;
 			}
 		}
 		return errMsg;
 	}
-	
-	public String pagenation(String searchKey, Integer displayedNum, String sortKey, String sortDirection, Pageable pageable, Model model) {
+
+	public String pagenation(String searchKey, Integer displayedNum, String sortKey, String sortDirection,
+			Pageable pageable, Model model) {
 		if (searchKey == null) {
 			searchKey = "";
 		}
 		Sort sort = null;
 		if (StringUtils.hasLength(sortDirection)) {
-			String sd = sortDirection.equals(Sort.Direction.ASC.name()) ? Sort.Direction.ASC.name() : Sort.Direction.DESC.name();
+			String sd = sortDirection.equals(Sort.Direction.ASC.name()) ? Sort.Direction.ASC.name()
+					: Sort.Direction.DESC.name();
 			String si = sortKey;
 			model.addAttribute("sortKey", si);
 
 			sort = Sort.by(Sort.Direction.fromString(sd), si);
 			model.addAttribute("sortDirection", sd);
-		}else {
+		} else {
 			sort = Sort.by(Sort.Direction.ASC, "id");
 		}
-		if(displayedNum == null) {
+		if (displayedNum == null) {
 			displayedNum = 5;
 		}
 		Pageable p = sort == null ? pageable : PageRequest.of(pageable.getPageNumber(), displayedNum, sort);
 		Page<User> user = findByKeyword(p, "%" + searchKey + "%");
 		model.addAttribute("page", user);
-		
+
 		return "user/list";
 	}
 }

@@ -21,6 +21,7 @@
                     WHEN cases.shipping_status = 1 THEN '支払待ち'
                     WHEN cases.shipping_status = 2 THEN '発送待ち'
                     WHEN cases.shipping_status = 3 THEN '発送済み'
+                    WHEN cases.shipping_status = 4 THEN 'キャンセル'
                     WHEN (cases.shipping_status = 0 AND orders.id IS NOT NULL) THEN '受注'
                     WHEN (cases.shipping_status = 0 AND orders.id IS NULL AND quotation.id IS NOT NULL) THEN '見積'
                     WHEN (cases.shipping_status = 0 AND orders.id IS NULL AND quotation.id IS NULL AND inquiry.id IS NOT NULL) THEN '問い合わせ'
@@ -117,10 +118,11 @@
                 orders.id as order_id,
                 quotation.id as quot_id,
                 inquiry.id as inqu_id,
-                CASE 
+                CASE
                     WHEN cases.shipping_status = 1 THEN '支払待ち'
                     WHEN cases.shipping_status = 2 THEN '発送待ち'
                     WHEN cases.shipping_status = 3 THEN '発送済み'
+                    WHEN cases.shipping_status = 4 THEN 'キャンセル'
                     WHEN (cases.shipping_status = 0 AND orders.id IS NOT NULL) THEN '受注'
                     WHEN (cases.shipping_status = 0 AND orders.id IS NULL AND quotation.id IS NOT NULL) THEN '見積'
                     WHEN (cases.shipping_status = 0 AND orders.id IS NULL AND quotation.id IS NULL AND inquiry.id IS NOT NULL) THEN '問い合わせ'

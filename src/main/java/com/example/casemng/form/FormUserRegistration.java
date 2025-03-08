@@ -1,6 +1,7 @@
 package com.example.casemng.form;
 
 import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 import lombok.Data;
@@ -20,6 +21,7 @@ public class FormUserRegistration {
 	private String firstName;
 
 	@NotBlank
+	@Email
 	private String emailAddress;
 	
 	@NotBlank

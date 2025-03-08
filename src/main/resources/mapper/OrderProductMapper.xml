@@ -33,6 +33,7 @@
 
 		cases.id as ord_case_id,
 		cases.case_name as ord_case_case_name,
+		cases.shipping_status as ord_case_shipping_status,
 
 		customer.id as ord_case_cus_id,
 		customer.last_name as ord_case_cus_last_name,
