@@ -1,5 +1,7 @@
 package com.example.casemng.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.ui.Model;
@@ -17,7 +19,7 @@ public interface CaseService {
 
 	public FormCase findById(int id);
 
-	public void caseEdit(FormCase form);
+	public List<String> caseEdit(FormCase form);
 
 	public int create(FormCaseEntry form);
 
