@@ -31,7 +31,7 @@ public class UserController {
 
 	@Autowired
 	UserService userService;
-	
+
 	@GetMapping("/admin/user")
 	public String getList(@ModelAttribute("search") FormSearch form,
 			@RequestParam(name = "displayedNum", required = false) Integer displayedNum,
@@ -93,19 +93,19 @@ public class UserController {
 		return "user/editPasswordAdmin";
 	}
 
-	@PostMapping("/admin/user/password")
+	@PostMapping("/admin/user/{id}/password")
 	public String postEditPassword(@ModelAttribute("form") @Validated FormUserEditPassword form, BindingResult result,
-			Model model) {
+			@PathVariable("id") int id, Model model) {
 
 		if (result.hasErrors()) {
-			return "user/editPassword";
+			return "user/editPasswordAdmin";
 		}
 		userService.editPassword(form);
 		return "redirect:/admin/user";
 	}
 
 	@GetMapping("/admin/user/create")
-	public String getCreate(@ModelAttribute("formUserRegistration")FormUserRegistration form, Model model) {
+	public String getCreate(@ModelAttribute("formUserRegistration") FormUserRegistration form, Model model) {
 
 		model.addAttribute("FormUserRegistration", form);
 
@@ -115,7 +115,8 @@ public class UserController {
 	}
 
 	@PostMapping("/admin/user/create")
-	public String postCreate(@ModelAttribute("formUserRegistration") @Validated FormUserRegistration form, BindingResult result, Model model) {
+	public String postCreate(@ModelAttribute("formUserRegistration") @Validated FormUserRegistration form,
+			BindingResult result, Model model) {
 
 		String errMsg = userService.duplicatesUserId(form.getUserId());
 
@@ -130,7 +131,7 @@ public class UserController {
 		userService.create(form);
 		return "redirect:/admin/user";
 	}
-	
+
 	@PostMapping("/admin/user/{id}/delete")
 	public String postDelete(@PathVariable("id") int id, Model model) {
 
@@ -142,23 +143,22 @@ public class UserController {
 	public String getSetting(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
 
 		int id = userDetails.getId();
-		model.addAttribute("formUserForEdit", userService.findById(id));
+		model.addAttribute("formUser", userService.findById(id));
 
 		return "user/setting";
 	}
 
 	@PostMapping("/user/setting")
-	public String postSetting(@ModelAttribute("formUserForEdit") @Validated FormUserRegistration form, BindingResult result,
-			Model model, Pageable pageable) {
+	public String postSetting(@ModelAttribute("formUser") @Validated FormUser form, BindingResult result,
+			Model model) {
 
 		if (result.hasErrors()) {
 			return "user/setting";
 		}
 		userService.editLoginUser(form);
-
 		return "redirect:/case";
 	}
-	
+
 	@GetMapping("/user/setting/password")
 	public String getSettingPassword(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
 
@@ -169,7 +169,8 @@ public class UserController {
 	}
 
 	@PostMapping("/user/setting/password")
-	public String postSettingPassword(@ModelAttribute("form") @Validated FormUserEditPassword form, BindingResult result,
+	public String postSettingPassword(@ModelAttribute("form") @Validated FormUserEditPassword form,
+			BindingResult result,
 			Model model) {
 
 		if (result.hasErrors()) {

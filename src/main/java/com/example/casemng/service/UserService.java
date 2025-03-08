@@ -21,7 +21,7 @@ public interface UserService {
 	public void create(FormUserRegistration form);
 	public void edit(FormUser form);
 	public void editPassword(FormUserEditPassword form);
-	public void editLoginUser(FormUserRegistration form);
+	public void editLoginUser(FormUser form);
 	public void logicalDelete(int id);
 	public String duplicatesUserId(String userId);
 	public String duplicatesUserIdWithoutId(FormUser form);
