@@ -3,7 +3,9 @@ $(window).on('load', function() {
 	const button = document.getElementById('insert');
 	let option = "<option value=''></option>";
 	for (let item of productList) {
-		option += "<option value=" + item.id + ">" + item.productName + "</option>"
+		if (item.stock > 0 && item.choose == false) {
+			option += "<option value=" + item.id + ">" + item.productName + "</option>"
+		}
 	}
 
 	button.addEventListener('click', function() {

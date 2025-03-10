@@ -17,6 +17,7 @@
 	</script>
 	<title th:text="${title}"></title>
 </head>
+
 <body>
 	<div class="mt-3" style="width:90%; margin: 0 auto;" layout:fragment="content">
 		<div class="card m-3">
@@ -60,14 +61,25 @@
 							</thead>
 							<tbody id="tbody">
 								<tr th:each="item, iterStat:*{quotationProduct}">
+									<input type="hidden" th:field="*{quotationProduct[__${iterStat.index}__].id}">
 									<td class="col-md-2">
-										<input type="hidden" th:field="*{quotationProduct[__${iterStat.index}__].id}">
-										<select class="product form-select select2"
+										<select class="product select2"
 											th:field="*{quotationProduct[__${iterStat.index}__].productId}" />
-										<option value=""></option>
-										<option th:each="prod : ${productList}" th:value="${prod.id}"
-											th:text="${prod.productName}" th:selected="${prod.id == item.productId}">
-										</option>
+
+										<th:block th:each="product : ${productList}">
+											<option
+												th:if="${product.id == item.productId and (product.stock <= 0 or product.choose)}"
+												th:text="${product.productName + '　選択不可'}" th:value="${item.productId}">
+											</option>
+										</th:block>
+
+										<option value="0"></option>
+										<th:block th:each="prod : ${productList}">
+											<option th:if="${prod.stock > 0 && prod.choose == false}"
+												th:value="${prod.id}" th:text="${prod.productName}"
+												th:selected="${prod.id == item.productId}">
+											</option>
+										</th:block>
 										</select>
 									</td>
 									<td class="col-md-1">

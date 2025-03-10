@@ -40,7 +40,7 @@ public class QuotationController {
 		}
 		model.addAttribute("formQuotation", form);
 
-		List<Product> productList = productService.findAllForSelect();
+		List<Product> productList = productService.findAll();
 		model.addAttribute("productList", productList);
 		model.addAttribute("distinction", "quotationProduct");
 		return "quotation/edit";
@@ -57,7 +57,7 @@ public class QuotationController {
 			@PathVariable("id") int id, Model model) {
 		
 		if (result.hasErrors()) {
-			List<Product> productList = productService.findAllForSelect();
+			List<Product> productList = productService.findAll();
 			model.addAttribute("productList", productList);
 			model.addAttribute("distinction", "quotationProduct");
 			return "quotation/edit";
@@ -68,6 +68,11 @@ public class QuotationController {
 		if (discountErr.isBlank() == false) {
 			errMsgs.add(discountErr);
 		}
+		String productErr = quotationProductService.checkProduct(form.getQuotationProduct());
+		if (productErr.isBlank() == false) {
+			errMsgs.add(productErr);
+		}
+		
 		if (errMsgs.isEmpty()) {
 			quotationService.quotationEdit(form);
 			quotationProductService.edit(form.getQuotationProduct(), form.getId());
@@ -75,7 +80,7 @@ public class QuotationController {
 		} else {
 			model.addAttribute("errMsg", errMsgs);
 
-			List<Product> productList = productService.findAllForSelectStock();
+			List<Product> productList = productService.findAll();
 			model.addAttribute("productList", productList);
 			model.addAttribute("distinction", "quotationProduct");
 			return "quotation/edit";

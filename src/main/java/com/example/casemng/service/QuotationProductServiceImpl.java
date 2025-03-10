@@ -123,17 +123,17 @@ public class QuotationProductServiceImpl implements QuotationProductService {
 
 	//商品個数が在庫を上回るかのチェック
 	public List<String> comparisonStock(List<FormQuotationProduct> list) {
-		
+
 		List<String> quantityErrMsgs = new ArrayList<String>();
 		List<Product> productList = productMapper.findAll();
 
 		List<FormQuotationProduct> cloneList = new ArrayList<>();
 
 		for (FormQuotationProduct sub : list) {
-			if(sub.getProductId() == null || sub.getQuantity() == null) {
+			if (sub.getProductId() == null || sub.getQuantity() == null) {
 				continue;
 			}
-			if(sub.getProductId() == 0 || sub.getQuantity() == 0) {
+			if (sub.getProductId() == 0 || sub.getQuantity() == 0) {
 				continue;
 			}
 			FormQuotationProduct copy = new FormQuotationProduct(sub);
@@ -155,7 +155,7 @@ public class QuotationProductServiceImpl implements QuotationProductService {
 				checkList.add(product);
 			}
 		}
-		
+
 		for (FormQuotationProduct quotation : checkList) {
 			for (Product product : productList) {
 				if (quotation.getProductId() == product.getId() && quotation.getQuantity() > product.getStock()) {
@@ -171,31 +171,48 @@ public class QuotationProductServiceImpl implements QuotationProductService {
 
 		return quantityErrMsgs;
 	}
-	
+
+	//値引き額が商品額を上回るかチェック
 	public String checkDiscount(List<FormQuotationProduct> list) {
-		
+
 		String msg = "";
 		List<Product> productList = productMapper.findAll();
-		
-		for(FormQuotationProduct item : list) {
-			if(item.getProductId() == null || item.getProductId() == 0) {
+
+		for (FormQuotationProduct item : list) {
+			if (item.getProductId() == null || item.getProductId() == 0) {
 				continue;
 			}
-			if(item.getDiscount() == null || item.getDiscount() == 0) {
+			if (item.getDiscount() == null || item.getDiscount() == 0) {
 				continue;
 			}
-			if(item.getQuantity() == null || item.getQuantity() == 0) {
+			if (item.getQuantity() == null || item.getQuantity() == 0) {
 				continue;
 			}
-			for(Product product : productList) {
-				if(item.getProductId() == product.getId()) {
-					if(item.getQuantity() * product.getPrice() < item.getDiscount()) {
+			for (Product product : productList) {
+				if (item.getProductId() == product.getId()) {
+					if (item.getQuantity() * product.getPrice() < item.getDiscount()) {
 						msg = "商品の金額より値引きの金額が上回っています";
 					}
 				}
 			}
 		}
+		return msg;
+	}
 
+	//登録済み商品の登録可否、ストック切れのチェック
+	public String checkProduct(List<FormQuotationProduct> list) {
+		String msg = "";
+		List<Product> productList = productMapper.findAll();
+		for (FormQuotationProduct formProduct : list) {
+			for (Product product : productList) {
+				if (product.getStock() <= 0 || product.isChoose() == true) {
+					if (product.getId() == formProduct.getProductId()) {
+						msg = ("受注できない商品が含まれています。商品管理ページを確認してください。");
+						break;
+					}
+				}
+			}
+		}
 		return msg;
 	}
 }

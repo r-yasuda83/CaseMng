@@ -46,7 +46,7 @@
 					<div>
 						<span id="insert" class="btn btn-secondary">商品追加</span>
 					</div>
-					
+
 					<div class="row mb-3">
 						<table id="itemTable">
 							<thead>
@@ -60,14 +60,25 @@
 							</thead>
 							<tbody id="tbody">
 								<tr th:each="item, iterStat:*{orderProduct}">
+									<input type="hidden" th:field="*{orderProduct[__${iterStat.index}__].id}">
 									<td class="col-md-2">
-										<input type="hidden" th:field="*{orderProduct[__${iterStat.index}__].id}">
 										<select class="product select2"
 											th:field="*{orderProduct[__${iterStat.index}__].productId}" />
-										<option value=""></option>
-										<option th:each="prod : ${productList}" th:value="${prod.id}"
-											th:text="${prod.productName}" th:selected="${prod.id == item.productId}">
-										</option>
+
+										<th:block th:each="product : ${productList}">
+											<option
+												th:if="${product.id == item.productId and (product.stock <= 0 or product.choose)}"
+												th:text="${product.productName + '　選択不可'}" th:value="${item.productId}">
+											</option>
+										</th:block>
+
+										<option value="0"></option>
+										<th:block th:each="prod : ${productList}">
+											<option th:if="${prod.stock > 0 && prod.choose == false}"
+												th:value="${prod.id}" th:text="${prod.productName}"
+												th:selected="${prod.id == item.productId}">
+											</option>
+										</th:block>
 										</select>
 									</td>
 									<td class="col-md-1">

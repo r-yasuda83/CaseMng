@@ -95,7 +95,7 @@
 	</select>
 
 	<select id="findByKeyword" resultMap="caseList">
-	SELECT
+	SELECT distinct
         id,
         case_name,
         customer_id,
@@ -104,10 +104,7 @@
         shipping_stock_flg,
         cust_id,
         cust_last_name,
-        cust_first_name,
-        order_id,
-        quot_id,
-        inqu_id
+        cust_first_name
     FROM
         (
             SELECT
