@@ -130,10 +130,10 @@ public class OrderProductServiceImpl implements OrderProductService {
 		List<FormOrderProduct> cloneList = new ArrayList<>();
 
 		for (FormOrderProduct sub : list) {
-			if(sub.getProductId() == null || sub.getQuantity() == null) {
+			if (sub.getProductId() == null || sub.getQuantity() == null) {
 				continue;
 			}
-			if(sub.getProductId() == 0 || sub.getQuantity() == 0) {
+			if (sub.getProductId() == 0 || sub.getQuantity() == 0) {
 				continue;
 			}
 			FormOrderProduct copy = new FormOrderProduct(sub);
@@ -172,18 +172,19 @@ public class OrderProductServiceImpl implements OrderProductService {
 		return quantityErrMsgs;
 	}
 
+	//値引き額が商品額を上回るかチェック
 	public String checkDiscount(List<FormOrderProduct> list) {
 		String msg = "";
 		List<Product> productList = productMapper.findAll();
 
 		for (FormOrderProduct item : list) {
-			if(item.getProductId() == null || item.getProductId() == 0) {
+			if (item.getProductId() == null || item.getProductId() == 0) {
 				continue;
 			}
-			if(item.getDiscount() == null || item.getDiscount() == 0) {
+			if (item.getDiscount() == null || item.getDiscount() == 0) {
 				continue;
 			}
-			if(item.getQuantity() == null || item.getQuantity() == 0) {
+			if (item.getQuantity() == null || item.getQuantity() == 0) {
 				continue;
 			}
 			for (Product product : productList) {
@@ -194,7 +195,23 @@ public class OrderProductServiceImpl implements OrderProductService {
 				}
 			}
 		}
+		return msg;
+	}
 
+	//登録済み商品の登録可否、ストック切れのチェック
+	public String checkProduct(List<FormOrderProduct> list) {
+		String msg = "";
+		List<Product> productList = productMapper.findAll();
+		for (FormOrderProduct formProduct : list) {
+			for (Product product : productList) {
+				if (product.getStock() <= 0 || product.isChoose() == true) {
+					if (product.getId() == formProduct.getProductId()) {
+						msg = ("受注できない商品が含まれています。商品管理ページを確認してください。");
+						break;
+					}
+				}
+			}
+		}
 		return msg;
 	}
 }

@@ -111,10 +111,10 @@ public class CaseServiceImpl implements CaseService {
 				productMapper.editStock(order.getOrderProduct());
 				//送付済みフラグを立てる
 				caseMapper.editShippingStockFlg(form.getId());
+				Case cases = modelMapper.map(form, Case.class);
+				caseMapper.caseEdit(cases);
 			}
 		}
-		Case cases = modelMapper.map(form, Case.class);
-		caseMapper.caseEdit(cases);
 		return errMsgs;
 	}
 

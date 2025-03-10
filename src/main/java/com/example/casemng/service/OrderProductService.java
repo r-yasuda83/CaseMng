@@ -15,4 +15,5 @@ public interface OrderProductService {
 	public List<String> comparisonStock(List<FormOrderProduct> list);
 	public List<FormOrderProduct> setOrdersId(List<FormOrderProduct> list, int ordersId);
 	public String checkDiscount(List<FormOrderProduct> list);
+	public String checkProduct(List<FormOrderProduct> list);
 }

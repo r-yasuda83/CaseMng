@@ -15,4 +15,5 @@ public interface QuotationProductService {
 	public List<String> comparisonStock(List<FormQuotationProduct> list);
 	public List<FormQuotationProduct> setQuotationId(List<FormQuotationProduct> list, int quotationId);
 	public String checkDiscount(List<FormQuotationProduct> list);
+	public String checkProduct(List<FormQuotationProduct> list);
 }

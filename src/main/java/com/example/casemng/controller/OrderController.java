@@ -45,7 +45,7 @@ public class OrderController {
 
 		model.addAttribute("formOrder", form);
 
-		List<Product> productList = productService.findAllForSelectStock();
+		List<Product> productList = productService.findAll();
 		model.addAttribute("productList", productList);
 		model.addAttribute("distinction", "orderProduct");
 		return "order/edit";
@@ -62,7 +62,7 @@ public class OrderController {
 			@PathVariable("id") int id, Model model) {
 
 		if (result.hasErrors()) {
-			List<Product> productList = productService.findAllForSelectStock();
+			List<Product> productList = productService.findAll();
 			model.addAttribute("productList", productList);
 			model.addAttribute("distinction", "orderProduct");
 			return "order/edit";
@@ -73,15 +73,19 @@ public class OrderController {
 		if (discountErr.isBlank() == false) {
 			errMsgs.add(discountErr);
 		}
+		String productErr = orderProductService.checkProduct(form.getOrderProduct());
+		if (productErr.isBlank() == false) {
+			errMsgs.add(productErr);
+		}
+		
 
 		if (errMsgs.isEmpty()) {
 			orderService.orderEdit(form);
 			orderProductService.edit(form.getOrderProduct(), form.getId());
 			return "redirect:/customer/" + form.getCases().getCustomerId() + "?caseId=" + form.getCaseId();
 		} else {
+			List<Product> productList = productService.findAll();
 			model.addAttribute("errMsg", errMsgs);
-
-			List<Product> productList = productService.findAllForSelectStock();
 			model.addAttribute("productList", productList);
 			model.addAttribute("distinction", "orderProduct");
 			return "order/edit";
@@ -134,7 +138,7 @@ public class OrderController {
 		if (discountErr.isBlank() == false) {
 			errMsgs.add(discountErr);
 		}
-		
+
 		if (errMsgs.isEmpty()) {
 			int orderId = orderService.create(form);
 			List<FormOrderProduct> list = orderProductService.setOrdersId(form.getOrderProduct(), orderId);
