@@ -97,9 +97,6 @@
 	<update id="edit">
 		update product
 		set
-		product_name = #{productName},
-		price
-		= #{price},
 		stock = #{stock},
 		is_choose = #{choose}
 		where
