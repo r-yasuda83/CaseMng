@@ -62,8 +62,8 @@ spring bootプロジェクトとしてインポートしてご利用ください
 画面上部の「CSV出力」プルダウンメニューで、顧客・案件・受注・見積・問い合わせの各リストが出力可能です。
 
 - 商品一覧  
-![商品一覧](https://github.com/user-attachments/assets/a40dbf2c-c25b-42b7-acb2-330fda80e759)  
-受注・見積情報にて使用する商品の一覧です。
+![商品編集](https://github.com/user-attachments/assets/2f6f74cc-0dae-426c-abf0-cb720af74e10)  
+受注・見積情報にて使用する商品の一覧です。商品名や金額は過去の受注や見積のデータに影響する為、変更したい場合は別商品として新規登録を行います。
 
 - 商品編集  
  ![商品編集](https://github.com/user-attachments/assets/28d725b4-f52b-4beb-b3b4-675b552e97e9)  
