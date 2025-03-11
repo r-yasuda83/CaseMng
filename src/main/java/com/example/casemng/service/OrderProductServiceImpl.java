@@ -203,6 +203,13 @@ public class OrderProductServiceImpl implements OrderProductService {
 		String msg = "";
 		List<Product> productList = productMapper.findAll();
 		for (FormOrderProduct formProduct : list) {
+			if (formProduct.getProductId() == null || formProduct.getProductId() == 0) {
+				continue;
+			}
+			if (formProduct.getQuantity() == null || formProduct.getQuantity() == 0) {
+				continue;
+			}
+			
 			for (Product product : productList) {
 				if (product.getStock() <= 0 || product.isChoose() == true) {
 					if (product.getId() == formProduct.getProductId()) {

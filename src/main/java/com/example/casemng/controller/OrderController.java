@@ -159,10 +159,8 @@ public class OrderController {
 	public String postDelete(@PathVariable("id") int id, Model model) {
 
 		FormOrder form = orderService.findById(id);
-		FormCase cases = caseService.findById(form.getCaseId());
-		int shippingStatus = cases.getShippingStatus();
-		if (shippingStatus == 3) {
-			model.addAttribute("msg", "発送済みとなっているので削除できません。");
+		if (form.getCases().isShippingStockFlg() == true) {
+			model.addAttribute("msg", "既に送付処理済の受注IDです。");
 			return "error";
 		}
 

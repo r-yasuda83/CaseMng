@@ -27,7 +27,7 @@
 
 					<div class="row mb-3">
 						<label class="col-sm-2 col-form-label">作成日</label>
-						<div class="col-sm-4">
+						<div class="col-sm-2">
 							<input class="form-control" type="date" th:field="*{caseDate}">
 						</div>
 						<span th:if="${#fields.hasErrors('caseDate')}" th:errors="*{caseDate}" th:errorclass="err">
@@ -42,7 +42,7 @@
 					</div>
 					<div class="row mb-3" th:if="*{order}">
 						<label class="col-sm-2 col-form-label">発送ステータス</label>
-						<div class="col-sm-4 d-flex align-items-center">
+						<div class="col-sm-2 d-flex align-items-center">
 							<select class="form-select" th:if="*{shippingStockFlg == false}"
 								th:field="*{shippingStatus}">
 								<option value="0">選択して下さい</option>
