@@ -20,7 +20,7 @@
 
 					<div class="row mb-3">
 						<label class="col-sm-2 col-form-label">商品名</label>
-						<div class="col-sm-2">
+						<div class="col-sm-4">
 							<input class="form-control" type="text" th:field="*{productName}">
 						</div>
 						<span th:if="${#fields.hasErrors('productName')}" th:errors="*{productName}"

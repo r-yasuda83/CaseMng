@@ -48,7 +48,7 @@
 
 					<div class="row mb-3">
 						<label class="col-sm-2 col-form-label">メールアドレス</label>
-						<div class="col-sm-3">
+						<div class="col-sm-5">
 							<input class="form-control" type="email" th:field="*{emailAddress}">
 						</div>
 						<span th:if="${#fields.hasErrors('emailAddress')}" th:errors="*{emailAddress}"

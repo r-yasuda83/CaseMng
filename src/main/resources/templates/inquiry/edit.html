@@ -17,6 +17,7 @@
 			<div class="card-body">
 				<form th:action="@{/inquiry/{id}/edit(id=${formInquiry.id})}" method="post" th:object="${formInquiry}">
 					<input type="hidden" th:field="*{id}">
+					<input type="hidden" th:field="*{caseId}">
 					<input type="hidden" th:field="*{cases.customerId}">
 
 					<div class="row mb-3">

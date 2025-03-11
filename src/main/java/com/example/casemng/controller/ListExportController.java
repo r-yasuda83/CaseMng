@@ -50,7 +50,6 @@ public class ListExportController {
 	@GetMapping("/export/orders")
 	public String getOrders(Model model) {
 		List<OrderProduct> list = orderProductService.findAllExport();
-		System.out.println(list);
 		model.addAttribute("list", list);
 		return "export/order";
 	}

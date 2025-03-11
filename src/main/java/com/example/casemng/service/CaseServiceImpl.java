@@ -101,7 +101,8 @@ public class CaseServiceImpl implements CaseService {
 				for (Product product : productList) {
 					if (orderProduct.getProductId() == product.getId()
 							&& orderProduct.getQuantity() > product.getStock()) {
-						String msg = product.getProductName() + "の発注数が在庫数を超えています。在庫数：" + product.getStock() + "　注文数：" + orderProduct.getQuantity();
+						String msg = product.getProductName() + "の発注数が在庫数を超えています。在庫数：" + product.getStock() + "　注文数："
+								+ orderProduct.getQuantity();
 						errMsgs.add(msg);
 					}
 				}
@@ -114,6 +115,9 @@ public class CaseServiceImpl implements CaseService {
 				Case cases = modelMapper.map(form, Case.class);
 				caseMapper.caseEdit(cases);
 			}
+		} else {
+			Case cases = modelMapper.map(form, Case.class);
+			caseMapper.caseEdit(cases);
 		}
 		return errMsgs;
 	}

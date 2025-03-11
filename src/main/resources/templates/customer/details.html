@@ -44,7 +44,7 @@
 						</tr>
 						<tr>
 							<th>住所</th>
-							<td th:text="${customer.address}"></td>
+							<td class="line-break" th:text="${customer.address}"></td>
 						</tr>
 						<tr>
 							<th>電話番号</th>
@@ -52,7 +52,7 @@
 						</tr>
 						<tr>
 							<th>備考</th>
-							<td th:text="${customer.memo}"></td>
+							<td class="line-break" th:text="${customer.memo}"></td>
 						</tr>
 					</table>
 				</div>
@@ -142,7 +142,7 @@
 							</tr>
 							<tr>
 								<th>備考</th>
-								<td th:text="${case.memo}"></td>
+								<td class="line-break" th:text="${case.memo}"></td>
 							</tr>
 						</table>
 					</div>
@@ -203,7 +203,7 @@
 								</tr>
 								<tr>
 									<th>備考</th>
-									<td th:text="${case.order.memo}"></td>
+									<td class="line-break" th:text="${case.order.memo}"></td>
 								</tr>
 							</table>
 						</div>
@@ -266,7 +266,7 @@
 								</tr>
 								<tr>
 									<th>メモ</th>
-									<td th:text="${quotation.memo}"></td>
+									<td class="line-break" th:text="${quotation.memo}"></td>
 								</tr>
 							</table>
 						</div>
@@ -301,7 +301,7 @@
 								</tr>
 								<tr>
 									<th>問い合わせ内容</th>
-									<td><p th:text="${inquiry.contents}" style="white-space: pre-wrap;"></p></td>
+									<td class="line-break" th:text="${inquiry.contents}"></td>
 								</tr>
 							</table>
 						</div>

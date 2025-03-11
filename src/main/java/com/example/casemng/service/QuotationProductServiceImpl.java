@@ -204,6 +204,12 @@ public class QuotationProductServiceImpl implements QuotationProductService {
 		String msg = "";
 		List<Product> productList = productMapper.findAll();
 		for (FormQuotationProduct formProduct : list) {
+			if (formProduct.getProductId() == null || formProduct.getProductId() == 0) {
+				continue;
+			}
+			if (formProduct.getQuantity() == null || formProduct.getQuantity() == 0) {
+				continue;
+			}
 			for (Product product : productList) {
 				if (product.getStock() <= 0 || product.isChoose() == true) {
 					if (product.getId() == formProduct.getProductId()) {
