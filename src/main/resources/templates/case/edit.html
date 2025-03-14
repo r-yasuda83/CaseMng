@@ -21,9 +21,12 @@
 					<input type="hidden" th:field="*{customerId}">
 					<input type="hidden" th:field="*{shippingStockFlg}">
 
-					<th:block th:if="${errMsg}" th:each="text : ${errMsg}">
-						<p class="err" th:text="${text}"></p>
-					</th:block>
+					<div th:each="orderProduct, iterStat : *{order.orderProduct}">
+						<div th:if="${#fields.hasErrors('order.orderProduct[' + iterStat.index + '].quantity')}"
+							th:errors="*{order.orderProduct[__${iterStat.index}__].quantity}" th:errorclass="err"></div>
+					</div>
+
+					<span th:if="${#fields.hasErrors('order')}" th:errors="*{order}" th:errorclass="err"></span>
 
 					<div class="row mb-3">
 						<label class="col-sm-2 col-form-label">作成日</label>

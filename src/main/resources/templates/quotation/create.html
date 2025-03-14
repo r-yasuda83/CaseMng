@@ -30,10 +30,6 @@
 					<input type="hidden" th:field="*{caseId}">
 					<input type="hidden" th:field="*{cases.customerId}">
 
-					<th:block th:if="${errMsg}" th:each="text : ${errMsg}">
-						<p class="err" th:text="${text}"></p>
-					</th:block>
-
 					<div class="row mb-3">
 						<label class="col-sm-2 col-form-label">作成日</label>
 						<div class="col-sm-2">
@@ -70,27 +66,27 @@
 										</option>
 										</select>
 									</td>
-									<td class="col-md-1">
+									<td class="col-sm-1">
 										<span class="price">
 									</td>
-									<td class="col-md-1">
+									<td class="col-sm-1">
 										<input class="form-control quantity" type="number" min="0"
 											th:field="*{quotationProduct[__${iterStat.index}__].quantity}">
 									</td>
-									<td class="col-md-1">
+									<td class="col-sm-1">
 										<input class="form-control discount" type="number" min="0"
 											th:field="*{quotationProduct[__${iterStat.index}__].discount}">
 									</td>
-									<td class="col-md-1">
+									<td class="col-sm-1">
 										<span class="rowTotal">
 									</td>
-									<td class="col-md-1">
-										<th:block th:with="key='quotationProduct[' + ${iterStat.index} + '].quantity'">
-											<div th:each="err : ${#fields.errors(key)}" th:text="${err}"
-												style="color:red;">
-												<span th:text="${key}"></span>
-											</div>
-										</th:block>
+									<td class="col-md-3">
+										<p th:if="${#fields.hasErrors('quotationProduct[__${iterStat.index}__].quantity')}"
+											th:errors="*{quotationProduct[__${iterStat.index}__].quantity}"
+											th:errorclass="err"></p>
+										<p th:if="${#fields.hasErrors('quotationProduct[__${iterStat.index}__].discount')}"
+											th:errors="*{quotationProduct[__${iterStat.index}__].discount}"
+											th:errorclass="err"></p>
 									</td>
 
 								</tr>

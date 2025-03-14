@@ -3,16 +3,15 @@ package com.example.casemng.service;
 import java.util.List;
 
 import com.example.casemng.entity.Order;
-import com.example.casemng.form.FormOrder;
-import com.example.casemng.form.FormOrderProduct;
+import com.example.casemng.entity.OrderProduct;
 
 public interface OrderService {
 
-	public FormOrder findById(int id);
+	public Order findById(int id);
 	public Order findByCaseId(int id);
-	public void orderEdit(FormOrder form);
+	public void orderEdit(Order order);
 	public List<Order> findAll();
-	public int create(FormOrder form);
-	public void logicalDelete(FormOrder form);
-	public List<FormOrderProduct> generateProductList();
+	public int create(Order order);
+	public void logicalDelete(Order order);
+	public List<OrderProduct> generateProductList();
 }

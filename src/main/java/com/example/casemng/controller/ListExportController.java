@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.example.casemng.constant.Constant;
 import com.example.casemng.entity.Case;
 import com.example.casemng.entity.Customer;
 import com.example.casemng.entity.Inquiry;
@@ -41,6 +42,7 @@ public class ListExportController {
 	public String getCases(Model model, @PageableDefault Pageable pageable) {
 		Page<Case> list = caseService.findAll(pageable);
 		model.addAttribute("list", list);
+		model.addAttribute("shippingStatus", Constant.ShippingStatus.values());
 		return "export/case";
 	}
 	
@@ -51,6 +53,7 @@ public class ListExportController {
 	public String getOrders(Model model) {
 		List<OrderProduct> list = orderProductService.findAllExport();
 		model.addAttribute("list", list);
+		model.addAttribute("shippingStatus", Constant.ShippingStatus.values());
 		return "export/order";
 	}
 	

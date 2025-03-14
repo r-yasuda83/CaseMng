@@ -132,13 +132,10 @@
 							</tr>
 							<tr>
 								<th>発送ステータス</th>
-								<td th:switch="${case.shippingStatus}">
-									<span th:case=1 th:text="支払待ち"></span>
-									<span th:case=2 th:text="発送待ち"></span>
-									<span th:case=3 th:text="発送済み"></span>
-									<span th:case=4 th:text="キャンセル"></span>
-									<span th:case="*">-</span>
-								</td>
+								<th:block th:each="status : ${shippingStatus}">
+									<td th:if="${status.value eq case.shippingStatus}" th:text="${status.view}">
+									</td>
+								</th:block>
 							</tr>
 							<tr>
 								<th>備考</th>

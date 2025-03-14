@@ -1,4 +1,4 @@
-package com.example.casemng.service;
+package com.example.casemng.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,11 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.casemng.entity.Order;
-import com.example.casemng.form.FormOrder;
-import com.example.casemng.form.FormOrderProduct;
+import com.example.casemng.entity.OrderProduct;
 import com.example.casemng.repository.CaseMapper;
 import com.example.casemng.repository.OrderMapper;
 import com.example.casemng.repository.OrderProductMapper;
+import com.example.casemng.service.OrderService;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -24,10 +24,9 @@ public class OrderServiceImpl implements OrderService {
 	@Autowired
 	ModelMapper modelMapper;
 
-	public FormOrder findById(int id) {
+	public Order findById(int id) {
 		Order order = orderMapper.findById(id);
-		FormOrder form = modelMapper.map(order, FormOrder.class);
-		return form;
+		return order;
 	}
 	
 	public Order findByCaseId(int id) {
@@ -36,8 +35,7 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Transactional
-	public void orderEdit(FormOrder form) {
-		Order order = modelMapper.map(form, Order.class);
+	public void orderEdit(Order order) {
 		orderMapper.orderEdit(order);
 	}
 
@@ -50,8 +48,7 @@ public class OrderServiceImpl implements OrderService {
 	OrderProductMapper orderProductMapper;
 
 	@Transactional
-	public int create(FormOrder form) {
-		Order order = modelMapper.map(form, Order.class);
+	public int create(Order order) {
 		orderMapper.create(order);
 		return order.getId();
 	}
@@ -59,16 +56,16 @@ public class OrderServiceImpl implements OrderService {
 	@Autowired
 	CaseMapper caseMapper;
 	
-	public void logicalDelete(FormOrder form) {
-		orderMapper.logicalDelete(form.getId());
-		caseMapper.whenDeleteOrder(form.getCaseId());
+	public void logicalDelete(Order order) {
+		orderMapper.logicalDelete(order.getId());
+		caseMapper.whenDeleteOrder(order.getCaseId());
 	}
 	
-	public List<FormOrderProduct> generateProductList(){
+	public List<OrderProduct> generateProductList(){
 		int ProductCount = 1;
-		List<FormOrderProduct> orderProductList = new ArrayList<>();
+		List<OrderProduct> orderProductList = new ArrayList<>();
 		for (int i = 0; i < ProductCount; i++) {
-			orderProductList.add(new FormOrderProduct());
+			orderProductList.add(new OrderProduct());
 		}
 		return orderProductList;
 	}

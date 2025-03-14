@@ -39,10 +39,9 @@
 					<td th:text="${item.customer.getFullName()}"></td>
 					<td>
 						<th:block th:switch="${item.shippingStatus}">
-							<span th:case=1 th:text="支払待ち"></span>
-							<span th:case=2 th:text="発送待ち"></span>
-							<span th:case=3 th:text="発送済み"></span>
-							<span th:case=4 th:text="キャンセル"></span>
+							<th:block th:each="status : ${shippingStatus}">
+								<span th:case=${status.value} th:text="${status.view}"></span>
+							</th:block>
 							<th:block th:case="*">
 								<span th:if="${#lists.isEmpty(item.order) eq false}" th:text="受注"></span>
 								<span

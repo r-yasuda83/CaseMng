@@ -2,18 +2,19 @@ package com.example.casemng.service;
 
 import java.util.List;
 
+import org.springframework.validation.BindingResult;
+
 import com.example.casemng.entity.OrderProduct;
-import com.example.casemng.form.FormOrderProduct;
 
 public interface OrderProductService {
 	
-	public void edit(List<FormOrderProduct> list, int orderId);
+	public void edit(List<OrderProduct> list, int orderId);
 	public OrderProduct findById(int id);
-	public void addOrderProduct(List<FormOrderProduct> list);
+	public void addOrderProduct(List<OrderProduct> list);
 	public List<OrderProduct> findAllExport();
 	public OrderProduct findByIdAll(int id);
-	public List<String> comparisonStock(List<FormOrderProduct> list);
-	public List<FormOrderProduct> setOrdersId(List<FormOrderProduct> list, int ordersId);
-	public String checkDiscount(List<FormOrderProduct> list);
-	public String checkProduct(List<FormOrderProduct> list);
+	public BindingResult comparisonStock(List<OrderProduct> list, BindingResult result);
+	public List<OrderProduct> setOrdersId(List<OrderProduct> list, int ordersId);
+	public BindingResult checkDiscount(List<OrderProduct> list, BindingResult result);
+	public BindingResult checkProduct(List<OrderProduct> list, BindingResult result);
 }

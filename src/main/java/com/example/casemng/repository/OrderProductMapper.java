@@ -5,7 +5,6 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.example.casemng.entity.OrderProduct;
-import com.example.casemng.form.FormOrderProduct;
 
 @Mapper
 public interface OrderProductMapper {
@@ -14,7 +13,7 @@ public interface OrderProductMapper {
 	public void edit(List<OrderProduct> orderProduct);
 	public void logicalDelete(List<OrderProduct> list);
 	public OrderProduct findById(int id);
-	public void addOrderProduct(List<FormOrderProduct> list);
+	public void addOrderProduct(List<OrderProduct> list);
 	public List<OrderProduct> findAllExport();
 	public void create(List<OrderProduct> validList);
 	public OrderProduct findByIdAll(int id);

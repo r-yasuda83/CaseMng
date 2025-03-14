@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class FormCustomer {
+public class CustomerForm {
 
 	private int id;
 	@NotBlank

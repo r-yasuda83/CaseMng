@@ -1,4 +1,4 @@
-package com.example.casemng.service;
+package com.example.casemng.service.impl;
 
 import java.util.List;
 
@@ -16,8 +16,8 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 
 import com.example.casemng.entity.Customer;
-import com.example.casemng.form.FormCustomer;
 import com.example.casemng.repository.CustomerMapper;
+import com.example.casemng.service.CustomerService;
 
 @Service
 public class CustomerServiceImpl implements CustomerService{
@@ -45,21 +45,18 @@ public class CustomerServiceImpl implements CustomerService{
 	@Autowired
 	ModelMapper modelMapper;
 	
-	public FormCustomer findByIdEdit(int id) {
+	public Customer findByIdEdit(int id) {
 		Customer customer = customerMapper.findById(id);
-		
-		return modelMapper.map(customer, FormCustomer.class);
+		return customer;
 	}
 	
 	@Transactional
-	public void customerEdit(FormCustomer formCustomer) {
-		Customer customer = modelMapper.map(formCustomer, Customer.class);
+	public void customerEdit(Customer customer) {
 		customerMapper.customerEdit(customer);
 	}
 	
 	@Transactional
-	public int create(FormCustomer form) {
-		Customer customer = modelMapper.map(form, Customer.class);
+	public int create(Customer customer) {
 		customerMapper.create(customer);
 		return customer.getId();
 	}

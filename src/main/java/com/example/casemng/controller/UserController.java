@@ -19,10 +19,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.casemng.entity.CustomUserDetails;
 import com.example.casemng.entity.Role;
-import com.example.casemng.form.FormSearch;
-import com.example.casemng.form.FormUser;
-import com.example.casemng.form.FormUserEditPassword;
-import com.example.casemng.form.FormUserRegistration;
+import com.example.casemng.entity.User;
+import com.example.casemng.form.SearchForm;
+import com.example.casemng.form.UserEditPasswordForm;
+import com.example.casemng.form.UserForm;
+import com.example.casemng.form.UserRegistrationForm;
 import com.example.casemng.service.RoleService;
 import com.example.casemng.service.UserService;
 
@@ -32,26 +33,34 @@ public class UserController {
 	@Autowired
 	UserService userService;
 
-	@GetMapping("/admin/user")
-	public String getList(@ModelAttribute("search") FormSearch form,
-			@RequestParam(name = "displayedNum", required = false) Integer displayedNum,
-			@RequestParam(name = "sortKey", required = false) String sortKey,
-			@RequestParam(name = "sortDirection", required = false) String sortDirection,
-			@PageableDefault(size = 5) Pageable pageable, Model model) {
-		return userService.pagenation(form.getKeyword(), displayedNum, sortKey, sortDirection, pageable, model);
-	}
-
 	@Autowired
 	RoleService roleService;
 
-	@GetMapping("/admin/user/{id}")
-	public String getEdit(@PathVariable("id") int id, Model model) {
+	@Autowired
+	ModelMapper modelMapper;
 
-		FormUser form = userService.findById(id);
-		if (form == null) {
+	@GetMapping("/admin/user")
+	public String getList(@ModelAttribute("search") SearchForm form,
+			@RequestParam(required = false) Integer displayedNum,
+			@RequestParam(required = false) String sortKey,
+			@RequestParam(required = false) String sortDirection,
+			@PageableDefault(size = 5) Pageable pageable, Model model) {
+
+		return userService.pagenation(form.getKeyword(), displayedNum, sortKey, sortDirection, pageable, model);
+	}
+
+	@GetMapping("/admin/user/{keyId}")
+	public String getEdit(@ModelAttribute("formUser") UserForm form, @PathVariable("keyId") int id, Model model) {
+
+		User user = userService.findById(id);
+		if (user == null) {
 			model.addAttribute("msg", "存在しないIDです。");
 			return "error";
 		}
+		if (form.getId() == 0) {
+			form = modelMapper.map(user, UserForm.class);
+		}
+
 		model.addAttribute("formUser", form);
 
 		List<Role> roleList = roleService.findAll();
@@ -59,32 +68,27 @@ public class UserController {
 		return "user/edit";
 	}
 
-	@Autowired
-	ModelMapper modelMapper;
+	@PostMapping("/admin/user/{keyId}")
+	public String postEdit(@ModelAttribute("formUser") @Validated UserForm form, BindingResult result,
+			@PathVariable("keyId") int id, Model model) {
 
-	@PostMapping("/admin/user/{id}")
-	public String postEdit(@ModelAttribute("formUser") @Validated FormUser form,
-			BindingResult result,
-			@PathVariable int id, Model model) {
-
-		String errMsg = userService.duplicatesUserIdWithoutId(form);
+		User user = modelMapper.map(form, User.class);
+		String errMsg = userService.duplicatesUserIdWithoutId(user);
 
 		if (result.hasErrors() || errMsg != null) {
-			List<Role> roleList = roleService.findAll();
-			model.addAttribute("roleList", roleList);
-
 			model.addAttribute("errMsg", errMsg);
-			return "user/edit";
+			return getEdit(form, id, model);
 		}
 
-		userService.edit(form);
+		userService.edit(user);
 		return "redirect:/admin/user";
 	}
 
 	@GetMapping("/admin/user/{id}/password")
-	public String getEditPassword(@PathVariable("id") int id, Model model) {
+	public String getEditPassword(@PathVariable int id, Model model) {
 
-		FormUserEditPassword form = userService.findByIdPassword(id);
+		User user = userService.findByIdPassword(id);
+		UserEditPasswordForm form = modelMapper.map(user, UserEditPasswordForm.class);
 		if (form == null) {
 			model.addAttribute("msg", "存在しないIDです。");
 			return "error";
@@ -94,18 +98,19 @@ public class UserController {
 	}
 
 	@PostMapping("/admin/user/{id}/password")
-	public String postEditPassword(@ModelAttribute("form") @Validated FormUserEditPassword form, BindingResult result,
-			@PathVariable("id") int id, Model model) {
+	public String postEditPassword(@ModelAttribute @Validated UserEditPasswordForm form, BindingResult result,
+			@PathVariable int id, Model model) {
 
 		if (result.hasErrors()) {
 			return "user/editPasswordAdmin";
 		}
-		userService.editPassword(form);
+		User user = modelMapper.map(form, User.class);
+		userService.editPassword(user);
 		return "redirect:/admin/user";
 	}
 
 	@GetMapping("/admin/user/create")
-	public String getCreate(@ModelAttribute("formUserRegistration") FormUserRegistration form, Model model) {
+	public String getCreate(@ModelAttribute("formUserRegistration") UserRegistrationForm form, Model model) {
 
 		model.addAttribute("FormUserRegistration", form);
 
@@ -115,25 +120,23 @@ public class UserController {
 	}
 
 	@PostMapping("/admin/user/create")
-	public String postCreate(@ModelAttribute("formUserRegistration") @Validated FormUserRegistration form,
+	public String postCreate(@ModelAttribute("formUserRegistration") @Validated UserRegistrationForm form,
 			BindingResult result, Model model) {
 
-		String errMsg = userService.duplicatesUserId(form.getUserId());
+		User user = modelMapper.map(form, User.class);
+		String errMsg = userService.duplicatesUserId(user.getUserId());
 
 		if (result.hasErrors() || errMsg != null) {
-			List<Role> roleList = roleService.findAll();
-			model.addAttribute("roleList", roleList);
-
 			model.addAttribute("errMsg", errMsg);
-			return "user/create";
+			return getCreate(form, model);
 		}
 
-		userService.create(form);
+		userService.create(user);
 		return "redirect:/admin/user";
 	}
 
 	@PostMapping("/admin/user/{id}/delete")
-	public String postDelete(@PathVariable("id") int id, Model model) {
+	public String postDelete(@PathVariable int id, Model model) {
 
 		userService.logicalDelete(id);
 		return "redirect:/admin/user";
@@ -149,13 +152,15 @@ public class UserController {
 	}
 
 	@PostMapping("/user/setting")
-	public String postSetting(@ModelAttribute("formUser") @Validated FormUser form, BindingResult result,
+	public String postSetting(@ModelAttribute("formUser") @Validated UserForm form, BindingResult result,
 			Model model) {
 
 		if (result.hasErrors()) {
 			return "user/setting";
 		}
-		userService.editLoginUser(form);
+
+		User user = modelMapper.map(form, User.class);
+		userService.editLoginUser(user);
 		return "redirect:/case";
 	}
 
@@ -163,20 +168,22 @@ public class UserController {
 	public String getSettingPassword(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
 
 		int id = userDetails.getId();
-		FormUserEditPassword form = userService.findByIdPassword(id);
+		User user = userService.findByIdPassword(id);
+		UserEditPasswordForm form = modelMapper.map(user, UserEditPasswordForm.class);
 		model.addAttribute("form", form);
 		return "user/editPassword";
 	}
 
 	@PostMapping("/user/setting/password")
-	public String postSettingPassword(@ModelAttribute("form") @Validated FormUserEditPassword form,
-			BindingResult result,
-			Model model) {
+	public String postSettingPassword(@ModelAttribute @Validated UserEditPasswordForm form,
+			BindingResult result, Model model) {
 
 		if (result.hasErrors()) {
 			return "user/editPassword";
 		}
-		userService.editPassword(form);
+
+		User user = modelMapper.map(form, User.class);
+		userService.editPassword(user);
 		return "redirect:/user/setting";
 	}
 }
