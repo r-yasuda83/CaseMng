@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class FormUserRegistration {
+public class UserRegistrationForm {
 
 	private int id;
 	

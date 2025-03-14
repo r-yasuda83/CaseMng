@@ -1,4 +1,4 @@
-package com.example.casemng.service;
+package com.example.casemng.service.impl;
 
 import java.util.List;
 
@@ -16,8 +16,8 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 
 import com.example.casemng.entity.Product;
-import com.example.casemng.form.FormProduct;
 import com.example.casemng.repository.ProductMapper;
+import com.example.casemng.service.ProductService;
 
 @Service
 public class ProductServiceImpl implements ProductService{
@@ -40,10 +40,9 @@ public class ProductServiceImpl implements ProductService{
 		return mapper.findAllForSelectStock();
 	}
 	
-	public FormProduct findById(int id) {
+	public Product findById(int id) {
 		Product product = mapper.findById(id);
-		FormProduct form = modelMapper.map(product, FormProduct.class);
-		return form;
+		return product;
 	}
 	
 	public Page<Product> findByKeyword(Pageable pageable, String searchKey) {
@@ -55,14 +54,12 @@ public class ProductServiceImpl implements ProductService{
 	}
 	
 	@Transactional
-	public void edit(FormProduct form) {
-		Product product = modelMapper.map(form, Product.class);
+	public void edit(Product product) {
 		mapper.edit(product);
 	}
 	
 	@Transactional
-	public void create(FormProduct form) {
-		Product product = modelMapper.map(form, Product.class);
+	public void create(Product product) {
 		mapper.create(product);
 	}
 	

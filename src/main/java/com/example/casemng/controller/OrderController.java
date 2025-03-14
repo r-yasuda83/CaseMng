@@ -2,6 +2,8 @@ package com.example.casemng.controller;
 
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,11 +14,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.example.casemng.entity.Case;
 import com.example.casemng.entity.Order;
+import com.example.casemng.entity.OrderProduct;
 import com.example.casemng.entity.Product;
-import com.example.casemng.form.FormCase;
-import com.example.casemng.form.FormOrder;
-import com.example.casemng.form.FormOrderProduct;
+import com.example.casemng.form.CaseForm;
+import com.example.casemng.form.OrderForm;
+import com.example.casemng.form.OrderProductForm;
 import com.example.casemng.service.CaseService;
 import com.example.casemng.service.OrderProductService;
 import com.example.casemng.service.OrderService;
@@ -31,14 +35,34 @@ public class OrderController {
 	@Autowired
 	ProductService productService;
 
-	@GetMapping("/order/{id}")
-	public String getEdit(@PathVariable("id") int id, Model model) {
+	@Autowired
+	ModelMapper modelMapper;
 
-		FormOrder form = orderService.findById(id);
-		if (form == null) {
+	@Autowired
+	OrderProductService orderProductService;
+
+	@Autowired
+	CustomerController customerCtrl;
+
+	@Autowired
+	CaseService caseService;
+
+	@GetMapping("/order/{id}")
+	public String getEdit(@ModelAttribute("formOrder") OrderForm form, @PathVariable int id, Model model) {
+
+		Order order = orderService.findById(id);
+
+		if (order == null) {
 			model.addAttribute("msg", "存在しないIDです。");
 			return "error";
-		} else if (form.getCases().isShippingStockFlg() == true) {
+		}
+
+		if (form.getCaseId() == 0) {
+			form = modelMapper.map(order, OrderForm.class);
+		}
+
+		form.setCases(modelMapper.map(order.getCases(), CaseForm.class));
+		if (form.getCases().isShippingStockFlg() == true) {
 			model.addAttribute("msg", "既に送付処理済の受注IDです。");
 			return "error";
 		}
@@ -51,60 +75,34 @@ public class OrderController {
 		return "order/edit";
 	}
 
-	@Autowired
-	OrderProductService orderProductService;
-
-	@Autowired
-	CustomerController customerCtrl;
-
 	@PostMapping("/order/{id}/edit")
-	public String postEdit(@ModelAttribute("formOrder") @Validated FormOrder form, BindingResult result,
-			@PathVariable("id") int id, Model model) {
+	public String postEdit(@ModelAttribute("formOrder") @Validated OrderForm form, BindingResult result,
+			@PathVariable int id, Model model) {
 
-		if (result.hasErrors()) {
-			List<Product> productList = productService.findAll();
-			model.addAttribute("productList", productList);
-			model.addAttribute("distinction", "orderProduct");
-			return "order/edit";
-		}
+		Order order = modelMapper.map(form, Order.class);
 
-		List<String> errMsgs = orderProductService.comparisonStock(form.getOrderProduct());
-		String discountErr = orderProductService.checkDiscount(form.getOrderProduct());
-		if (discountErr.isBlank() == false) {
-			errMsgs.add(discountErr);
-		}
-		String productErr = orderProductService.checkProduct(form.getOrderProduct());
-		if (productErr.isBlank() == false) {
-			errMsgs.add(productErr);
-		}
+		result = orderProductService.comparisonStock(order.getOrderProduct(), result);
+		result = orderProductService.checkDiscount(order.getOrderProduct(), result);
+		result = orderProductService.checkProduct(order.getOrderProduct(), result);
 		
-
-		if (errMsgs.isEmpty()) {
-			orderService.orderEdit(form);
-			orderProductService.edit(form.getOrderProduct(), form.getId());
-			return "redirect:/customer/" + form.getCases().getCustomerId() + "?caseId=" + form.getCaseId();
+		if (result.hasErrors()) {
+			return getEdit(form, id, model);
 		} else {
-			List<Product> productList = productService.findAll();
-			model.addAttribute("errMsg", errMsgs);
-			model.addAttribute("productList", productList);
-			model.addAttribute("distinction", "orderProduct");
-			return "order/edit";
+			orderService.orderEdit(order);
+			orderProductService.edit(order.getOrderProduct(), order.getId());
+			return "redirect:/customer/" + order.getCases().getCustomerId() + "?caseId=" + order.getCaseId();
 		}
 	}
 
-	@Autowired
-	CaseService caseService;
-
 	@GetMapping("/order/create/{caseId}")
-	public String getCreate(@ModelAttribute("formOrder") FormOrder form, @PathVariable("caseId") int caseId,
+	public String getCreate(@ModelAttribute("formOrder") OrderForm form, @PathVariable int caseId,
 			Model model) {
 
-		FormCase cases = caseService.findById(caseId);
+		Case cases = caseService.findById(caseId);
 		if (cases == null) {
 			model.addAttribute("msg", "存在しないIDです。");
 			return "error";
 		}
-
 		Order order = orderService.findByCaseId(caseId);
 		if (order != null && order.isDeleted() == false) {
 			model.addAttribute("msg", "既に受注登録されています。");
@@ -112,10 +110,18 @@ public class OrderController {
 		}
 
 		form.setCaseId(caseId);
-		form.setCases(cases);
-		form.setOrderProduct(orderService.generateProductList());
-		model.addAttribute("formOrder", form);
 
+		CaseForm caseForm = modelMapper.map(cases, CaseForm.class);
+		form.setCases(caseForm);
+
+		if (form.getOrderProduct() == null) {
+			List<OrderProduct> list = orderService.generateProductList();
+			List<OrderProductForm> listForm = modelMapper.map(list, new TypeToken<List<OrderProduct>>() {
+			}.getType());
+			form.setOrderProduct(listForm);
+		}
+
+		model.addAttribute("formOrder", form);
 		List<Product> productList = productService.findAllForSelectStock();
 		model.addAttribute("productList", productList);
 		model.addAttribute("distinction", "orderProduct");
@@ -123,48 +129,35 @@ public class OrderController {
 	}
 
 	@PostMapping("/order/create/{caseId}")
-	public String postCreate(@ModelAttribute("formOrder") @Validated FormOrder form, BindingResult result,
-			@PathVariable("caseId") int caseId, Model model) {
+	public String postCreate(@ModelAttribute("formOrder") @Validated OrderForm form, BindingResult result,
+			@PathVariable int caseId, Model model) {
+
+		Order order = modelMapper.map(form, Order.class);
+
+		result = orderProductService.comparisonStock(order.getOrderProduct(), result);
+		result = orderProductService.checkDiscount(order.getOrderProduct(), result);
 
 		if (result.hasErrors()) {
-			List<Product> productList = productService.findAllForSelectStock();
-			model.addAttribute("productList", productList);
-			model.addAttribute("distinction", "orderProduct");
-			return "order/create";
-		}
-
-		List<String> errMsgs = orderProductService.comparisonStock(form.getOrderProduct());
-		String discountErr = orderProductService.checkDiscount(form.getOrderProduct());
-		if (discountErr.isBlank() == false) {
-			errMsgs.add(discountErr);
-		}
-
-		if (errMsgs.isEmpty()) {
-			int orderId = orderService.create(form);
-			List<FormOrderProduct> list = orderProductService.setOrdersId(form.getOrderProduct(), orderId);
+			return getCreate(form, caseId, model);
+		} else {
+			int orderId = orderService.create(order);
+			List<OrderProduct> list = orderProductService.setOrdersId(order.getOrderProduct(), orderId);
 			orderProductService.addOrderProduct(list);
 
-			return "redirect:/customer/" + form.getCases().getCustomerId() + "?caseId=" + form.getCaseId();
-		} else {
-			model.addAttribute("errMsg", errMsgs);
-
-			List<Product> productList = productService.findAllForSelectStock();
-			model.addAttribute("productList", productList);
-			model.addAttribute("distinction", "orderProduct");
-			return "order/create";
+			return "redirect:/customer/" + order.getCases().getCustomerId() + "?caseId=" + order.getCaseId();
 		}
 	}
 
 	@PostMapping("/order/delete/{id}")
-	public String postDelete(@PathVariable("id") int id, Model model) {
+	public String postDelete(@PathVariable int id, Model model) {
 
-		FormOrder form = orderService.findById(id);
-		if (form.getCases().isShippingStockFlg() == true) {
+		Order order = orderService.findById(id);
+		if (order.getCases().isShippingStockFlg() == true) {
 			model.addAttribute("msg", "既に送付処理済の受注IDです。");
 			return "error";
 		}
 
-		orderService.logicalDelete(form);
-		return "redirect:/customer/" + form.getCases().getCustomerId() + "?caseId=" + form.getCaseId();
+		orderService.logicalDelete(order);
+		return "redirect:/customer/" + order.getCases().getCustomerId() + "?caseId=" + order.getCaseId();
 	}
 }

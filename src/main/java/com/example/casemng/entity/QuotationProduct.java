@@ -4,6 +4,17 @@ import lombok.Data;
 
 @Data
 public class QuotationProduct {
+	
+	public QuotationProduct() {
+	}
+	
+	public QuotationProduct(QuotationProduct quo) {
+		this.id = quo.getId();
+		this.quotationId = quo.getQuotationId();
+	    this.productId = quo.getProductId();
+	    this.quantity = quo.getQuantity();
+	    this.discount = quo.getDiscount();
+	}
 
 	private int id;
 

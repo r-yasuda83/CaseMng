@@ -11,7 +11,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import lombok.Data;
 
 @Data
-public class FormOrder {
+public class QuotationForm {
 
 	private int id;
 
@@ -19,13 +19,13 @@ public class FormOrder {
 	
 	@NotNull
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private Date orderDate;
+	private Date quotationDate;
 
 	private String memo;
 
 	private boolean isDeleted;
 	
-	private FormCase cases;
+	private CaseForm cases;
 	@Valid
-	private List<FormOrderProduct> orderProduct;
+	private List<QuotationProductForm> quotationProduct;
 }

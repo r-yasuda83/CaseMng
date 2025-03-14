@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class FormOrderProductList {
+public class OrderProductListForm {
 
-	private List<FormOrderProduct> orderProductList;
+	private List<OrderProductForm> orderProductList;
 }

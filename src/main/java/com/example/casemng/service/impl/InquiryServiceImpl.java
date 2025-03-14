@@ -1,4 +1,4 @@
-package com.example.casemng.service;
+package com.example.casemng.service.impl;
 
 import java.util.List;
 
@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.casemng.entity.Inquiry;
-import com.example.casemng.form.FormInquiry;
 import com.example.casemng.repository.InquiryMapper;
+import com.example.casemng.service.InquiryService;
 
 @Service
 public class InquiryServiceImpl implements InquiryService{
@@ -24,21 +24,18 @@ public class InquiryServiceImpl implements InquiryService{
 		return mapper.findAll();
 	}
 	
-	public FormInquiry findById(int id) {
+	public Inquiry findById(int id) {
 		Inquiry inqu = mapper.findById(id);
-		FormInquiry form = modelMapper.map(inqu, FormInquiry.class);
-		return form;
+		return inqu;
 	}
 	
 	@Transactional
-	public void inquiryEdit(FormInquiry form) {
-		Inquiry inquiry = modelMapper.map(form, Inquiry.class);
+	public void inquiryEdit(Inquiry inquiry) {
 		mapper.inquiryEdit(inquiry);
 	}
 	
 	@Transactional
-	public int create(FormInquiry form) {
-		Inquiry inquiry = modelMapper.map(form, Inquiry.class);
+	public int create(Inquiry inquiry) {
 		mapper.create(inquiry);
 		return inquiry.getId();
 	}

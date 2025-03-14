@@ -7,7 +7,7 @@ import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
 
 @Data
-public class FormProduct {
+public class ProductForm {
 
 	private int id;
 

@@ -1,4 +1,4 @@
-package com.example.casemng.service;
+package com.example.casemng.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,17 +15,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
 
 import com.example.casemng.entity.Case;
 import com.example.casemng.entity.CaseForList;
 import com.example.casemng.entity.Order;
 import com.example.casemng.entity.OrderProduct;
 import com.example.casemng.entity.Product;
-import com.example.casemng.form.FormCase;
-import com.example.casemng.form.FormCaseEntry;
 import com.example.casemng.repository.CaseMapper;
 import com.example.casemng.repository.OrderMapper;
 import com.example.casemng.repository.ProductMapper;
+import com.example.casemng.service.CaseService;
 
 @Service
 public class CaseServiceImpl implements CaseService {
@@ -60,17 +60,16 @@ public class CaseServiceImpl implements CaseService {
 	@Autowired
 	ModelMapper modelMapper;
 
-	public FormCase findById(int id) {
+	public Case findById(int id) {
 		Case cases = caseMapper.findById(id);
-		FormCase form = modelMapper.map(cases, FormCase.class);
-		return form;
+		return cases;
 	}
 
 	@Transactional
-	public List<String> caseEdit(FormCase form) {
-		List<String> errMsgs = new ArrayList<String>();
-		if (form.getShippingStatus() == 3 && form.isShippingStockFlg() == false) {
-			Order order = orderMapper.findByCaseId(form.getId());
+	public BindingResult caseEdit(Case cases, BindingResult result) {
+
+		if (cases.getShippingStatus() == 3 && cases.isShippingStockFlg() == false) {
+			Order order = orderMapper.findByCaseId(cases.getId());
 
 			List<OrderProduct> cloneList = new ArrayList<>();
 
@@ -97,34 +96,33 @@ public class CaseServiceImpl implements CaseService {
 
 			List<Product> productList = productMapper.findAll();
 
+			int i = 0;
 			for (OrderProduct orderProduct : checkList) {
 				for (Product product : productList) {
-					if (orderProduct.getProductId() == product.getId()
-							&& orderProduct.getQuantity() > product.getStock()) {
-						String msg = product.getProductName() + "の発注数が在庫数を超えています。在庫数：" + product.getStock() + "　注文数："
-								+ orderProduct.getQuantity();
-						errMsgs.add(msg);
+					if (orderProduct.getProductId() == product.getId() && orderProduct.getQuantity() > product.getStock()) {
+
+						result.rejectValue("order.orderProduct[" + i + "].quantity", "error.caseForm",
+								product.getProductName() + "の発注数が在庫数を超えています。在庫数：" + product.getStock() + "　注文数："
+										+ orderProduct.getQuantity());
 					}
 				}
+				i++;
 			}
-			if (errMsgs.isEmpty()) {
+			if (result.hasErrors() == false) {
 				//送付済み案件の在庫を反映
 				productMapper.editStock(order.getOrderProduct());
 				//送付済みフラグを立てる
-				caseMapper.editShippingStockFlg(form.getId());
-				Case cases = modelMapper.map(form, Case.class);
+				caseMapper.editShippingStockFlg(cases.getId());
 				caseMapper.caseEdit(cases);
 			}
 		} else {
-			Case cases = modelMapper.map(form, Case.class);
 			caseMapper.caseEdit(cases);
 		}
-		return errMsgs;
+		return result;
 	}
 
 	@Transactional
-	public int create(FormCaseEntry form) {
-		Case cases = modelMapper.map(form, Case.class);
+	public int create(Case cases) {
 		caseMapper.create(cases);
 		return cases.getId();
 	}

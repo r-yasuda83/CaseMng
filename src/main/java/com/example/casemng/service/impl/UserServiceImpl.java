@@ -1,4 +1,4 @@
-package com.example.casemng.service;
+package com.example.casemng.service.impl;
 
 import java.util.List;
 
@@ -22,10 +22,8 @@ import org.springframework.util.StringUtils;
 
 import com.example.casemng.entity.CustomUserDetails;
 import com.example.casemng.entity.User;
-import com.example.casemng.form.FormUser;
-import com.example.casemng.form.FormUserEditPassword;
-import com.example.casemng.form.FormUserRegistration;
 import com.example.casemng.repository.UserMapper;
+import com.example.casemng.service.UserService;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -48,16 +46,14 @@ public class UserServiceImpl implements UserService {
 		return userMapper.findAll();
 	}
 
-	public FormUser findById(int id) {
+	public User findById(int id) {
 		User user = userMapper.findById(id);
-		FormUser form = modelMapper.map(user, FormUser.class);
-		return form;
+		return user;
 	}
 
-	public FormUserEditPassword findByIdPassword(int id) {
+	public User findByIdPassword(int id) {
 		User user = userMapper.findById(id);
-		FormUserEditPassword form = modelMapper.map(user, FormUserEditPassword.class);
-		return form;
+		return user;
 	}
 
 	public Page<User> findByKeyword(Pageable pageable, String searchKey) {
@@ -70,22 +66,19 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Transactional
-	public void edit(FormUser form) {
-		User user = modelMapper.map(form, User.class);
+	public void edit(User user) {
 		userMapper.edit(user);
 	}
 
 	@Transactional
-	public void editPassword(FormUserEditPassword form) {
-		User user = modelMapper.map(form, User.class);
+	public void editPassword(User user) {
 		String password = encoder.encode(user.getPassword());
 		user.setPassword(password);
 		userMapper.editPassword(user);
 	}
 
 	@Transactional
-	public void create(FormUserRegistration form) {
-		User user = modelMapper.map(form, User.class);
+	public void create(User user) {
 		String password = encoder.encode(user.getPassword());
 		user.setPassword(password);
 
@@ -93,12 +86,11 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Transactional
-	public void editLoginUser(FormUser form) {
-		User user = modelMapper.map(form, User.class);
+	public void editLoginUser(User user) {
 		userMapper.editLoginUser(user);
 		
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		User users = userMapper.findByUsername(form.getUserId());
+		User users = userMapper.findByUsername(user.getUserId());
 		UserDetails userDetails = new CustomUserDetails(users);
 		
 		UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(
@@ -125,11 +117,11 @@ public class UserServiceImpl implements UserService {
 		return errMsg;
 	}
 
-	public String duplicatesUserIdWithoutId(FormUser form) {
+	public String duplicatesUserIdWithoutId(User user) {
 		String errMsg = null;
-		List<User> userList = userMapper.findWithoutThisId(form.getId());
-		for (User user : userList) {
-			if (user.getUserId().equals(form.getUserId())) {
+		List<User> userList = userMapper.findWithoutThisId(user.getId());
+		for (User check : userList) {
+			if (check.getUserId().equals(user.getUserId())) {
 				errMsg = "このユーザーIDは既に使われています";
 				break;
 			}

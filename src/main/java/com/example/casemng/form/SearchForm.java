@@ -3,7 +3,7 @@ package com.example.casemng.form;
 import lombok.Data;
 
 @Data
-public class FormSearch {
+public class SearchForm {
 	
 	private String keyword;
 	

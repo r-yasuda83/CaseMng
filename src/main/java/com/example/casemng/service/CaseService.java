@@ -1,15 +1,12 @@
 package com.example.casemng.service;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 
 import com.example.casemng.entity.Case;
 import com.example.casemng.entity.CaseForList;
-import com.example.casemng.form.FormCase;
-import com.example.casemng.form.FormCaseEntry;
 
 public interface CaseService {
 
@@ -17,11 +14,11 @@ public interface CaseService {
 
 	public Page<CaseForList> findByKeyword(Pageable pageable, String serachKey);
 
-	public FormCase findById(int id);
+	public Case findById(int id);
 
-	public List<String> caseEdit(FormCase form);
+	public BindingResult caseEdit(Case cases, BindingResult result);
 
-	public int create(FormCaseEntry form);
+	public int create(Case cases);
 
 	public void logicalDelete(int id);
 

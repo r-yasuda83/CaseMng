@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class FormCaseEntry {
+public class CaseEntryForm {
 
 	private int customerId;
 
