@@ -4,9 +4,8 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.ui.Model;
 
-import com.example.casemng.entity.User;
+import com.example.casemng.model.entity.User;
 
 public interface UserService {
 
@@ -20,7 +19,5 @@ public interface UserService {
 	public void editPassword(User user);
 	public void editLoginUser(User user);
 	public void logicalDelete(int id);
-	public String duplicatesUserId(String userId);
-	public String duplicatesUserIdWithoutId(User user);
-	public String pagenation(String searchKey, Integer displayedNum, String sortKey, String sortDirection, Pageable pageable, Model model);
+	public List<User> findWithoutThisId(int id);
 }

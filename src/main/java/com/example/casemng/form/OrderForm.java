@@ -16,7 +16,7 @@ public class OrderForm {
 	private int id;
 
 	private int caseId;
-	
+
 	@NotNull
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date orderDate;
@@ -24,7 +24,7 @@ public class OrderForm {
 	private String memo;
 
 	private boolean isDeleted;
-	
+
 	private CaseForm cases;
 	@Valid
 	private List<OrderProductForm> orderProduct;

@@ -2,7 +2,7 @@ package com.example.casemng.repository;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.example.casemng.entity.Quotation;
+import com.example.casemng.model.entity.Quotation;
 
 @Mapper
 public interface QuotationMapper {

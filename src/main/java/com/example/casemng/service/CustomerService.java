@@ -4,9 +4,8 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.ui.Model;
 
-import com.example.casemng.entity.Customer;
+import com.example.casemng.model.entity.Customer;
 
 public interface CustomerService {
 
@@ -17,5 +16,4 @@ public interface CustomerService {
 	public void customerEdit(Customer customer);
 	public int create(Customer customer);
 	public void logicalDelete(int id);
-	public String pagenation(String searchKey, Integer displayedNum, String sortKey, String sortDirection, Pageable pageable, Model model);
 }

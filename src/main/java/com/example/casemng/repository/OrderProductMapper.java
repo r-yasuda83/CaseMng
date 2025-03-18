@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.example.casemng.entity.OrderProduct;
+import com.example.casemng.model.entity.OrderProduct;
 
 @Mapper
 public interface OrderProductMapper {

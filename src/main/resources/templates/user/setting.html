@@ -16,7 +16,7 @@
 				<div th:text="アカウント設定"></div>
 			</div>
 			<div class="card-body">
-				<form th:action="@{/user/setting}" method="post" th:object="${formUser}">
+				<form th:action="@{/user/setting}" method="post" th:object="${userForm}">
 					<input type="hidden" th:field="*{id}">
 
 					<div class="row mb-3">

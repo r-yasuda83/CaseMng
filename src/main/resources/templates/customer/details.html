@@ -119,13 +119,13 @@
 									<th:block th:switch="${case.shippingStatus}">
 										<span th:case="4" th:text="キャンセル"></span>
 										<th:block th:case="*">
-											<span th:if="${#lists.isEmpty(case.order) eq false}" th:text="受注"></span>
+											<span th:if="${#lists.isEmpty(case.order) eq false}" th:text="#{order}"></span>
 											<span
 												th:if="${#lists.isEmpty(case.order) eq true && #lists.isEmpty(case.quotation) eq false}"
-												th:text="見積"></span>
+												th:text="#{quotation}"></span>
 											<span
 												th:if="${(#lists.isEmpty(case.order) eq true && #lists.isEmpty(case.quotation) eq true) && #lists.isEmpty(case.inquiry) eq false}"
-												th:text="問い合わせ"></span>
+												th:text="#{inquiry}"></span>
 										</th:block>
 									</th:block>
 								</td>

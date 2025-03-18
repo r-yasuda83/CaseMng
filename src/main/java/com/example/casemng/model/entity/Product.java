@@ -1,4 +1,4 @@
-package com.example.casemng.entity;
+package com.example.casemng.model.entity;
 
 import jakarta.validation.constraints.NotBlank;
 

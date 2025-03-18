@@ -7,9 +7,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,11 +15,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 
-import com.example.casemng.entity.CustomUserDetails;
-import com.example.casemng.entity.User;
+import com.example.casemng.model.entity.CustomUserDetails;
+import com.example.casemng.model.entity.User;
 import com.example.casemng.repository.UserMapper;
 import com.example.casemng.service.UserService;
 
@@ -104,55 +100,8 @@ public class UserServiceImpl implements UserService {
 	public void logicalDelete(int id) {
 		userMapper.logicalDelete(id);
 	}
-
-	public String duplicatesUserId(String userId) {
-		String errMsg = null;
-		List<User> userList = userMapper.findAll();
-		for (User user : userList) {
-			if (user.getUserId().equals(userId)) {
-				errMsg = "このユーザーIDは既に使われています";
-				break;
-			}
-		}
-		return errMsg;
-	}
-
-	public String duplicatesUserIdWithoutId(User user) {
-		String errMsg = null;
-		List<User> userList = userMapper.findWithoutThisId(user.getId());
-		for (User check : userList) {
-			if (check.getUserId().equals(user.getUserId())) {
-				errMsg = "このユーザーIDは既に使われています";
-				break;
-			}
-		}
-		return errMsg;
-	}
-
-	public String pagenation(String searchKey, Integer displayedNum, String sortKey, String sortDirection,
-			Pageable pageable, Model model) {
-		if (searchKey == null) {
-			searchKey = "";
-		}
-		Sort sort = null;
-		if (StringUtils.hasLength(sortDirection)) {
-			String sd = sortDirection.equals(Sort.Direction.ASC.name()) ? Sort.Direction.ASC.name()
-					: Sort.Direction.DESC.name();
-			String si = sortKey;
-			model.addAttribute("sortKey", si);
-
-			sort = Sort.by(Sort.Direction.fromString(sd), si);
-			model.addAttribute("sortDirection", sd);
-		} else {
-			sort = Sort.by(Sort.Direction.ASC, "id");
-		}
-		if (displayedNum == null) {
-			displayedNum = 5;
-		}
-		Pageable p = sort == null ? pageable : PageRequest.of(pageable.getPageNumber(), displayedNum, sort);
-		Page<User> user = findByKeyword(p, "%" + searchKey + "%");
-		model.addAttribute("page", user);
-
-		return "user/list";
+	
+	public List<User> findWithoutThisId(int id){
+		return userMapper.findWithoutThisId(id);
 	}
 }

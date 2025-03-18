@@ -85,12 +85,12 @@
 			</thead>
 			<tbody>
 				<tr th:each="item:${page}">
-					<td><a th:text="${item.id}" th:href="@{/product/{id}(id=${item.id})}"></a></td>
-					<td><a th:text="${item.productName}" th:href="@{/product/{id}(id=${item.id})}"></a></td>
-					<td><a th:text="${item.price}" th:href="@{/product/{id}(id=${item.id})}"></a></td>
+					<td><a th:text="${item.id}" th:href="@{/product/{productId}(productId=${item.id})}"></a></td>
+					<td><a th:text="${item.productName}" th:href="@{/product/{productId}(productId=${item.id})}"></a></td>
+					<td><a th:text="${item.price}" th:href="@{/product/{productId}(productId=${item.id})}"></a></td>
 					<td><a th:classappend="${item.stock == 0} ? 'stock0'" th:text="${item.stock}"
-							th:href="@{/product/{id}(id=${item.id})}"></a></td>
-					<td><a th:text="${item.choose}? '不可':'可'" th:href="@{/product/{id}(id=${item.id})}"></a></td>
+							th:href="@{/product/{productId}(productId=${item.id})}"></a></td>
+					<td><a th:text="${item.choose}? '不可':'可'" th:href="@{/product/{productId}(productId=${item.id})}"></a></td>
 				</tr>
 			</tbody>
 		</table>
@@ -101,7 +101,7 @@
 					<!-- 前へ -->
 					<li th:if="${page.hasPrevious()}" class="page-item">
 						<a class="page-link"
-							th:href="@{/product(keyword=${search.keyword}, sortKey=${search.sortKey}, sortDirection=${search.sortDirection}, displayedNum=${search.displayedNum}, page=${page.number - 1})}">
+							th:href="@{/product(keyword=${search.keyword}, sortKey=${search.sortKey}, sortDirection=${search.sortDirection}, displayedNum=${search.displayedNum}, page=${page.number})}">
 							前へ
 						</a>
 					</li>
@@ -114,7 +114,7 @@
 						</li>
 						<li th:case="*" class="page-item">
 							<a class="page-link"
-								th:href="@{/product(keyword=${search.keyword}, sortKey=${search.sortKey}, sortDirection=${search.sortDirection}, displayedNum=${search.displayedNum}, page=${i})}"
+								th:href="@{/product(keyword=${search.keyword}, sortKey=${search.sortKey}, sortDirection=${search.sortDirection}, displayedNum=${search.displayedNum}, page=${i+1})}"
 								th:text="${i + 1}">
 							</a>
 						</li>
@@ -123,7 +123,7 @@
 					<!-- 次へ -->
 					<li th:if="${page.hasNext()}" class="page-item">
 						<a class="page-link"
-							th:href="@{/product(keyword=${search.keyword}, sortKey=${search.sortKey}, sortDirection=${search.sortDirection}, displayedNum=${search.displayedNum}, page=${page.number + 1})}">
+							th:href="@{/product(keyword=${search.keyword}, sortKey=${search.sortKey}, sortDirection=${search.sortDirection}, displayedNum=${search.displayedNum}, page=${page.number + 2})}">
 							次へ
 						</a>
 					</li>

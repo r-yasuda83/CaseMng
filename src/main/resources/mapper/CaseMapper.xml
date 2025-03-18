@@ -226,7 +226,7 @@
 		)
 	</insert>
 
-	<resultMap type="com.example.casemng.entity.Case" id="case">
+	<resultMap type="com.example.casemng.model.entity.Case" id="case">
 		<id property="id" column="id" />
 		<result property="caseName" column="case_name" />
 		<result property="customerId" column="customer_id" />
@@ -245,7 +245,7 @@
 			columnPrefix="inqu_" />
 	</resultMap>
 	
-	<resultMap type="com.example.casemng.entity.CaseForList" id="caseList">
+	<resultMap type="com.example.casemng.model.entity.CaseForList" id="caseList">
 		<id property="id" column="id" />
 		<result property="caseName" column="case_name" />
 		<result property="customerId" column="customer_id" />
@@ -262,7 +262,7 @@
 			columnPrefix="inqu_" />
 	</resultMap>
 
-	<resultMap type="com.example.casemng.entity.Customer"
+	<resultMap type="com.example.casemng.model.entity.Customer"
 		id="cust">
 		<id property="id" column="id" />
 		<result property="lastName" column="last_name" />
@@ -273,13 +273,13 @@
 		<result property="memo" column="memo" />
 	</resultMap>
 
-	<resultMap type="com.example.casemng.entity.Order" id="order">
+	<resultMap type="com.example.casemng.model.entity.Order" id="order">
 		<id property="id" column="id" />
 		<result property="orderDate" column="order_date" />
 		<result property="memo" column="memo" />
 	</resultMap>
 
-	<resultMap type="com.example.casemng.entity.Product"
+	<resultMap type="com.example.casemng.model.entity.Product"
 		id="prdu">
 		<id property="id" column="id" />
 		<result property="productName" column="product_name" />
@@ -290,14 +290,14 @@
 		<result property="choose" column="is_choose" />
 	</resultMap>
 
-	<resultMap type="com.example.casemng.entity.Quotation"
+	<resultMap type="com.example.casemng.model.entity.Quotation"
 		id="quot">
 		<id property="id" column="id" />
 		<result property="quotationDate" column="quotation_date" />
 		<result property="memo" column="memo" />
 	</resultMap>
 
-	<resultMap type="com.example.casemng.entity.Inquiry"
+	<resultMap type="com.example.casemng.model.entity.Inquiry"
 		id="inqu">
 		<id property="id" column="id" />
 		<result property="inquiryDate" column="inququiry_date" />

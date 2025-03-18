@@ -16,7 +16,7 @@
 				<div th:text="商品登録"></div>
 			</div>
 			<div class="card-body">
-				<form th:action="@{/product/create}" method="post" th:object="${formProduct}">
+				<form th:action="@{/product/create}" method="post" th:object="${productForm}">
 
 					<div class="row mb-3">
 						<label class="col-sm-2 col-form-label">商品名</label>
@@ -47,10 +47,10 @@
 						<label class="col-sm-2 col-form-label">受注・見積登録</label>
 						<div class="col-sm-2">
 							<input class="form-check-input" type="radio" th:field="*{choose}" th:value="false"
-								th:checked="${formProduct.choose == false}">
+								th:checked="${productForm.choose == false}">
 							<label th:text="登録可"></label>
 							<input class="form-check-input" type="radio" th:field="*{choose}" th:value="true"
-								th:checked="${formProduct.choose == true}">
+								th:checked="${productForm.choose == true}">
 							<label th:text="登録不可"></label>
 						</div>
 					</div>

@@ -5,6 +5,7 @@ import java.util.Date;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
@@ -17,12 +18,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.casemng.entity.Case;
-import com.example.casemng.entity.Customer;
+import com.example.casemng.constant.Constant;
 import com.example.casemng.form.CaseEntryForm;
 import com.example.casemng.form.CaseForm;
 import com.example.casemng.form.OrderForm;
 import com.example.casemng.form.SearchForm;
+import com.example.casemng.model.CaseValidator;
+import com.example.casemng.model.Pagenation;
+import com.example.casemng.model.entity.Case;
+import com.example.casemng.model.entity.CaseForList;
+import com.example.casemng.model.entity.Customer;
 import com.example.casemng.service.CaseService;
 import com.example.casemng.service.CustomerService;
 
@@ -40,9 +45,12 @@ public class CaseController {
 
 	@Autowired
 	CustomerService customerService;
-	
+
 	@Autowired
 	MessageSource messageSource;
+
+	@Autowired
+	Pagenation pagenation;
 
 	@GetMapping("/case")
 	public String getList(@ModelAttribute("search") SearchForm form,
@@ -51,11 +59,23 @@ public class CaseController {
 			@RequestParam(required = false) String sortDirection,
 			@PageableDefault(size = 5) Pageable pageable, Model model) {
 
-		return caseService.pagenation(form.getKeyword(), displayedNum, sortKey, sortDirection, pageable, model);
+		Pageable p = pagenation.getPageable(displayedNum, sortKey, sortDirection, pageable, model);
+
+		String searchKey = null;
+		if (form.getKeyword() == null) {
+			searchKey = "";
+		} else {
+			searchKey = form.getKeyword();
+		}
+
+		Page<CaseForList> cases = caseService.findByKeyword(p, "%" + searchKey + "%");
+		model.addAttribute("page", cases);
+
+		return "case/list";
 	}
 
 	@GetMapping("/case/{id}")
-	public String getEdit(@ModelAttribute("formCase") CaseForm form, @PathVariable int id, Model model) {
+	public String getEdit(@ModelAttribute("caseForm") CaseForm form, @PathVariable int id, Model model) {
 
 		Case cases = caseService.findById(id);
 		if (cases == null) {
@@ -70,30 +90,34 @@ public class CaseController {
 			form.setOrder(modelMapper.map(cases.getOrder(), OrderForm.class));
 		}
 
-		model.addAttribute("formCase", form);
+		model.addAttribute("caseForm", form);
+		model.addAttribute("shippingStatus", Constant.ShippingStatus.values());
 		return "case/edit";
 	}
+	
+	@Autowired
+	CaseValidator caseValidator;
 
 	@PostMapping("/case/{id}/edit")
-	public String postEdit(@ModelAttribute("formCase") @Validated CaseForm form, BindingResult result,
+	public String postEdit(@ModelAttribute("caseForm") @Validated CaseForm form, BindingResult result,
 			@PathVariable int id, Model model) {
+		
+		caseValidator.validate(form, result);
 
 		if (result.hasErrors()) {
 			return getEdit(form, id, model);
 		}
 
 		Case conv = modelMapper.map(form, Case.class);
-
-		if (caseService.caseEdit(conv, result).hasErrors()) {
-			return getEdit(form, id, model);
-		}
+		caseService.caseEdit(conv);
 
 		int customerId = form.getCustomerId();
 		return "redirect:/customer/" + customerId + "?caseId=" + form.getId();
 	}
 
 	@GetMapping("/case/create/{id}")
-	public String getCreate(@PathVariable("id") int customerId, Model model) {
+	public String getCreate(@ModelAttribute("caseEntryForm") CaseEntryForm form, @PathVariable("id") int customerId,
+			Model model) {
 
 		Customer check = customerService.findById(customerId);
 		if (check == null) {
@@ -101,18 +125,17 @@ public class CaseController {
 			return "error";
 		}
 
-		CaseEntryForm form = new CaseEntryForm();
 		form.setCustomerId(customerId);
-		model.addAttribute("formCaseEntry", form);
+		model.addAttribute("caseEntryForm", form);
 		return "case/create";
 	}
 
 	@PostMapping("/case/create/{id}")
-	public String postCreate(@ModelAttribute("formCaseEntry") @Validated CaseEntryForm form, BindingResult result,
+	public String postCreate(@ModelAttribute("caseEntryForm") @Validated CaseEntryForm form, BindingResult result,
 			@PathVariable int id, Model model) {
 
 		if (result.hasErrors()) {
-			return "case/create";
+			return getCreate(form, id, model);
 		}
 		Date today = new Date();
 		form.setCaseDate(today);

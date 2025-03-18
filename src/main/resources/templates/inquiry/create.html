@@ -16,8 +16,8 @@
 				<span>問い合わせ登録</span>
 			</div>
 			<div class="card-body">
-				<form th:action="@{/inquiry/create/{caseId}(caseId=${formInquiry.caseId})}" method="post"
-					th:object="${formInquiry}">
+				<form th:action="@{/inquiry/create/{caseId}(caseId=${inquiryForm.caseId})}" method="post"
+					th:object="${inquiryForm}">
 
 					<input type="hidden" th:field="*{cases.customerId}">
 
@@ -37,7 +37,7 @@
 					</div>
 					<div>
 						<input type="button"
-							th:onclick="|location.href='@{/customer/{id}(id=${formInquiry.cases.customerId}, caseId=${formInquiry.caseId})}'|"
+							th:onclick="|location.href='@{/customer/{id}(id=${inquiryForm.cases.customerId}, caseId=${inquiryForm.caseId})}'|"
 							value="取消">
 						<input type="submit" value="保存">
 					</div>

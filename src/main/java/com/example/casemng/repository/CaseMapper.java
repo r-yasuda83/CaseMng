@@ -6,13 +6,13 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.data.domain.Pageable;
 
-import com.example.casemng.entity.Case;
-import com.example.casemng.entity.CaseForList;
+import com.example.casemng.model.entity.Case;
+import com.example.casemng.model.entity.CaseForList;
 
 @Mapper
 public interface CaseMapper {
 
-	public List<Case> findAll(RowBounds rowBounds);
+	public List<Case> findAll();
 	public List<CaseForList> findByKeyword(RowBounds rowBounds, String searchKey, Pageable pageable);
 	public Long count(String searchKey);
 	public Case findById(int id);

@@ -14,13 +14,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.example.casemng.entity.Case;
-import com.example.casemng.entity.Order;
-import com.example.casemng.entity.OrderProduct;
-import com.example.casemng.entity.Product;
 import com.example.casemng.form.CaseForm;
 import com.example.casemng.form.OrderForm;
 import com.example.casemng.form.OrderProductForm;
+import com.example.casemng.model.OrderProductListValidator;
+import com.example.casemng.model.entity.Case;
+import com.example.casemng.model.entity.Order;
+import com.example.casemng.model.entity.OrderProduct;
+import com.example.casemng.model.entity.Product;
 import com.example.casemng.service.CaseService;
 import com.example.casemng.service.OrderProductService;
 import com.example.casemng.service.OrderService;
@@ -48,7 +49,7 @@ public class OrderController {
 	CaseService caseService;
 
 	@GetMapping("/order/{id}")
-	public String getEdit(@ModelAttribute("formOrder") OrderForm form, @PathVariable int id, Model model) {
+	public String getEdit(@ModelAttribute("orderForm") OrderForm form, @PathVariable int id, Model model) {
 
 		Order order = orderService.findById(id);
 
@@ -67,7 +68,7 @@ public class OrderController {
 			return "error";
 		}
 
-		model.addAttribute("formOrder", form);
+		model.addAttribute("orderForm", form);
 
 		List<Product> productList = productService.findAll();
 		model.addAttribute("productList", productList);
@@ -75,27 +76,27 @@ public class OrderController {
 		return "order/edit";
 	}
 
+	@Autowired
+	private OrderProductListValidator orderProductListValidator;
+
 	@PostMapping("/order/{id}/edit")
-	public String postEdit(@ModelAttribute("formOrder") @Validated OrderForm form, BindingResult result,
+	public String postEdit(@ModelAttribute("orderForm") @Validated OrderForm form, BindingResult result,
 			@PathVariable int id, Model model) {
 
-		Order order = modelMapper.map(form, Order.class);
+		orderProductListValidator.validate(form, result);
 
-		result = orderProductService.comparisonStock(order.getOrderProduct(), result);
-		result = orderProductService.checkDiscount(order.getOrderProduct(), result);
-		result = orderProductService.checkProduct(order.getOrderProduct(), result);
-		
 		if (result.hasErrors()) {
 			return getEdit(form, id, model);
-		} else {
-			orderService.orderEdit(order);
-			orderProductService.edit(order.getOrderProduct(), order.getId());
-			return "redirect:/customer/" + order.getCases().getCustomerId() + "?caseId=" + order.getCaseId();
 		}
+
+		Order order = modelMapper.map(form, Order.class);
+		orderService.orderEdit(order);
+		orderProductService.edit(order.getOrderProduct(), order.getId());
+		return "redirect:/customer/" + order.getCases().getCustomerId() + "?caseId=" + order.getCaseId();
 	}
 
 	@GetMapping("/order/create/{caseId}")
-	public String getCreate(@ModelAttribute("formOrder") OrderForm form, @PathVariable int caseId,
+	public String getCreate(@ModelAttribute("orderForm") OrderForm form, @PathVariable int caseId,
 			Model model) {
 
 		Case cases = caseService.findById(caseId);
@@ -121,7 +122,7 @@ public class OrderController {
 			form.setOrderProduct(listForm);
 		}
 
-		model.addAttribute("formOrder", form);
+		model.addAttribute("orderForm", form);
 		List<Product> productList = productService.findAllForSelectStock();
 		model.addAttribute("productList", productList);
 		model.addAttribute("distinction", "orderProduct");
@@ -129,23 +130,22 @@ public class OrderController {
 	}
 
 	@PostMapping("/order/create/{caseId}")
-	public String postCreate(@ModelAttribute("formOrder") @Validated OrderForm form, BindingResult result,
+	public String postCreate(@ModelAttribute("orderForm") @Validated OrderForm form, BindingResult result,
 			@PathVariable int caseId, Model model) {
 
-		Order order = modelMapper.map(form, Order.class);
-
-		result = orderProductService.comparisonStock(order.getOrderProduct(), result);
-		result = orderProductService.checkDiscount(order.getOrderProduct(), result);
+		orderProductListValidator.validate(form, result);
 
 		if (result.hasErrors()) {
 			return getCreate(form, caseId, model);
-		} else {
-			int orderId = orderService.create(order);
-			List<OrderProduct> list = orderProductService.setOrdersId(order.getOrderProduct(), orderId);
-			orderProductService.addOrderProduct(list);
-
-			return "redirect:/customer/" + order.getCases().getCustomerId() + "?caseId=" + order.getCaseId();
 		}
+
+		Order order = modelMapper.map(form, Order.class);
+		int orderId = orderService.create(order);
+		List<OrderProduct> list = orderProductService.setOrdersId(order.getOrderProduct(), orderId);
+		orderProductService.addOrderProduct(list);
+
+		return "redirect:/customer/" + order.getCases().getCustomerId() + "?caseId=" + order.getCaseId();
+
 	}
 
 	@PostMapping("/order/delete/{id}")

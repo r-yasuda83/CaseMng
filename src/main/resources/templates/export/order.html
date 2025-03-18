@@ -46,7 +46,7 @@
 					<th:block th:each="status : ${shippingStatus}">
 						<td th:if="${status.value eq item.orders.cases.shippingStatus}" th:text="${status.view}"></td>
 					</th:block>
-					<td th:if="${item.orders.cases.shippingStatus == 0}" th:text="受注"></td>
+					<td th:if="${item.orders.cases.shippingStatus == 0}" th:text="#{order}"></td>
 					<td th:text="${#dates.format(item.orders.orderDate, 'yyyy-MM-dd')}"></td>
 					<td th:text="${item.orders.cases.id}"></td>
 					<td th:text="${item.orders.cases.caseName}"></td>

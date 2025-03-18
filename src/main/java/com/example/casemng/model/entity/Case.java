@@ -1,4 +1,4 @@
-package com.example.casemng.entity;
+package com.example.casemng.model.entity;
 
 import java.util.Date;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class CaseForList {
+public class Case {
 
 	private int id;
 
@@ -16,9 +16,13 @@ public class CaseForList {
 
 	private Date caseDate;
 
-	private String status;
+	private int shippingStatus;
+
+	private String memo;
 	
 	private boolean shippingStockFlg;
+
+	private boolean isDeleted;
 	
 	private Customer customer;
 	

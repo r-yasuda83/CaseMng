@@ -2,8 +2,8 @@ package com.example.casemng.service;
 
 import java.util.List;
 
-import com.example.casemng.entity.Quotation;
-import com.example.casemng.entity.QuotationProduct;
+import com.example.casemng.model.entity.Quotation;
+import com.example.casemng.model.entity.QuotationProduct;
 
 public interface QuotationService {
 
