@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.data.domain.Pageable;
 
-import com.example.casemng.entity.Customer;
+import com.example.casemng.model.entity.Customer;
 
 @Mapper
 public interface CustomerMapper {

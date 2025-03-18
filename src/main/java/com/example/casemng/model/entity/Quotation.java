@@ -1,4 +1,4 @@
-package com.example.casemng.entity;
+package com.example.casemng.model.entity;
 
 import java.util.Date;
 import java.util.List;

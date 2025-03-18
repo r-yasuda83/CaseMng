@@ -43,13 +43,13 @@
 								<span th:case=${status.value} th:text="${status.view}"></span>
 							</th:block>
 							<th:block th:case="*">
-								<span th:if="${#lists.isEmpty(item.order) eq false}" th:text="受注"></span>
+								<span th:if="${#lists.isEmpty(item.order) eq false}" th:text="#{order}"></span>
 								<span
 									th:if="${#lists.isEmpty(item.order) eq true && #lists.isEmpty(item.quotation) eq false}"
-									th:text="見積"></span>
+									th:text="#{quotation}"></span>
 								<span
 									th:if="${(#lists.isEmpty(item.order) eq true && #lists.isEmpty(item.quotation) eq true) && #lists.isEmpty(item.inquiry) eq false}"
-									th:text="問い合わせ"></span>
+									th:text="#{inquiry}"></span>
 							</th:block>
 						</th:block>
 					</td>

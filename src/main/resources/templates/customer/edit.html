@@ -13,11 +13,11 @@
 	<div class="mt-3" style="width:90%; margin: 0 auto;" layout:fragment="content">
 		<div class="card m-3">
 			<div class="card-header d-flex justify-content-between align-items-center">
-				<div th:text="${'顧客ID：' + formCustomer.id + ' ' + formCustomer.getFullName() + ' 様'}"></div>
+				<div th:text="${'顧客ID：' + customerForm.id + ' ' + customerForm.getFullName() + ' 様'}"></div>
 			</div>
 			<div class="card-body">
-				<form th:action="@{/customer/{id}/edit(id=${formCustomer.id})}" method="post"
-					th:object="${formCustomer}">
+				<form th:action="@{/customer/{customerId}/edit(customerId=${customerForm.id})}" method="post"
+					th:object="${customerForm}">
 					<input type="hidden" th:field="*{id}">
 
 					<div class="row mb-3">
@@ -69,7 +69,7 @@
 					</div>
 
 					<div>
-						<input type="button" th:onclick="|location.href='@{/customer/{id}(id=${formCustomer.id})}'|"
+						<input type="button" th:onclick="|location.href='@{/customer/{customerId}(customerId=${customerForm.id})}'|"
 							value="取消">
 						<input type="submit" value="保存">
 					</div>

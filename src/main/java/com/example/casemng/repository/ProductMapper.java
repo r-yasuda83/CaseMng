@@ -6,8 +6,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.data.domain.Pageable;
 
-import com.example.casemng.entity.OrderProduct;
-import com.example.casemng.entity.Product;
+import com.example.casemng.model.entity.OrderProduct;
+import com.example.casemng.model.entity.Product;
 
 @Mapper
 public interface ProductMapper {

@@ -2,7 +2,7 @@ package com.example.casemng.service;
 
 import java.util.List;
 
-import com.example.casemng.entity.Inquiry;
+import com.example.casemng.model.entity.Inquiry;
 
 public interface InquiryService {
 

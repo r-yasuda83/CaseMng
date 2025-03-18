@@ -91,7 +91,7 @@
 					<!-- 前へ -->
 					<li th:if="${page.hasPrevious()}" class="page-item">
 						<a class="page-link"
-							th:href="@{/admin/user(keyword=${search.keyword}, sortKey=${search.sortKey}, sortDirection=${search.sortDirection}, displayedNum=${search.displayedNum}, page=${page.number - 1})}">
+							th:href="@{/admin/user(keyword=${search.keyword}, sortKey=${search.sortKey}, sortDirection=${search.sortDirection}, displayedNum=${search.displayedNum}, page=${page.number})}">
 							前へ
 						</a>
 					</li>
@@ -104,7 +104,7 @@
 						</li>
 						<li th:case="*" class="page-item">
 							<a class="page-link"
-								th:href="@{/admin/user(keyword=${search.keyword}, sortKey=${search.sortKey}, sortDirection=${search.sortDirection}, displayedNum=${search.displayedNum}, page=${i})}"
+								th:href="@{/admin/user(keyword=${search.keyword}, sortKey=${search.sortKey}, sortDirection=${search.sortDirection}, displayedNum=${search.displayedNum}, page=${i+1})}"
 								th:text="${i + 1}">
 							</a>
 						</li>
@@ -113,7 +113,7 @@
 					<!-- 次へ -->
 					<li th:if="${page.hasNext()}" class="page-item">
 						<a class="page-link"
-							th:href="@{/admin/user(keyword=${search.keyword}, sortKey=${search.sortKey}, sortDirection=${search.sortDirection}, displayedNum=${search.displayedNum}, page=${page.number + 1})}">
+							th:href="@{/admin/user(keyword=${search.keyword}, sortKey=${search.sortKey}, sortDirection=${search.sortDirection}, displayedNum=${search.displayedNum}, page=${page.number + 2})}">
 							次へ
 						</a>
 					</li>

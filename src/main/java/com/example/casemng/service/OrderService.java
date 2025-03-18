@@ -2,8 +2,8 @@ package com.example.casemng.service;
 
 import java.util.List;
 
-import com.example.casemng.entity.Order;
-import com.example.casemng.entity.OrderProduct;
+import com.example.casemng.model.entity.Order;
+import com.example.casemng.model.entity.OrderProduct;
 
 public interface OrderService {
 

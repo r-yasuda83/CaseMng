@@ -94,7 +94,7 @@
 		)
 	</insert>
 
-	<resultMap type="com.example.casemng.entity.Inquiry" id="inq">
+	<resultMap type="com.example.casemng.model.entity.Inquiry" id="inq">
 		<id property="id" column="id" />
 		<result property="caseId" column="case_id" />
 		<result property="inquiryDate" column="inquiry_date" />
@@ -103,7 +103,7 @@
 			columnPrefix="case_" />
 	</resultMap>
 
-	<resultMap type="com.example.casemng.entity.Case" id="cases">
+	<resultMap type="com.example.casemng.model.entity.Case" id="cases">
 		<id property="id" column="id" />
 		<result property="caseName" column="case_name" />
 		<result property="customerId" column="customer_id" />
@@ -114,7 +114,7 @@
 			columnPrefix="cust_" />
 	</resultMap>
 
-	<resultMap type="com.example.casemng.entity.Customer"
+	<resultMap type="com.example.casemng.model.entity.Customer"
 		id="cust">
 		<id property="id" column="id" />
 		<result property="lastName" column="last_name" />

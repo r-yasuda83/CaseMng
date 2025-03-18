@@ -14,13 +14,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.example.casemng.entity.Case;
-import com.example.casemng.entity.Product;
-import com.example.casemng.entity.Quotation;
-import com.example.casemng.entity.QuotationProduct;
 import com.example.casemng.form.CaseForm;
 import com.example.casemng.form.QuotationForm;
 import com.example.casemng.form.QuotationProductForm;
+import com.example.casemng.model.QuotationProductListValidator;
+import com.example.casemng.model.entity.Case;
+import com.example.casemng.model.entity.Product;
+import com.example.casemng.model.entity.Quotation;
+import com.example.casemng.model.entity.QuotationProduct;
 import com.example.casemng.service.CaseService;
 import com.example.casemng.service.ProductService;
 import com.example.casemng.service.QuotationProductService;
@@ -45,7 +46,7 @@ public class QuotationController {
 	CustomerController customerCtrl;
 
 	@GetMapping("/quotation/{id}")
-	public String getEdit(@ModelAttribute("formQuotation") QuotationForm form, @PathVariable int id, Model model) {
+	public String getEdit(@ModelAttribute("quotationForm") QuotationForm form, @PathVariable int id, Model model) {
 
 		Quotation quotation = quotationService.findById(id);
 
@@ -57,38 +58,38 @@ public class QuotationController {
 			form = modelMapper.map(quotation, QuotationForm.class);
 		}
 
-		model.addAttribute("formQuotation", form);
+		model.addAttribute("quotationForm", form);
 		List<Product> productList = productService.findAll();
 		model.addAttribute("productList", productList);
 		model.addAttribute("distinction", "quotationProduct");
 		return "quotation/edit";
 	}
 
+	@Autowired
+	private QuotationProductListValidator quotationProductListValidator;
+
 	@PostMapping("/quotation/{id}/edit")
-	public String postEdit(@ModelAttribute("formQuotation") @Validated QuotationForm form, BindingResult result,
+	public String postEdit(@ModelAttribute("quotationForm") @Validated QuotationForm form, BindingResult result,
 			@PathVariable int id, Model model) {
 
-		Quotation quotation = modelMapper.map(form, Quotation.class);
-
-		result = quotationProductService.comparisonStock(quotation.getQuotationProduct(), result);
-		result = quotationProductService.checkDiscount(quotation.getQuotationProduct(), result);
-		result = quotationProductService.checkProduct(quotation.getQuotationProduct(), result);
+		quotationProductListValidator.validate(form, result);
 
 		if (result.hasErrors()) {
 			return getEdit(form, id, model);
-		} else {
-			quotationService.quotationEdit(quotation);
-			quotationProductService.edit(quotation.getQuotationProduct(), quotation.getId());
-			return "redirect:/customer/" + quotation.getCases().getCustomerId() + "?caseId=" + quotation.getCaseId()
-					+ "&quotationId=" + quotation.getId();
 		}
+
+		Quotation quotation = modelMapper.map(form, Quotation.class);
+		quotationService.quotationEdit(quotation);
+		quotationProductService.edit(quotation.getQuotationProduct(), quotation.getId());
+		return "redirect:/customer/" + quotation.getCases().getCustomerId() + "?caseId=" + quotation.getCaseId()
+				+ "&quotationId=" + quotation.getId();
 	}
 
 	@Autowired
 	CaseService caseService;
 
 	@GetMapping("/quotation/create/{caseId}")
-	public String getCreate(@ModelAttribute("formQuotation") QuotationForm form, @PathVariable int caseId,
+	public String getCreate(@ModelAttribute("quotationForm") QuotationForm form, @PathVariable int caseId,
 			Model model) {
 
 		Case cases = caseService.findById(caseId);
@@ -109,7 +110,7 @@ public class QuotationController {
 			form.setQuotationProduct(listForm);
 		}
 
-		model.addAttribute("formQuotation", form);
+		model.addAttribute("quotationForm", form);
 		List<Product> productList = productService.findAllForSelect();
 		model.addAttribute("productList", productList);
 		model.addAttribute("distinction", "quotationProduct");
@@ -117,26 +118,24 @@ public class QuotationController {
 	}
 
 	@PostMapping("/quotation/create/{caseId}")
-	public String postCreate(@ModelAttribute("formQuotation") @Validated QuotationForm form, BindingResult result,
+	public String postCreate(@ModelAttribute("quotationForm") @Validated QuotationForm form, BindingResult result,
 			@PathVariable int caseId, Model model) {
 
-
-		Quotation quotation = modelMapper.map(form, Quotation.class);
-
-		result = quotationProductService.comparisonStock(quotation.getQuotationProduct(), result);
-		result = quotationProductService.checkDiscount(quotation.getQuotationProduct(), result);
+		quotationProductListValidator.validate(form, result);
 
 		if (result.hasErrors()) {
 			return getCreate(form, caseId, model);
-		} else {
-			int quotationId = quotationService.create(quotation);
-			List<QuotationProduct> list = quotationProductService.setQuotationId(quotation.getQuotationProduct(),
-					quotationId);
-			quotationProductService.addQuotationProduct(list);
-
-			return "redirect:/customer/" + quotation.getCases().getCustomerId() + "?caseId=" + quotation.getCaseId()
-					+ "&quotationId=" + quotationId;
 		}
+
+		Quotation quotation = modelMapper.map(form, Quotation.class);
+		int quotationId = quotationService.create(quotation);
+		List<QuotationProduct> list = quotationProductService.setQuotationId(quotation.getQuotationProduct(),
+				quotationId);
+		quotationProductService.addQuotationProduct(list);
+
+		return "redirect:/customer/" + quotation.getCases().getCustomerId() + "?caseId=" + quotation.getCaseId()
+				+ "&quotationId=" + quotationId;
+
 	}
 
 	@PostMapping("/quotation/delete/{id}")

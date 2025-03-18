@@ -179,7 +179,7 @@
 		id = #{id}
 	</update>
 	
-	<resultMap type="com.example.casemng.entity.User" id="user">
+	<resultMap type="com.example.casemng.model.entity.User" id="user">
 		<id property="id" column="id" />
 		<result property="userId" column="user_id" />
 		<result property="password" column="password" />
@@ -191,7 +191,7 @@
 		<association property="roles" columnPrefix="role_" resultMap="role" />
 	</resultMap>
 	
-	<resultMap type="com.example.casemng.entity.Role" id="role">
+	<resultMap type="com.example.casemng.model.entity.Role" id="role">
 		<id property="id" column="id" />
 		<result property="roleName" column="role_name" />
  	</resultMap>

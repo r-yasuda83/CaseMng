@@ -15,8 +15,8 @@
 				<span>新規案件登録</span>
 			</div>
 			<div class="card-body">
-				<form th:action="@{/case/create/{id}(id=${formCaseEntry.customerId})}" method="post"
-					th:object="${formCaseEntry}">
+				<form th:action="@{/case/create/{id}(id=${caseEntryForm.customerId})}" method="post"
+					th:object="${caseEntryForm}">
 					<input type="hidden" th:field="*{customerId}">
 
 					<div class="row mb-3">
@@ -35,7 +35,7 @@
 					</div>
 					<div>
 						<input type="button"
-							th:onclick="|location.href='@{/customer/{id}(id=${formCaseEntry.customerId})}'|" value="取消">
+							th:onclick="|location.href='@{/customer/{id}(id=${caseEntryForm.customerId})}'|" value="取消">
 						<input type="submit" value="保存">
 					</div>
 				</form>

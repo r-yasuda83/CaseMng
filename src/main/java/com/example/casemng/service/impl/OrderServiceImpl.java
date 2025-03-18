@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.casemng.entity.Order;
-import com.example.casemng.entity.OrderProduct;
+import com.example.casemng.model.entity.Order;
+import com.example.casemng.model.entity.OrderProduct;
 import com.example.casemng.repository.CaseMapper;
 import com.example.casemng.repository.OrderMapper;
 import com.example.casemng.repository.OrderProductMapper;

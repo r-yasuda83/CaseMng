@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.casemng.entity.Quotation;
-import com.example.casemng.entity.QuotationProduct;
+import com.example.casemng.model.entity.Quotation;
+import com.example.casemng.model.entity.QuotationProduct;
 import com.example.casemng.repository.QuotationMapper;
 import com.example.casemng.repository.QuotationProductMapper;
 import com.example.casemng.service.QuotationService;

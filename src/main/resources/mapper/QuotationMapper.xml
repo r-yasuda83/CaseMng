@@ -68,7 +68,7 @@
 		)
 	</insert>
 
-	<resultMap type="com.example.casemng.entity.Quotation"
+	<resultMap type="com.example.casemng.model.entity.Quotation"
 		id="quot">
 		<id property="id" column="id" />
 		<result property="caseId" column="case_id" />
@@ -78,7 +78,7 @@
 		<collection property="quotationProduct" resultMap="quoPr" columnPrefix="quoPr_"/>
 	</resultMap>
 
-	<resultMap type="com.example.casemng.entity.Case" id="cases">
+	<resultMap type="com.example.casemng.model.entity.Case" id="cases">
 		<id property="id" column="id" />
 		<result property="caseName" column="case_name" />
 		<result property="customerId" column="customer_id" />
@@ -88,7 +88,7 @@
 		<result property="isDeleted" column="is_deleted" />
 	</resultMap>
 	
-	<resultMap type="com.example.casemng.entity.QuotationProduct"
+	<resultMap type="com.example.casemng.model.entity.QuotationProduct"
 		id="quoPr">
 		<id property="id" column="id" />
 		<result property="quotationId" column="quotation_id" />
@@ -100,7 +100,7 @@
 			columnPrefix="prdu_" />
 	</resultMap>
 
-	<resultMap type="com.example.casemng.entity.Product"
+	<resultMap type="com.example.casemng.model.entity.Product"
 		id="prdu">
 		<id property="id" column="id" />
 		<result property="productName" column="product_name" />

@@ -13,10 +13,10 @@
 	<div class="mt-3" style="width:90%; margin: 0 auto;" layout:fragment="content">
 		<div class="card m-3">
 			<div class="card-header d-flex justify-content-between align-items-center">
-				<div th:text="${'商品ID：' + formProduct.id + '  '+ formProduct.productName}"></div>
+				<div th:text="${'商品ID：' + productForm.id + '  '+ productForm.productName}"></div>
 			</div>
 			<div class="card-body">
-				<form th:action="@{/product/{id}/edit(id=${formProduct.id})}" method="post" th:object="${formProduct}">
+				<form th:action="@{/product/{id}/edit(id=${productForm.id})}" method="post" th:object="${productForm}">
 					<input type="hidden" th:field="*{id}">
 
 					<div class="row mb-3">
@@ -48,10 +48,10 @@
 						<label class="col-sm-2 col-form-label">受注・見積登録可否</label>
 						<div class="col-sm-2">
 							<input class="form-check-input" type="radio" th:field="*{choose}" th:value="false"
-								th:checked="${formProduct.choose == false}">
+								th:checked="${productForm.choose == false}">
 							<label th:text="登録可"></label>
 							<input class="form-check-input" type="radio" th:field="*{choose}" th:value="true"
-								th:checked="${formProduct.choose == true}">
+								th:checked="${productForm.choose == true}">
 							<label th:text="登録不可"></label>
 						</div>
 					</div>

@@ -90,7 +90,7 @@
 		id = #{id}
 	</select>
 
-	<resultMap type="com.example.casemng.entity.OrderProduct"
+	<resultMap type="com.example.casemng.model.entity.OrderProduct"
 		id="ordPr">
 		<id property="id" column="id" />
 		<result property="ordersId" column="orders_id" />
@@ -104,7 +104,7 @@
 			columnPrefix="ord_"></association>
 	</resultMap>
 
-	<resultMap type="com.example.casemng.entity.Product"
+	<resultMap type="com.example.casemng.model.entity.Product"
 		id="prdu">
 		<id property="id" column="id" />
 		<result property="productName" column="product_name" />
@@ -115,7 +115,7 @@
 		<result property="choose" column="is_choose" />
 	</resultMap>
 
-	<resultMap type="com.example.casemng.entity.Order" id="ord">
+	<resultMap type="com.example.casemng.model.entity.Order" id="ord">
 		<id property="id" column="id" />
 		<result property="orderDate" column="order_date" />
 		<result property="memo" column="memo" />
@@ -123,7 +123,7 @@
 			columnPrefix="case_" />
 	</resultMap>
 
-	<resultMap type="com.example.casemng.entity.Case" id="case">
+	<resultMap type="com.example.casemng.model.entity.Case" id="case">
 		<id property="id" column="id" />
 		<result property="caseName" column="case_name" />
 		<result property="customerId" column="customer_id" />
@@ -135,7 +135,7 @@
 			columnPrefix="cus_" />
 	</resultMap>
 
-	<resultMap type="com.example.casemng.entity.Customer"
+	<resultMap type="com.example.casemng.model.entity.Customer"
 		id="cus">
 		<id property="id" column="id" />
 		<result property="lastName" column="last_name" />

@@ -2,6 +2,7 @@ package com.example.casemng.controller;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
@@ -15,9 +16,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.casemng.constant.Constant;
-import com.example.casemng.entity.Customer;
 import com.example.casemng.form.CustomerForm;
 import com.example.casemng.form.SearchForm;
+import com.example.casemng.model.Pagenation;
+import com.example.casemng.model.entity.Customer;
 import com.example.casemng.service.CustomerService;
 
 @Controller
@@ -28,6 +30,9 @@ public class CustomerController {
 	
 	@Autowired
 	ModelMapper modelMapper;
+	
+	@Autowired
+	Pagenation pagenation;
 
 	@GetMapping("/customer")
 	public String getList(@ModelAttribute("search") SearchForm form,
@@ -36,7 +41,18 @@ public class CustomerController {
 			@RequestParam(required = false) String sortDirection,
 			@PageableDefault(size = 5) Pageable pageable, Model model) {
 		
-		return customerService.pagenation(form.getKeyword(), displayedNum, sortKey, sortDirection, pageable, model);
+		Pageable p = pagenation.getPageable(displayedNum, sortKey, sortDirection, pageable, model);
+		
+		String searchKey = null;
+		if (form.getKeyword() == null) {
+			searchKey = "";
+		}else {
+			searchKey = form.getKeyword();
+		}
+		Page<Customer> customer = customerService.findByKeyword(p, "%" + searchKey + "%");
+		model.addAttribute("page", customer);
+
+		return "customer/list";
 	}
 
 	@GetMapping("/customer/{id}")
@@ -59,27 +75,30 @@ public class CustomerController {
 		return "customer/details";
 	}
 
-	@GetMapping("/customer/{id}/edit")
-	public String getEdit(@PathVariable int id, Model model) {
+	@GetMapping("/customer/{customerId}/edit")
+	public String getEdit(@ModelAttribute("customerForm") CustomerForm form, @PathVariable int customerId, Model model) {
 		
-		Customer customer = customerService.findByIdEdit(id);
-		CustomerForm form = modelMapper.map(customer, CustomerForm.class);
+		Customer customer = customerService.findByIdEdit(customerId);
 		
-		if (form == null) {
+		if (customer == null) {
 			model.addAttribute("msg", "存在しないIDです。");
 			return "error";
 		}
+		
+		if(form.getId() == 0) {
+			form = modelMapper.map(customer, CustomerForm.class);
+		}
 
-		model.addAttribute("formCustomer", form);
+		model.addAttribute("customerForm", form);
 		return "customer/edit";
 	}
 
 	@PostMapping("/customer/{id}/edit")
-	public String postEdit(@ModelAttribute("formCustomer") @Validated CustomerForm form,
+	public String postEdit(@ModelAttribute("customerForm") @Validated CustomerForm form,
 			BindingResult result, @PathVariable int id, Model model) {
 		
 		if (result.hasErrors()) {
-			return "customer/edit";
+			return getEdit(form, id, model);
 		}
 		
 		Customer customer = modelMapper.map(form, Customer.class);
@@ -88,19 +107,18 @@ public class CustomerController {
 	}
 
 	@GetMapping("/customer/create")
-	public String getCreate(Model model) {
+	public String getCreate(@ModelAttribute("customerForm") CustomerForm form, Model model) {
 		
-		CustomerForm form = new CustomerForm();
-		model.addAttribute("formCustomer", form);
+		model.addAttribute("customerForm", form);
 		return "customer/create";
 	}
 
 	@PostMapping("/customer/create")
-	public String postCreate(@ModelAttribute("formCustomer") @Validated CustomerForm form, BindingResult result,
+	public String postCreate(@ModelAttribute("customerForm") @Validated CustomerForm form, BindingResult result,
 			Model model) {
 		
 		if (result.hasErrors()) {
-			return "customer/create";
+			return getCreate(form, model);
 		}
 
 		Customer customer = modelMapper.map(form, Customer.class);
