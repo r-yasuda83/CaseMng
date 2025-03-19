@@ -20,11 +20,11 @@
 					<input type="hidden" th:field="*{id}">
 					<input type="hidden" th:field="*{customerId}">
 					<input type="hidden" th:field="*{shippingStockFlg}">
+					<input type="hidden" th:field="*{order.id}">
 
-					<div th:each="orderProduct, iterStat : *{order.orderProduct}">
-						<div th:if="${#fields.hasErrors('order.orderProduct[' + iterStat.index + '].quantity')}"
-							th:errors="*{order.orderProduct[__${iterStat.index}__].quantity}" th:errorclass="err"></div>
-					</div>
+					<th:block th:if="${errMsg != null}" th:each="str : ${errMsg}">
+						<p th:text="${str}" style="color: red;"></p>
+					</th:block>
 
 					<span th:if="${#fields.hasErrors('order')}" th:errors="*{order}" th:errorclass="err"></span>
 
@@ -43,6 +43,7 @@
 						</div>
 						<span th:if="${#fields.hasErrors('caseName')}" th:errors="*{caseName}" th:errorclass="err">
 					</div>
+					
 					<div class="row mb-3" th:if="*{order}">
 						<label class="col-sm-2 col-form-label">発送ステータス</label>
 						<div class="col-sm-2 d-flex align-items-center">
@@ -57,7 +58,8 @@
 							<select class="form-select" th:if="*{shippingStockFlg == true}"
 								th:field="*{shippingStatus}">
 								<th:block th:each="i : ${#numbers.sequence(3,4)}">
-									<option th:value="${shippingStatus[i-1].value}" th:text="${shippingStatus[i-1].view}"></option>
+									<option th:value="${shippingStatus[i-1].value}"
+										th:text="${shippingStatus[i-1].view}"></option>
 								</th:block>
 							</select>
 						</div>

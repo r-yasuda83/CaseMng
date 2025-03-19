@@ -1,16 +1,18 @@
-package com.example.casemng.form;
+package com.example.casemng.form.orderform;
+
+import java.io.Serializable;
 
 import lombok.Data;
 
 @Data
-public class QuotationProductForm {
-	
-	public QuotationProductForm() {
+public class OrderProductForm implements Serializable{
+
+	public OrderProductForm() {
 	}
 	
-	public QuotationProductForm(QuotationProductForm form) {
+	public OrderProductForm(OrderProductForm form) {
 		this.id = form.getId();
-		this.quotationId = form.getQuotationId();
+		this.ordersId = form.getOrdersId();
 	    this.productId = form.getProductId();
 	    this.quantity = form.getQuantity();
 	    this.discount = form.getDiscount();
@@ -18,15 +20,13 @@ public class QuotationProductForm {
 
 	private int id;
 
-	private int quotationId;
-
+	private int ordersId;
+	
 	private Integer productId;
-
+	
 	private Integer quantity;
-
+	
 	private Integer discount;
 
 	private boolean isDeleted;
-
-	private ProductForm product;
 }

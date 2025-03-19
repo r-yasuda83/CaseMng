@@ -1,10 +1,10 @@
 package com.example.casemng.controller;
 
 import java.util.Date;
+import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -19,11 +19,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.casemng.constant.Constant;
-import com.example.casemng.form.CaseEntryForm;
-import com.example.casemng.form.CaseForm;
-import com.example.casemng.form.OrderForm;
 import com.example.casemng.form.SearchForm;
-import com.example.casemng.model.CaseValidator;
+import com.example.casemng.form.caseform.CaseEntryForm;
+import com.example.casemng.form.caseform.CaseForm;
+import com.example.casemng.form.caseform.CaseOrderForm;
 import com.example.casemng.model.Pagenation;
 import com.example.casemng.model.entity.Case;
 import com.example.casemng.model.entity.CaseForList;
@@ -41,13 +40,7 @@ public class CaseController {
 	ModelMapper modelMapper;
 
 	@Autowired
-	CustomerController customerCtrl;
-
-	@Autowired
 	CustomerService customerService;
-
-	@Autowired
-	MessageSource messageSource;
 
 	@Autowired
 	Pagenation pagenation;
@@ -68,48 +61,48 @@ public class CaseController {
 			searchKey = form.getKeyword();
 		}
 
-		Page<CaseForList> cases = caseService.findByKeyword(p, "%" + searchKey + "%");
+		Page<CaseForList> cases = caseService.findByKeyword(p, searchKey);
 		model.addAttribute("page", cases);
 
 		return "case/list";
 	}
 
 	@GetMapping("/case/{id}")
-	public String getEdit(@ModelAttribute("caseForm") CaseForm form, @PathVariable int id, Model model) {
+	public String getEdit(@PathVariable int id, Model model) {
 
 		Case cases = caseService.findById(id);
 		if (cases == null) {
 			model.addAttribute("msg", "存在しないIDです。");
 			return "error";
 		}
-		if (form.getCustomerId() == 0) {
-			form = modelMapper.map(cases, CaseForm.class);
+		
+		if (!model.containsAttribute("caseForm")) {
+			CaseForm form = modelMapper.map(cases, CaseForm.class);
+			form.setOrder(modelMapper.map(cases.getOrder(), CaseOrderForm.class));
+			model.addAttribute("caseForm", form);
 		}
-		//バリデーションエラー時
-		if (form.getOrder() == null) {
-			form.setOrder(modelMapper.map(cases.getOrder(), OrderForm.class));
-		}
-
-		model.addAttribute("caseForm", form);
+		
 		model.addAttribute("shippingStatus", Constant.ShippingStatus.values());
 		return "case/edit";
 	}
-	
-	@Autowired
-	CaseValidator caseValidator;
 
 	@PostMapping("/case/{id}/edit")
 	public String postEdit(@ModelAttribute("caseForm") @Validated CaseForm form, BindingResult result,
 			@PathVariable int id, Model model) {
-		
-		caseValidator.validate(form, result);
 
+		Case cases = modelMapper.map(form, Case.class);
+		List<String> errMsg = caseService.checkStock(cases);
+
+		if(!errMsg.isEmpty()) {
+			model.addAttribute("errMsg", errMsg);
+			return getEdit(id, model);
+		}
+		
 		if (result.hasErrors()) {
-			return getEdit(form, id, model);
+			return getEdit(id, model);
 		}
 
-		Case conv = modelMapper.map(form, Case.class);
-		caseService.caseEdit(conv);
+		caseService.caseEdit(cases);
 
 		int customerId = form.getCustomerId();
 		return "redirect:/customer/" + customerId + "?caseId=" + form.getId();

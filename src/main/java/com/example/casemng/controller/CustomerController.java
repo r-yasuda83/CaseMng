@@ -49,7 +49,7 @@ public class CustomerController {
 		}else {
 			searchKey = form.getKeyword();
 		}
-		Page<Customer> customer = customerService.findByKeyword(p, "%" + searchKey + "%");
+		Page<Customer> customer = customerService.findByKeyword(p, searchKey);
 		model.addAttribute("page", customer);
 
 		return "customer/list";
@@ -76,7 +76,7 @@ public class CustomerController {
 	}
 
 	@GetMapping("/customer/{customerId}/edit")
-	public String getEdit(@ModelAttribute("customerForm") CustomerForm form, @PathVariable int customerId, Model model) {
+	public String getEdit(@PathVariable int customerId, Model model) {
 		
 		Customer customer = customerService.findByIdEdit(customerId);
 		
@@ -85,11 +85,11 @@ public class CustomerController {
 			return "error";
 		}
 		
-		if(form.getId() == 0) {
-			form = modelMapper.map(customer, CustomerForm.class);
+		if (!model.containsAttribute("customerForm")) {
+			CustomerForm form = modelMapper.map(customer, CustomerForm.class);
+			model.addAttribute("customerForm", form);
 		}
-
-		model.addAttribute("customerForm", form);
+		
 		return "customer/edit";
 	}
 
@@ -98,18 +98,23 @@ public class CustomerController {
 			BindingResult result, @PathVariable int id, Model model) {
 		
 		if (result.hasErrors()) {
-			return getEdit(form, id, model);
+			return getEdit(id, model);
 		}
 		
 		Customer customer = modelMapper.map(form, Customer.class);
 		customerService.customerEdit(customer);
 		return "redirect:/customer/" + id;
 	}
+	
+	@Autowired
+	CustomerForm customerForm;
 
 	@GetMapping("/customer/create")
-	public String getCreate(@ModelAttribute("customerForm") CustomerForm form, Model model) {
+	public String getCreate(Model model) {
 		
-		model.addAttribute("customerForm", form);
+		if (!model.containsAttribute("customerForm")) {
+			model.addAttribute("customerForm", customerForm);
+		}
 		return "customer/create";
 	}
 
@@ -118,7 +123,7 @@ public class CustomerController {
 			Model model) {
 		
 		if (result.hasErrors()) {
-			return getCreate(form, model);
+			return getCreate(model);
 		}
 
 		Customer customer = modelMapper.map(form, Customer.class);

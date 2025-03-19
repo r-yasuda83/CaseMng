@@ -3,7 +3,6 @@ package com.example.casemng.service.impl;
 import java.util.List;
 
 import org.apache.ibatis.session.RowBounds;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -26,9 +25,6 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	UserMapper userMapper;
-
-	@Autowired
-	ModelMapper modelMapper;
 
 	@Autowired
 	BCryptPasswordEncoder encoder;

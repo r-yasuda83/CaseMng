@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.example.casemng.form.CaseForm;
-import com.example.casemng.form.QuotationForm;
-import com.example.casemng.form.QuotationProductForm;
-import com.example.casemng.model.QuotationProductListValidator;
+import com.example.casemng.form.quantityform.QuantityCaseForm;
+import com.example.casemng.form.quantityform.QuotationForm;
+import com.example.casemng.form.quantityform.QuotationProductForm;
+import com.example.casemng.form.validator.QuotationProductListValidator;
 import com.example.casemng.model.entity.Case;
 import com.example.casemng.model.entity.Product;
 import com.example.casemng.model.entity.Quotation;
@@ -42,23 +42,19 @@ public class QuotationController {
 	@Autowired
 	QuotationProductService quotationProductService;
 
-	@Autowired
-	CustomerController customerCtrl;
-
 	@GetMapping("/quotation/{id}")
-	public String getEdit(@ModelAttribute("quotationForm") QuotationForm form, @PathVariable int id, Model model) {
+	public String getEdit(@PathVariable int id, Model model) {
 
 		Quotation quotation = quotationService.findById(id);
-
 		if (quotation == null) {
 			model.addAttribute("msg", "存在しないIDです。");
 			return "error";
 		}
-		if (form.getCaseId() == 0) {
-			form = modelMapper.map(quotation, QuotationForm.class);
+		if (!model.containsAttribute("quotationForm")) {
+			QuotationForm form = modelMapper.map(quotation, QuotationForm.class);
+			model.addAttribute("quotationForm", form);
 		}
 
-		model.addAttribute("quotationForm", form);
 		List<Product> productList = productService.findAll();
 		model.addAttribute("productList", productList);
 		model.addAttribute("distinction", "quotationProduct");
@@ -73,9 +69,8 @@ public class QuotationController {
 			@PathVariable int id, Model model) {
 
 		quotationProductListValidator.validate(form, result);
-
 		if (result.hasErrors()) {
-			return getEdit(form, id, model);
+			return getEdit(id, model);
 		}
 
 		Quotation quotation = modelMapper.map(form, Quotation.class);
@@ -87,9 +82,12 @@ public class QuotationController {
 
 	@Autowired
 	CaseService caseService;
-
+	
+	@Autowired
+	QuotationForm quotationForm;
+	
 	@GetMapping("/quotation/create/{caseId}")
-	public String getCreate(@ModelAttribute("quotationForm") QuotationForm form, @PathVariable int caseId,
+	public String getCreate(@PathVariable int caseId,
 			Model model) {
 
 		Case cases = caseService.findById(caseId);
@@ -98,19 +96,21 @@ public class QuotationController {
 			model.addAttribute("msg", "存在しないIDです。");
 			return "error";
 		}
-		form.setCaseId(caseId);
 
-		CaseForm caseForm = modelMapper.map(cases, CaseForm.class);
-		form.setCases(caseForm);
+		if (!model.containsAttribute("quotationForm")) {
+			QuotationForm form = quotationForm;
+			form.setCaseId(caseId);
+			QuantityCaseForm caseForm = modelMapper.map(cases, QuantityCaseForm.class);
+			form.setCases(caseForm);
 
-		if (form.getQuotationProduct() == null) {
 			List<QuotationProduct> list = quotationService.generateProductList();
 			List<QuotationProductForm> listForm = modelMapper.map(list, new TypeToken<List<QuotationProduct>>() {
 			}.getType());
 			form.setQuotationProduct(listForm);
+			
+			model.addAttribute("quotationForm", form);
 		}
 
-		model.addAttribute("quotationForm", form);
 		List<Product> productList = productService.findAllForSelect();
 		model.addAttribute("productList", productList);
 		model.addAttribute("distinction", "quotationProduct");
@@ -124,7 +124,7 @@ public class QuotationController {
 		quotationProductListValidator.validate(form, result);
 
 		if (result.hasErrors()) {
-			return getCreate(form, caseId, model);
+			return getCreate(caseId, model);
 		}
 
 		Quotation quotation = modelMapper.map(form, Quotation.class);

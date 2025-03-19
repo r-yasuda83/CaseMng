@@ -1,4 +1,4 @@
-package com.example.casemng.form;
+package com.example.casemng.form.caseform;
 
 import java.util.Date;
 import java.util.List;
@@ -11,7 +11,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import lombok.Data;
 
 @Data
-public class OrderForm {
+public class CaseOrderForm {
 
 	private int id;
 
@@ -27,5 +27,5 @@ public class OrderForm {
 
 	private CaseForm cases;
 	@Valid
-	private List<OrderProductForm> orderProduct;
+	private List<CaseOrderProductForm> orderProduct;
 }

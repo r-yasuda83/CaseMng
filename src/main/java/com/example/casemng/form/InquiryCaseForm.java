@@ -10,24 +10,22 @@ import org.springframework.format.annotation.DateTimeFormat;
 import lombok.Data;
 
 @Data
-public class CaseForm {
+public class InquiryCaseForm {
 
 	private int id;
-	
+
 	@NotBlank
 	private String caseName;
-	
+
 	private int customerId;
-	
+
 	@NotNull
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date caseDate;
-	
+
 	private int shippingStatus;
-	
+
 	private String memo;
-	
+
 	private boolean shippingStockFlg;
-	
-	private OrderForm order;
 }

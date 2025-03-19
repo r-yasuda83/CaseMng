@@ -9,7 +9,7 @@
 		from
 		product
 		where
-		concat(product.id, product.product_name, product.price, product.stock, product.is_choose) like #{searchKey}
+		concat(product.id, product.product_name, product.price, product.stock, product.is_choose) like concat('%', #{searchKey}, '%')
 	</select>
 	
 	<select id="findAll" resultMap="prod">
@@ -78,7 +78,7 @@
 		from
 		product
 		where
-		concat(product.id, product.product_name, product.price, product.stock, product.is_choose) like #{searchKey}
+		concat(product.id, product.product_name, product.price, product.stock, product.is_choose) like concat('%', #{searchKey}, '%')
 		<choose>
 			<when test="!pageable.sort.isEmpty()">
 				ORDER BY

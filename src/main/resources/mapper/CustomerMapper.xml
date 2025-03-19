@@ -11,7 +11,7 @@
 		customer
 		where
 		customer.is_deleted = 0
-		AND concat(customer.id, customer.last_name, customer.first_name, customer.address, customer.phone_number) like #{searchKey}
+		AND concat(customer.id, customer.last_name, customer.first_name, customer.address, customer.phone_number) like concat('%', #{searchKey}, '%')
 	</select>
 	
 	<select id="findAll" resultMap="cust">
@@ -46,7 +46,7 @@
 		customer
 		where
 		customer.is_deleted = 0
-		AND concat(customer.id, customer.last_name, customer.first_name, customer.address, customer.phone_number) like #{searchKey}
+		AND concat(customer.id, customer.last_name, customer.first_name, customer.address, customer.phone_number) like concat('%', #{searchKey}, '%')
 		<choose>
             <when test="!pageable.sort.isEmpty()">
                 ORDER BY

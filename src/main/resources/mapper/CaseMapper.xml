@@ -41,7 +41,7 @@
                 AND customer.is_deleted = 0
         ) AS subquery
     	WHERE
-        	concat(subquery.id, subquery.case_name, subquery.cust_last_name, subquery.cust_first_name, subquery.status) LIKE #{searchKey}
+        	concat(subquery.id, subquery.case_name, subquery.cust_last_name, subquery.cust_first_name, subquery.status) LIKE concat('%', #{searchKey}, '%')
 	</select>
 
 	<select id="findAll" resultMap="case">
@@ -139,7 +139,7 @@
                 AND customer.is_deleted = 0
         ) AS subquery
     WHERE
-        concat(subquery.id, subquery.case_name, subquery.cust_last_name, subquery.cust_first_name, subquery.status) LIKE #{searchKey}
+        concat(subquery.id, subquery.case_name, subquery.cust_last_name, subquery.cust_first_name, subquery.status) LIKE concat('%', #{searchKey}, '%')
 		<choose>
             <when test="!pageable.sort.isEmpty()">
                 ORDER BY
