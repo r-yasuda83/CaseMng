@@ -2,7 +2,6 @@ package com.example.casemng.service.impl;
 
 import java.util.List;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,9 +15,6 @@ public class InquiryServiceImpl implements InquiryService{
 	
 	@Autowired
 	InquiryMapper mapper;
-	
-	@Autowired
-	ModelMapper modelMapper;
 
 	public List<Inquiry> findAll(){
 		return mapper.findAll();
@@ -40,6 +36,7 @@ public class InquiryServiceImpl implements InquiryService{
 		return inquiry.getId();
 	}
 	
+	@Transactional
 	public void logicalDelete(int id) {
 		mapper.logicalDelete(id);
 	}

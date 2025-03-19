@@ -13,6 +13,7 @@ public interface CaseService {
 	public List<Case> findAll();
 	public Page<CaseForList> findByKeyword(Pageable pageable, String serachKey);
 	public Case findById(int id);
+	public List<String> checkStock(Case cases);
 	public void caseEdit(Case cases);
 	public int create(Case cases);
 	public void logicalDelete(int id);

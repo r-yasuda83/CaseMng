@@ -3,7 +3,6 @@ package com.example.casemng.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,9 +19,6 @@ public class OrderServiceImpl implements OrderService {
 
 	@Autowired
 	OrderMapper orderMapper;
-
-	@Autowired
-	ModelMapper modelMapper;
 
 	public Order findById(int id) {
 		Order order = orderMapper.findById(id);
@@ -56,6 +52,7 @@ public class OrderServiceImpl implements OrderService {
 	@Autowired
 	CaseMapper caseMapper;
 	
+	@Transactional
 	public void logicalDelete(Order order) {
 		orderMapper.logicalDelete(order.getId());
 		caseMapper.whenDeleteOrder(order.getCaseId());

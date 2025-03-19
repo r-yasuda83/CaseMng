@@ -22,9 +22,9 @@ import com.example.casemng.form.SearchForm;
 import com.example.casemng.form.UserEditPasswordForm;
 import com.example.casemng.form.UserForm;
 import com.example.casemng.form.UserRegistrationForm;
-import com.example.casemng.model.NewUserValidator;
+import com.example.casemng.form.validator.NewUserValidator;
+import com.example.casemng.form.validator.UserValidator;
 import com.example.casemng.model.Pagenation;
-import com.example.casemng.model.UserValidator;
 import com.example.casemng.model.entity.CustomUserDetails;
 import com.example.casemng.model.entity.Role;
 import com.example.casemng.model.entity.User;
@@ -42,7 +42,7 @@ public class UserController {
 
 	@Autowired
 	ModelMapper modelMapper;
-	
+
 	@Autowired
 	Pagenation pagenation;
 
@@ -61,45 +61,44 @@ public class UserController {
 		} else {
 			searchKey = form.getKeyword();
 		}
-		
-		Page<User> user = userService.findByKeyword(p, "%" + searchKey + "%");
+
+		Page<User> user = userService.findByKeyword(p, searchKey);
 		model.addAttribute("page", user);
 
 		return "user/list";
 	}
 
-	@GetMapping("/admin/user/{keyId}")
-	public String getEdit(@ModelAttribute("userForm") UserForm form, @PathVariable("keyId") int id, Model model) {
+	@GetMapping("/admin/user/{id}")
+	public String getEdit(@PathVariable int id, Model model) {
 
 		User user = userService.findById(id);
 		if (user == null) {
 			model.addAttribute("msg", "存在しないIDです。");
 			return "error";
 		}
-		if (form.getId() == 0) {
-			form = modelMapper.map(user, UserForm.class);
+		if (!model.containsAttribute("userForm")) {
+			UserForm userForm = modelMapper.map(user, UserForm.class);
+			model.addAttribute("userForm", userForm);
 		}
-
-		model.addAttribute("userForm", form);
 
 		List<Role> roleList = roleService.findAll();
 		model.addAttribute("roleList", roleList);
 		return "user/edit";
 	}
-	
-	@Autowired
-    private UserValidator userValidator;
 
-	@PostMapping("/admin/user/{keyId}")
+	@Autowired
+	private UserValidator userValidator;
+
+	@PostMapping("/admin/user/{id}")
 	public String postEdit(@ModelAttribute("userForm") @Validated UserForm form, BindingResult result,
-			@PathVariable("keyId") int id, Model model) {
-		
+			@PathVariable int id, Model model) {
+
 		userValidator.validate(form, result);
 
 		User user = modelMapper.map(form, User.class);
 
 		if (result.hasErrors()) {
-			return getEdit(form, id, model);
+			return getEdit(id, model);
 		}
 
 		userService.edit(user);
@@ -107,8 +106,7 @@ public class UserController {
 	}
 
 	@GetMapping("/admin/user/{id}/password")
-	public String getEditPassword(@ModelAttribute("userEditPasswordForm") UserEditPasswordForm form, @PathVariable int id,
-			Model model) {
+	public String getEditPassword(@PathVariable int id,	Model model) {
 
 		User user = userService.findByIdPassword(id);
 		if (user == null) {
@@ -116,39 +114,45 @@ public class UserController {
 			return "error";
 		}
 
-		if (form.getFirstName() == null) {
-			form = modelMapper.map(user, UserEditPasswordForm.class);
+		if (!model.containsAttribute("userEditPasswordForm")) {
+			UserEditPasswordForm form = modelMapper.map(user, UserEditPasswordForm.class);
+			model.addAttribute("userEditPasswordForm", form);
 		}
 
-		model.addAttribute("userEditPasswordForm", form);
 		return "user/editPasswordAdmin";
 	}
 
 	@PostMapping("/admin/user/{id}/password")
-	public String postEditPassword(@ModelAttribute("userEditPasswordForm") @Validated UserEditPasswordForm form, BindingResult result,
+	public String postEditPassword(@ModelAttribute("userEditPasswordForm") @Validated UserEditPasswordForm form,
+			BindingResult result,
 			@PathVariable int id, Model model) {
 
 		if (result.hasErrors()) {
-			return getEditPassword(form, id, model);
+			return getEditPassword(id, model);
 		}
-		
+
 		User user = modelMapper.map(form, User.class);
 		userService.editPassword(user);
 		return "redirect:/admin/user";
 	}
+	
+	@Autowired
+	UserRegistrationForm userRegistrationForm;
 
 	@GetMapping("/admin/user/create")
-	public String getCreate(@ModelAttribute("userRegistrationForm") UserRegistrationForm form, Model model) {
-
-		model.addAttribute("userRegistrationForm", form);
+	public String getCreate(Model model) {
+		
+		if (!model.containsAttribute("userRegistrationForm")) {
+			model.addAttribute("userRegistrationForm", userRegistrationForm);
+		}
 
 		List<Role> roleList = roleService.findAll();
 		model.addAttribute("roleList", roleList);
 		return "user/create";
 	}
-	
+
 	@Autowired
-    private NewUserValidator newUserValidator;
+	private NewUserValidator newUserValidator;
 
 	@PostMapping("/admin/user/create")
 	public String postCreate(@ModelAttribute("userRegistrationForm") @Validated UserRegistrationForm form,
@@ -157,9 +161,9 @@ public class UserController {
 		newUserValidator.validate(form, result);
 
 		if (result.hasErrors()) {
-			return getCreate(form, model);
+			return getCreate(model);
 		}
-		
+
 		User user = modelMapper.map(form, User.class);
 		userService.create(user);
 		return "redirect:/admin/user";
@@ -173,10 +177,9 @@ public class UserController {
 	}
 
 	@GetMapping("/user/setting")
-	public String getSetting(@ModelAttribute("userForm") UserForm form,
-			@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
-
-		if (form.getFirstName() == null) {
+	public String getSetting(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+		
+		if (!model.containsAttribute("userForm")) {
 			int id = userDetails.getId();
 			model.addAttribute("userForm", userService.findById(id));
 		}
@@ -190,7 +193,7 @@ public class UserController {
 			Model model) {
 
 		if (result.hasErrors()) {
-			return getSetting(form, userDetails, model);
+			return getSetting(userDetails, model);
 		}
 
 		User user = modelMapper.map(form, User.class);
@@ -199,16 +202,15 @@ public class UserController {
 	}
 
 	@GetMapping("/user/setting/password")
-	public String getSettingPassword(@ModelAttribute("userEditPasswordForm") UserEditPasswordForm form,
-			@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
-
-		if (form.getFirstName() == null) {
+	public String getSettingPassword(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+		
+		if (!model.containsAttribute("userEditPasswordForm")) {
 			int id = userDetails.getId();
 			User user = userService.findByIdPassword(id);
-			form = modelMapper.map(user, UserEditPasswordForm.class);
+			UserEditPasswordForm form = modelMapper.map(user, UserEditPasswordForm.class);
+			model.addAttribute("userEditPasswordForm", form);
 		}
-
-		model.addAttribute("userEditPasswordForm", form);
+		
 		return "user/editPassword";
 	}
 
@@ -217,7 +219,7 @@ public class UserController {
 			BindingResult result, @AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
 
 		if (result.hasErrors()) {
-			return getSettingPassword(form, userDetails, model);
+			return getSettingPassword(userDetails, model);
 		}
 
 		User user = modelMapper.map(form, User.class);

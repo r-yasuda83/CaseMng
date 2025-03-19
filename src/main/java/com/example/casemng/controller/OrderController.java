@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.example.casemng.form.CaseForm;
-import com.example.casemng.form.OrderForm;
-import com.example.casemng.form.OrderProductForm;
-import com.example.casemng.model.OrderProductListValidator;
+import com.example.casemng.form.orderform.OrderCaseForm;
+import com.example.casemng.form.orderform.OrderForm;
+import com.example.casemng.form.orderform.OrderProductForm;
+import com.example.casemng.form.validator.OrderProductListValidator;
 import com.example.casemng.model.entity.Case;
 import com.example.casemng.model.entity.Order;
 import com.example.casemng.model.entity.OrderProduct;
@@ -43,13 +43,10 @@ public class OrderController {
 	OrderProductService orderProductService;
 
 	@Autowired
-	CustomerController customerCtrl;
-
-	@Autowired
 	CaseService caseService;
 
 	@GetMapping("/order/{id}")
-	public String getEdit(@ModelAttribute("orderForm") OrderForm form, @PathVariable int id, Model model) {
+	public String getEdit(@PathVariable int id, Model model) {
 
 		Order order = orderService.findById(id);
 
@@ -57,18 +54,16 @@ public class OrderController {
 			model.addAttribute("msg", "存在しないIDです。");
 			return "error";
 		}
-
-		if (form.getCaseId() == 0) {
-			form = modelMapper.map(order, OrderForm.class);
-		}
-
-		form.setCases(modelMapper.map(order.getCases(), CaseForm.class));
-		if (form.getCases().isShippingStockFlg() == true) {
+		if (order.getCases().isShippingStockFlg() == true) {
 			model.addAttribute("msg", "既に送付処理済の受注IDです。");
 			return "error";
 		}
 
-		model.addAttribute("orderForm", form);
+		if (!model.containsAttribute("orderForm")) {
+			OrderForm form = modelMapper.map(order, OrderForm.class);
+			form.setCases(modelMapper.map(order.getCases(), OrderCaseForm.class));
+			model.addAttribute("orderForm", form);
+		}
 
 		List<Product> productList = productService.findAll();
 		model.addAttribute("productList", productList);
@@ -86,7 +81,7 @@ public class OrderController {
 		orderProductListValidator.validate(form, result);
 
 		if (result.hasErrors()) {
-			return getEdit(form, id, model);
+			return getEdit(id, model);
 		}
 
 		Order order = modelMapper.map(form, Order.class);
@@ -94,9 +89,12 @@ public class OrderController {
 		orderProductService.edit(order.getOrderProduct(), order.getId());
 		return "redirect:/customer/" + order.getCases().getCustomerId() + "?caseId=" + order.getCaseId();
 	}
+	
+	@Autowired
+	OrderForm orderForm;
 
 	@GetMapping("/order/create/{caseId}")
-	public String getCreate(@ModelAttribute("orderForm") OrderForm form, @PathVariable int caseId,
+	public String getCreate(@PathVariable int caseId,
 			Model model) {
 
 		Case cases = caseService.findById(caseId);
@@ -110,19 +108,22 @@ public class OrderController {
 			return "error";
 		}
 
-		form.setCaseId(caseId);
+		if (!model.containsAttribute("orderForm")) {
+			OrderForm form = orderForm;
+			form.setCaseId(caseId);
 
-		CaseForm caseForm = modelMapper.map(cases, CaseForm.class);
-		form.setCases(caseForm);
+			OrderCaseForm caseForm = modelMapper.map(cases, OrderCaseForm.class);
+			form.setCases(caseForm);
 
-		if (form.getOrderProduct() == null) {
-			List<OrderProduct> list = orderService.generateProductList();
-			List<OrderProductForm> listForm = modelMapper.map(list, new TypeToken<List<OrderProduct>>() {
-			}.getType());
-			form.setOrderProduct(listForm);
+			if (form.getOrderProduct() == null) {
+				List<OrderProduct> list = orderService.generateProductList();
+				List<OrderProductForm> listForm = modelMapper.map(list, new TypeToken<List<OrderProduct>>() {
+				}.getType());
+				form.setOrderProduct(listForm);
+			}
+			model.addAttribute("orderForm", form);
 		}
 
-		model.addAttribute("orderForm", form);
 		List<Product> productList = productService.findAllForSelectStock();
 		model.addAttribute("productList", productList);
 		model.addAttribute("distinction", "orderProduct");
@@ -136,7 +137,7 @@ public class OrderController {
 		orderProductListValidator.validate(form, result);
 
 		if (result.hasErrors()) {
-			return getCreate(form, caseId, model);
+			return getCreate(caseId, model);
 		}
 
 		Order order = modelMapper.map(form, Order.class);

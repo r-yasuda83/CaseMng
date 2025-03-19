@@ -3,7 +3,6 @@ package com.example.casemng.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,9 +14,6 @@ import com.example.casemng.service.QuotationProductService;
 
 @Service
 public class QuotationProductServiceImpl implements QuotationProductService {
-
-	@Autowired
-	ModelMapper modelMapper;
 
 	@Autowired
 	QuotationProductMapper quotationMapper;
@@ -55,6 +51,7 @@ public class QuotationProductServiceImpl implements QuotationProductService {
 		return quotationMapper.findByIdAll(id);
 	}
 
+	@Transactional
 	public List<QuotationProduct> setQuotationId(List<QuotationProduct> list, int quotationId) {
 		for (QuotationProduct item : list) {
 			item.setQuotationId(quotationId);

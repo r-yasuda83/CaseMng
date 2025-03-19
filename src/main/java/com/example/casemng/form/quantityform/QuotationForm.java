@@ -1,7 +1,9 @@
-package com.example.casemng.form;
+package com.example.casemng.form.quantityform;
 
 import java.util.Date;
+import java.util.List;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -11,19 +13,21 @@ import lombok.Data;
 
 @Component
 @Data
-public class InquiryForm {
+public class QuotationForm {
 
 	private int id;
 
 	private int caseId;
-
+	
 	@NotNull
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private Date inquiryDate;
+	private Date quotationDate;
 
-	private String contents;
+	private String memo;
 
 	private boolean isDeleted;
-
-	private InquiryCaseForm cases;
+	
+	private QuantityCaseForm cases;
+	@Valid
+	private List<QuotationProductForm> quotationProduct;
 }

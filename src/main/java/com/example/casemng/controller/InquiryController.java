@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.example.casemng.form.CaseForm;
+import com.example.casemng.form.InquiryCaseForm;
 import com.example.casemng.form.InquiryForm;
 import com.example.casemng.model.entity.Case;
 import com.example.casemng.model.entity.Inquiry;
@@ -28,7 +28,7 @@ public class InquiryController {
 	ModelMapper modelMapper;
 
 	@GetMapping("/inquiry/{inquiryId}")
-	public String getEdit(@ModelAttribute("inquiryForm") InquiryForm form, @PathVariable int inquiryId, Model model) {
+	public String getEdit(@PathVariable int inquiryId, Model model) {
 
 		Inquiry inquiry = inquiryService.findById(inquiryId);
 
@@ -37,22 +37,20 @@ public class InquiryController {
 			return "error";
 		}
 		
-		if(form.getId() == 0) {
-			form = modelMapper.map(inquiry, InquiryForm.class);
+		if (!model.containsAttribute("inquiryForm")) {
+			InquiryForm form = modelMapper.map(inquiry, InquiryForm.class);
+			model.addAttribute("inquiryForm", form);
 		}
 		
-		model.addAttribute("inquiryForm", form);
 		return "inquiry/edit";
 	}
-
-	@Autowired
-	CustomerController customerCtrl;
 
 	@PostMapping("/inquiry/{inquiryId}/edit")
 	public String postEdit(@ModelAttribute("inquiryForm") @Validated InquiryForm form, BindingResult result,
 			@PathVariable int inquiryId, Model model) {
+		
 		if (result.hasErrors()) {
-			return getEdit(form, inquiryId, model);
+			return getEdit(inquiryId, model);
 		}
 
 		Inquiry inquiry = modelMapper.map(form, Inquiry.class);
@@ -63,22 +61,29 @@ public class InquiryController {
 
 	@Autowired
 	CaseService caseService;
+	
+	@Autowired
+	InquiryForm inquiryForm;
 
 	@GetMapping("/inquiry/create/{caseId}")
-	public String getCreate(@ModelAttribute("inquiryForm") InquiryForm form, @PathVariable int caseId, Model model) {
+	public String getCreate(@PathVariable int caseId, Model model) {
 
 		Case cases = caseService.findById(caseId);
-		CaseForm caseForm = modelMapper.map(cases, CaseForm.class);
 
-		if (caseForm == null) {
+		if (cases == null) {
 			model.addAttribute("msg", "存在しないIDです。");
 			return "error";
 		}
-
-		form.setCaseId(caseId);
-		form.setCases(caseForm);
-		model.addAttribute("inquiryForm", form);
-
+		
+		InquiryCaseForm caseForm = modelMapper.map(cases, InquiryCaseForm.class);
+		
+		if (!model.containsAttribute("inquiryForm")) {
+			InquiryForm form = inquiryForm;
+			form.setCaseId(caseId);
+			form.setCases(caseForm);
+			model.addAttribute("inquiryForm", form);
+		}
+		
 		return "inquiry/create";
 	}
 
@@ -87,7 +92,7 @@ public class InquiryController {
 			@PathVariable int caseId, Model model) {
 		
 		if (result.hasErrors()) {
-			return getCreate(form, caseId, model);
+			return getCreate(caseId, model);
 		}
 		Inquiry inquiry = modelMapper.map(form, Inquiry.class);
 		int inquiryId = inquiryService.create(inquiry);

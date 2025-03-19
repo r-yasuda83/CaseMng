@@ -29,7 +29,7 @@ public class ProductController {
 
 	@Autowired
 	ModelMapper modelMapper;
-	
+
 	@Autowired
 	Pagenation pagenation;
 
@@ -48,15 +48,15 @@ public class ProductController {
 		} else {
 			searchKey = form.getKeyword();
 		}
-		
-		Page<Product> product = productService.findByKeyword(p, "%" + searchKey + "%");
+
+		Page<Product> product = productService.findByKeyword(p, searchKey);
 		model.addAttribute("page", product);
-		
+
 		return "product/list";
 	}
 
 	@GetMapping("/product/{productId}")
-	public String getEdit(@ModelAttribute("productForm") ProductForm form, @PathVariable int productId, Model model) {
+	public String getEdit(@PathVariable int productId, Model model) {
 
 		Product product = productService.findById(productId);
 
@@ -65,11 +65,11 @@ public class ProductController {
 			return "error";
 		}
 
-		if (form.getId() == 0) {
-			form = modelMapper.map(product, ProductForm.class);
+		if (!model.containsAttribute("productForm")) {
+			ProductForm form = modelMapper.map(product, ProductForm.class);
+			model.addAttribute("productForm", form);
 		}
 
-		model.addAttribute("productForm", form);
 		return "product/edit";
 	}
 
@@ -78,18 +78,24 @@ public class ProductController {
 			@PathVariable int productId, Model model) {
 
 		if (result.hasErrors()) {
-			return getEdit(form, productId, model);
+			return getEdit(productId, model);
 		}
 
 		Product product = modelMapper.map(form, Product.class);
 		productService.edit(product);
 		return "redirect:/product";
 	}
+	
+	@Autowired
+	ProductForm productForm;
 
 	@GetMapping("/product/create")
-	public String getCreate(@ModelAttribute("productForm") ProductForm form, Model model) {
+	public String getCreate(Model model) {
 
-		model.addAttribute("productForm", form);
+		if (!model.containsAttribute("productForm")) {
+			model.addAttribute("productForm", productForm);
+		}
+
 		return "product/create";
 	}
 
@@ -98,7 +104,7 @@ public class ProductController {
 			Model model) {
 
 		if (result.hasErrors()) {
-			return getCreate(form, model);
+			return getCreate(model);
 		}
 		Product product = modelMapper.map(form, Product.class);
 		productService.create(product);

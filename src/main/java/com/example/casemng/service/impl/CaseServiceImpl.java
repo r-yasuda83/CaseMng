@@ -1,9 +1,9 @@
 package com.example.casemng.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.ibatis.session.RowBounds;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.casemng.model.entity.Case;
 import com.example.casemng.model.entity.CaseForList;
 import com.example.casemng.model.entity.Order;
+import com.example.casemng.model.entity.OrderProduct;
+import com.example.casemng.model.entity.Product;
 import com.example.casemng.repository.CaseMapper;
 import com.example.casemng.repository.OrderMapper;
 import com.example.casemng.repository.ProductMapper;
@@ -44,9 +46,6 @@ public class CaseServiceImpl implements CaseService {
 		return new PageImpl<>(cases, pageable, total);
 	}
 
-	@Autowired
-	ModelMapper modelMapper;
-
 	public Case findById(int id) {
 		Case cases = caseMapper.findById(id);
 		return cases;
@@ -73,7 +72,53 @@ public class CaseServiceImpl implements CaseService {
 		return cases.getId();
 	}
 
+	@Transactional
 	public void logicalDelete(int id) {
 		caseMapper.logicalDelete(id);
+	}
+
+	public List<String> checkStock(Case cases) {
+		
+		Order order = orderMapper.findByCaseId(cases.getId());
+		List<String> errMsg = new ArrayList<String>();
+		if (cases.getShippingStatus() == 3 && cases.isShippingStockFlg() == false) {
+
+			List<OrderProduct> cloneList = new ArrayList<>();
+
+			for (OrderProduct sub : order.getOrderProduct()) {
+				OrderProduct copy = new OrderProduct(sub);
+				cloneList.add(copy);
+			}
+
+			List<OrderProduct> checkList = new ArrayList<>();
+
+			for (OrderProduct product : cloneList) {
+				boolean found = false;
+				for (OrderProduct combinedProduct : checkList) {
+					if (combinedProduct.getProductId() == product.getProductId()) {
+						combinedProduct.setQuantity(combinedProduct.getQuantity() + product.getQuantity());
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					checkList.add(product);
+				}
+			}
+
+			List<Product> productList = productMapper.findAll();
+
+			for (OrderProduct orderProduct : checkList) {
+				for (Product product : productList) {
+					if (orderProduct.getProductId() == product.getId()
+							&& orderProduct.getQuantity() > product.getStock()) {
+
+						errMsg.add(product.getProductName() + "の発注数が在庫数を超えています。在庫数：" + product.getStock() + "　注文数："
+								+ orderProduct.getQuantity());
+					}
+				}
+			}
+		}
+		return errMsg;
 	}
 }

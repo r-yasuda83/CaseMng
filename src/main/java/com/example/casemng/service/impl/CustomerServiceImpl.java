@@ -3,7 +3,6 @@ package com.example.casemng.service.impl;
 import java.util.List;
 
 import org.apache.ibatis.session.RowBounds;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -38,9 +37,6 @@ public class CustomerServiceImpl implements CustomerService {
 		return customerMapper.findById(id);
 	}
 
-	@Autowired
-	ModelMapper modelMapper;
-
 	public Customer findByIdEdit(int id) {
 		Customer customer = customerMapper.findById(id);
 		return customer;
@@ -57,6 +53,7 @@ public class CustomerServiceImpl implements CustomerService {
 		return customer.getId();
 	}
 
+	@Transactional
 	public void logicalDelete(int id) {
 		customerMapper.logicalDelete(id);
 	}

@@ -3,27 +3,19 @@ package com.example.casemng.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.casemng.model.entity.OrderProduct;
 import com.example.casemng.repository.OrderProductMapper;
-import com.example.casemng.repository.ProductMapper;
 import com.example.casemng.service.OrderProductService;
 
 @Service
 public class OrderProductServiceImpl implements OrderProductService {
 
 	@Autowired
-	ModelMapper modelMapper;
-
-	@Autowired
 	OrderProductMapper orderProductMapper;
-
-	@Autowired
-	ProductMapper productMapper;
 
 	public OrderProduct findById(int id) {
 		return orderProductMapper.findById(id);
@@ -55,6 +47,7 @@ public class OrderProductServiceImpl implements OrderProductService {
 		return orderProductMapper.findByIdAll(id);
 	}
 
+	@Transactional
 	public List<OrderProduct> setOrdersId(List<OrderProduct> list, int ordersId) {
 		for (OrderProduct item : list) {
 			item.setOrdersId(ordersId);

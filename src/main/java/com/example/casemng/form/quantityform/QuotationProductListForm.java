@@ -1,4 +1,4 @@
-package com.example.casemng.form;
+package com.example.casemng.form.quantityform;
 
 import java.util.List;
 
