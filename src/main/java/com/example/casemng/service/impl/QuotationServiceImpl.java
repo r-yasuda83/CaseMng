@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.casemng.model.entity.Quotation;
 import com.example.casemng.model.entity.QuotationProduct;
 import com.example.casemng.repository.QuotationMapper;
-import com.example.casemng.repository.QuotationProductMapper;
 import com.example.casemng.service.QuotationService;
 
 @Service
@@ -28,9 +27,6 @@ public class QuotationServiceImpl implements QuotationService{
 	public void quotationEdit(Quotation quotation) {
 		quotationMapper.quotationEdit(quotation);
 	}
-	
-	@Autowired
-	QuotationProductMapper quotationProductMapper;
 	
 	@Transactional
 	public int create(Quotation quotation) {

@@ -11,7 +11,6 @@ import com.example.casemng.model.entity.Order;
 import com.example.casemng.model.entity.OrderProduct;
 import com.example.casemng.repository.CaseMapper;
 import com.example.casemng.repository.OrderMapper;
-import com.example.casemng.repository.OrderProductMapper;
 import com.example.casemng.service.OrderService;
 
 @Service
@@ -39,9 +38,6 @@ public class OrderServiceImpl implements OrderService {
 		List<Order> list = orderMapper.findAll();
 		return list;
 	}
-	
-	@Autowired
-	OrderProductMapper orderProductMapper;
 
 	@Transactional
 	public int create(Order order) {

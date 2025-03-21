@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.casemng.model.entity.QuotationProduct;
-import com.example.casemng.repository.ProductMapper;
 import com.example.casemng.repository.QuotationProductMapper;
 import com.example.casemng.service.QuotationProductService;
 
@@ -17,9 +16,6 @@ public class QuotationProductServiceImpl implements QuotationProductService {
 
 	@Autowired
 	QuotationProductMapper quotationMapper;
-
-	@Autowired
-	ProductMapper productMapper;
 
 	public QuotationProduct findById(int id) {
 		return quotationMapper.findById(id);
