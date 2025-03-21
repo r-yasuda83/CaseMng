@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import com.example.casemng.form.UserRegistrationForm;
+import com.example.casemng.form.userform.UserRegistrationForm;
 import com.example.casemng.model.entity.User;
 import com.example.casemng.service.UserService;
 

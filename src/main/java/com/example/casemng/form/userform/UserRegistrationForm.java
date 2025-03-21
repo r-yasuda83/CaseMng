@@ -1,4 +1,4 @@
-package com.example.casemng.form;
+package com.example.casemng.form.userform;
 
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Email;
