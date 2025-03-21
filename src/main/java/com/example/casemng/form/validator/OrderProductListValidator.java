@@ -33,7 +33,7 @@ public class OrderProductListValidator implements Validator {
 
 		//無効な受注商品の削除
 		for (OrderProductForm sub : form.getOrderProduct()) {
-			if (sub.getProductId() == null) {
+			if (sub.getProductId() == null || sub.getQuantity() == null) {
 				continue;
 			}
 			if (sub.getProductId() == 0 || sub.getQuantity() == 0) {
@@ -114,7 +114,7 @@ public class OrderProductListValidator implements Validator {
 				k++;
 				continue;
 			}
-			if (formProduct.getQuantity() == 0) {
+			if (formProduct.getQuantity() == null || formProduct.getQuantity() == 0) {
 				k++;
 				continue;
 			}
