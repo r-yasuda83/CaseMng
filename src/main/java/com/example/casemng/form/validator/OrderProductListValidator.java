@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import com.example.casemng.form.RegisterProductForm;
 import com.example.casemng.form.order.OrderForm;
+import com.example.casemng.form.register.RegisterProductForm;
 import com.example.casemng.model.entity.Product;
 import com.example.casemng.service.ProductService;
 

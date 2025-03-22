@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.example.casemng.form.RegisterProductForm;
-import com.example.casemng.form.quantity.QuantityCaseForm;
-import com.example.casemng.form.quantity.QuotationForm;
+import com.example.casemng.form.quotation.QuotationForm;
+import com.example.casemng.form.register.RegisterCaseForm;
+import com.example.casemng.form.register.RegisterProductForm;
 import com.example.casemng.form.validator.QuotationProductListValidator;
 import com.example.casemng.model.entity.Case;
 import com.example.casemng.model.entity.Product;
@@ -100,7 +100,7 @@ public class QuotationController {
 		if (!model.containsAttribute("quotationForm")) {
 			QuotationForm form = quotationForm;
 			form.setCaseId(caseId);
-			QuantityCaseForm caseForm = modelMapper.map(cases, QuantityCaseForm.class);
+			RegisterCaseForm caseForm = modelMapper.map(cases, RegisterCaseForm.class);
 			form.setCases(caseForm);
 
 			List<QuotationProduct> list = quotationService.generateProductList();

@@ -1,4 +1,4 @@
-package com.example.casemng.form;
+package com.example.casemng.form.register;
 
 import java.io.Serializable;
 
