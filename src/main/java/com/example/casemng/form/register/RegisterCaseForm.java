@@ -1,4 +1,4 @@
-package com.example.casemng.form.quantity;
+package com.example.casemng.form.register;
 
 import java.util.Date;
 
@@ -10,7 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import lombok.Data;
 
 @Data
-public class QuantityCaseForm {
+public class RegisterCaseForm {
 
 	private int id;
 

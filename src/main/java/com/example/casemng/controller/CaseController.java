@@ -3,7 +3,6 @@ package com.example.casemng.controller;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +24,7 @@ import com.example.casemng.form.SearchForm;
 import com.example.casemng.form.cases.CaseEntryForm;
 import com.example.casemng.form.cases.CaseForm;
 import com.example.casemng.form.cases.CaseOrderForm;
+import com.example.casemng.model.OutOfStock;
 import com.example.casemng.model.Pagenation;
 import com.example.casemng.model.entity.Case;
 import com.example.casemng.model.entity.CaseForList;
@@ -93,11 +93,14 @@ public class CaseController {
 			@PathVariable int id, Model model) {
 
 		Case cases = modelMapper.map(form, Case.class);
-		List<Map<String, String>> notEnoughList = caseService.checkStock(cases);
+		
 		List<String> errMsg = new ArrayList<String>();
-
-		for (Map<String, String> map : notEnoughList) {
-			errMsg.add(map.get("name") + "の発注数が在庫数を超えています。在庫数：" + map.get("stock") + "　注文数：" + map.get("quantity"));
+		int shipped = Constant.ShippingStatus.Shipped.getValue();
+		if (cases.getShippingStatus() == shipped && cases.isShippingStockFlg() == false) {
+			List<OutOfStock> outOfStockList = caseService.checkStock(cases);
+			for (OutOfStock os : outOfStockList) {
+				errMsg.add(os.getProductName() + "の発注数が在庫数を超えています。在庫数：" + os.getStock() + "　注文数：" + os.getRegistedQuantity());
+			}
 		}
 
 		if (!errMsg.isEmpty()) {

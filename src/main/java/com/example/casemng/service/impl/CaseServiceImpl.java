@@ -1,9 +1,7 @@
 package com.example.casemng.service.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.casemng.constant.Constant;
+import com.example.casemng.model.OutOfStock;
 import com.example.casemng.model.entity.Case;
 import com.example.casemng.model.entity.CaseForList;
 import com.example.casemng.model.entity.Order;
@@ -56,7 +56,8 @@ public class CaseServiceImpl implements CaseService {
 	@Transactional
 	public void caseEdit(Case cases) {
 
-		if (cases.getShippingStatus() == 3 && cases.isShippingStockFlg() == false) {
+		int shipped = Constant.ShippingStatus.Shipped.getValue();
+		if (cases.getShippingStatus() == shipped && cases.isShippingStockFlg() == false) {
 			Order order = orderMapper.findByCaseId(cases.getId());
 			//送付済み案件の在庫を反映
 			productMapper.editStock(order.getOrderProduct());
@@ -79,51 +80,53 @@ public class CaseServiceImpl implements CaseService {
 		caseMapper.logicalDelete(id);
 	}
 
-	public List<Map<String, String>> checkStock(Case cases) {
+	public List<OutOfStock> checkStock(Case cases) {
 
 		Order order = orderMapper.findByCaseId(cases.getId());
-		List<Map<String, String>> notEnoughList = new ArrayList<>();
+		List<OrderProduct> checkList = organizeList(order.getOrderProduct());
 
-		if (cases.getShippingStatus() == 3 && cases.isShippingStockFlg() == false) {
+		List<Product> productList = productMapper.findAll();
+		List<OutOfStock> outOfStockList = new ArrayList<>();
 
-			List<OrderProduct> cloneList = new ArrayList<>();
-
-			for (OrderProduct sub : order.getOrderProduct()) {
-				OrderProduct copy = new OrderProduct(sub);
-				cloneList.add(copy);
-			}
-
-			List<OrderProduct> checkList = new ArrayList<>();
-
-			for (OrderProduct product : cloneList) {
-				boolean found = false;
-				for (OrderProduct combinedProduct : checkList) {
-					if (combinedProduct.getProductId() == product.getProductId()) {
-						combinedProduct.setQuantity(combinedProduct.getQuantity() + product.getQuantity());
-						found = true;
-						break;
-					}
-				}
-				if (!found) {
-					checkList.add(product);
-				}
-			}
-
-			List<Product> productList = productMapper.findAll();
-
-			for (OrderProduct orderProduct : checkList) {
-				for (Product product : productList) {
-					if (orderProduct.getProductId() == product.getId()
-							&& orderProduct.getQuantity() > product.getStock()) {
-						Map<String, String> map = new HashMap<>();
-						map.put("name", product.getProductName());
-						map.put("stock", String.valueOf(product.getStock()));
-						map.put("quantity", String.valueOf(orderProduct.getQuantity()));
-						notEnoughList.add(map);
-					}
+		for (OrderProduct orderProduct : checkList) {
+			for (Product product : productList) {
+				if (orderProduct.getProductId() == product.getId()
+						&& orderProduct.getQuantity() > product.getStock()) {
+					OutOfStock os = new OutOfStock();
+					os.setProductName(product.getProductName());
+					os.setStock(product.getStock());
+					os.setRegistedQuantity(orderProduct.getQuantity());
+					outOfStockList.add(os);
 				}
 			}
 		}
-		return notEnoughList;
+		return outOfStockList;
+	}
+	
+	public List<OrderProduct> organizeList(List<OrderProduct> list){
+		
+		List<OrderProduct> cloneList = new ArrayList<>();
+
+		for (OrderProduct sub : list) {
+			OrderProduct copy = new OrderProduct(sub);
+			cloneList.add(copy);
+		}
+
+		List<OrderProduct> checkList = new ArrayList<>();
+
+		for (OrderProduct product : cloneList) {
+			boolean found = false;
+			for (OrderProduct combinedProduct : checkList) {
+				if (combinedProduct.getProductId() == product.getProductId()) {
+					combinedProduct.setQuantity(combinedProduct.getQuantity() + product.getQuantity());
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				checkList.add(product);
+			}
+		}
+		return checkList;
 	}
 }
