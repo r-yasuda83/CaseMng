@@ -1,7 +1,9 @@
 package com.example.casemng.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,10 +79,11 @@ public class CaseServiceImpl implements CaseService {
 		caseMapper.logicalDelete(id);
 	}
 
-	public List<String> checkStock(Case cases) {
-		
+	public List<Map<String, String>> checkStock(Case cases) {
+
 		Order order = orderMapper.findByCaseId(cases.getId());
-		List<String> errMsg = new ArrayList<String>();
+		List<Map<String, String>> notEnoughList = new ArrayList<>();
+
 		if (cases.getShippingStatus() == 3 && cases.isShippingStockFlg() == false) {
 
 			List<OrderProduct> cloneList = new ArrayList<>();
@@ -112,13 +115,15 @@ public class CaseServiceImpl implements CaseService {
 				for (Product product : productList) {
 					if (orderProduct.getProductId() == product.getId()
 							&& orderProduct.getQuantity() > product.getStock()) {
-
-						errMsg.add(product.getProductName() + "の発注数が在庫数を超えています。在庫数：" + product.getStock() + "　注文数："
-								+ orderProduct.getQuantity());
+						Map<String, String> map = new HashMap<>();
+						map.put("name", product.getProductName());
+						map.put("stock", String.valueOf(product.getStock()));
+						map.put("quantity", String.valueOf(orderProduct.getQuantity()));
+						notEnoughList.add(map);
 					}
 				}
 			}
 		}
-		return errMsg;
+		return notEnoughList;
 	}
 }

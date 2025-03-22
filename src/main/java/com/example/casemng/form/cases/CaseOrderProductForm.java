@@ -1,16 +1,16 @@
-package com.example.casemng.form.quantityform;
+package com.example.casemng.form.cases;
 
 import lombok.Data;
 
 @Data
-public class QuotationProductForm {
-	
-	public QuotationProductForm() {
+public class CaseOrderProductForm {
+
+	public CaseOrderProductForm() {
 	}
 	
-	public QuotationProductForm(QuotationProductForm form) {
+	public CaseOrderProductForm(CaseOrderProductForm form) {
 		this.id = form.getId();
-		this.quotationId = form.getQuotationId();
+		this.ordersId = form.getOrdersId();
 	    this.productId = form.getProductId();
 	    this.quantity = form.getQuantity();
 	    this.discount = form.getDiscount();
@@ -18,12 +18,12 @@ public class QuotationProductForm {
 
 	private int id;
 
-	private int quotationId;
-
+	private int ordersId;
+	
 	private Integer productId;
-
+	
 	private Integer quantity;
-
+	
 	private Integer discount;
 
 	private boolean isDeleted;

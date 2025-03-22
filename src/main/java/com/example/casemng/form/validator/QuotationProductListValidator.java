@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import com.example.casemng.form.quantityform.QuotationForm;
-import com.example.casemng.form.quantityform.QuotationProductForm;
+import com.example.casemng.form.RegisterProductForm;
+import com.example.casemng.form.quantity.QuotationForm;
 import com.example.casemng.model.entity.Product;
 import com.example.casemng.service.ProductService;
 
@@ -29,26 +29,26 @@ public class QuotationProductListValidator implements Validator{
 		QuotationForm form = (QuotationForm) target;
 
 		List<Product> productList = productService.findAll();
-		List<QuotationProductForm> cloneList = new ArrayList<>();
+		List<RegisterProductForm> cloneList = new ArrayList<>();
 
 		//無効な受注商品の削除
-		for (QuotationProductForm sub : form.getQuotationProduct()) {
+		for (RegisterProductForm sub : form.getQuotationProduct()) {
 			if (sub.getProductId() == null || sub.getQuantity() == null){
 				continue;
 			}
 			if (sub.getProductId() == 0 || sub.getQuantity() == 0) {
 				continue;
 			}
-			QuotationProductForm copy = new QuotationProductForm(sub);
+			RegisterProductForm copy = new RegisterProductForm(sub);
 			cloneList.add(copy);
 		}
 
-		List<QuotationProductForm> checkList = new ArrayList<>();
+		List<RegisterProductForm> checkList = new ArrayList<>();
 
 		//商品毎にまとめる
-		for (QuotationProductForm product : cloneList) {
+		for (RegisterProductForm product : cloneList) {
 			boolean found = false;
-			for (QuotationProductForm combinedProduct : checkList) {
+			for (RegisterProductForm combinedProduct : checkList) {
 				if (combinedProduct.getProductId() == product.getProductId()) {
 					combinedProduct.setQuantity(combinedProduct.getQuantity() + product.getQuantity());
 					found = true;
@@ -61,8 +61,8 @@ public class QuotationProductListValidator implements Validator{
 		}
 
 		int i = 0;
-		for (QuotationProductForm quo : form.getQuotationProduct()) {
-			for (QuotationProductForm check : checkList) {
+		for (RegisterProductForm quo : form.getQuotationProduct()) {
+			for (RegisterProductForm check : checkList) {
 				if (quo.getProductId() == check.getProductId()) {
 					for (Product product : productList) {
 						if (quo.getProductId() == product.getId() && quo.getQuantity() > product.getStock()) {
@@ -83,7 +83,7 @@ public class QuotationProductListValidator implements Validator{
 
 		//値引き額が商品額を上回るかチェック
 		int j = 0;
-		for (QuotationProductForm item : form.getQuotationProduct()) {
+		for (RegisterProductForm item : form.getQuotationProduct()) {
 			if (item.getProductId() == null || item.getProductId() == 0) {
 				j++;
 				continue;
@@ -109,7 +109,7 @@ public class QuotationProductListValidator implements Validator{
 
 		//登録済み商品の登録可否、ストック切れのチェック
 		int k = 0;
-		for (QuotationProductForm formProduct : form.getQuotationProduct()) {
+		for (RegisterProductForm formProduct : form.getQuotationProduct()) {
 			if (formProduct.getProductId() == null || formProduct.getProductId() == 0) {
 				k++;
 				continue;

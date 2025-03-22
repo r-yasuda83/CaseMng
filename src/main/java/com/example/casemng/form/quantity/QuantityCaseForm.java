@@ -1,4 +1,4 @@
-package com.example.casemng.form.quantityform;
+package com.example.casemng.form.quantity;
 
 import java.util.Date;
 

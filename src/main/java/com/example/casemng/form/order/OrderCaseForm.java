@@ -1,4 +1,4 @@
-package com.example.casemng.form.orderform;
+package com.example.casemng.form.order;
 
 import java.util.Date;
 
