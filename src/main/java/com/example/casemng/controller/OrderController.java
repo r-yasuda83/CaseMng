@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.example.casemng.form.orderform.OrderCaseForm;
-import com.example.casemng.form.orderform.OrderForm;
-import com.example.casemng.form.orderform.OrderProductForm;
+import com.example.casemng.form.RegisterProductForm;
+import com.example.casemng.form.order.OrderCaseForm;
+import com.example.casemng.form.order.OrderForm;
 import com.example.casemng.form.validator.OrderProductListValidator;
 import com.example.casemng.model.entity.Case;
 import com.example.casemng.model.entity.Order;
@@ -117,7 +117,7 @@ public class OrderController {
 
 			if (form.getOrderProduct() == null) {
 				List<OrderProduct> list = orderService.generateProductList();
-				List<OrderProductForm> listForm = modelMapper.map(list, new TypeToken<List<OrderProduct>>() {
+				List<RegisterProductForm> listForm = modelMapper.map(list, new TypeToken<List<OrderProduct>>() {
 				}.getType());
 				form.setOrderProduct(listForm);
 			}

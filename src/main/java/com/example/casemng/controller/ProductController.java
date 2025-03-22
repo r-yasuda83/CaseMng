@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.casemng.form.ProductForm;
 import com.example.casemng.form.SearchForm;
+import com.example.casemng.form.product.ProductForm;
 import com.example.casemng.model.Pagenation;
 import com.example.casemng.model.entity.Product;
 import com.example.casemng.service.ProductService;

@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.example.casemng.form.InquiryCaseForm;
-import com.example.casemng.form.InquiryForm;
+import com.example.casemng.form.inquiry.InquiryCaseForm;
+import com.example.casemng.form.inquiry.InquiryForm;
 import com.example.casemng.model.entity.Case;
 import com.example.casemng.model.entity.Inquiry;
 import com.example.casemng.service.CaseService;

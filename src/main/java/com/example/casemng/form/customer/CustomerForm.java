@@ -1,4 +1,4 @@
-package com.example.casemng.form;
+package com.example.casemng.form.customer;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

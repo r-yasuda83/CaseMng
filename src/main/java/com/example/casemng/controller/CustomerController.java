@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.casemng.constant.Constant;
-import com.example.casemng.form.CustomerForm;
 import com.example.casemng.form.SearchForm;
+import com.example.casemng.form.customer.CustomerForm;
 import com.example.casemng.model.Pagenation;
 import com.example.casemng.model.entity.Customer;
 import com.example.casemng.service.CustomerService;

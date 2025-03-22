@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.casemng.form.SearchForm;
-import com.example.casemng.form.userform.UserEditPasswordForm;
-import com.example.casemng.form.userform.UserForm;
-import com.example.casemng.form.userform.UserRegistrationForm;
+import com.example.casemng.form.user.UserEditPasswordForm;
+import com.example.casemng.form.user.UserForm;
+import com.example.casemng.form.user.UserRegistrationForm;
 import com.example.casemng.form.validator.NewUserValidator;
 import com.example.casemng.form.validator.UserValidator;
 import com.example.casemng.model.Pagenation;

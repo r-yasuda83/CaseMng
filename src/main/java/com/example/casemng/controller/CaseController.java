@@ -1,7 +1,9 @@
 package com.example.casemng.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +22,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.casemng.constant.Constant;
 import com.example.casemng.form.SearchForm;
-import com.example.casemng.form.caseform.CaseEntryForm;
-import com.example.casemng.form.caseform.CaseForm;
-import com.example.casemng.form.caseform.CaseOrderForm;
+import com.example.casemng.form.cases.CaseEntryForm;
+import com.example.casemng.form.cases.CaseForm;
+import com.example.casemng.form.cases.CaseOrderForm;
 import com.example.casemng.model.Pagenation;
 import com.example.casemng.model.entity.Case;
 import com.example.casemng.model.entity.CaseForList;
@@ -75,13 +77,13 @@ public class CaseController {
 			model.addAttribute("msg", "存在しないIDです。");
 			return "error";
 		}
-		
+
 		if (!model.containsAttribute("caseForm")) {
 			CaseForm form = modelMapper.map(cases, CaseForm.class);
 			form.setOrder(modelMapper.map(cases.getOrder(), CaseOrderForm.class));
 			model.addAttribute("caseForm", form);
 		}
-		
+
 		model.addAttribute("shippingStatus", Constant.ShippingStatus.values());
 		return "case/edit";
 	}
@@ -91,13 +93,18 @@ public class CaseController {
 			@PathVariable int id, Model model) {
 
 		Case cases = modelMapper.map(form, Case.class);
-		List<String> errMsg = caseService.checkStock(cases);
+		List<Map<String, String>> notEnoughList = caseService.checkStock(cases);
+		List<String> errMsg = new ArrayList<String>();
 
-		if(!errMsg.isEmpty()) {
+		for (Map<String, String> map : notEnoughList) {
+			errMsg.add(map.get("name") + "の発注数が在庫数を超えています。在庫数：" + map.get("stock") + "　注文数：" + map.get("quantity"));
+		}
+
+		if (!errMsg.isEmpty()) {
 			model.addAttribute("errMsg", errMsg);
 			return getEdit(id, model);
 		}
-		
+
 		if (result.hasErrors()) {
 			return getEdit(id, model);
 		}

@@ -1,16 +1,16 @@
-package com.example.casemng.form.orderform;
+package com.example.casemng.form;
 
 import java.io.Serializable;
 
 import lombok.Data;
 
 @Data
-public class OrderProductForm implements Serializable{
+public class RegisterProductForm implements Serializable{
 
-	public OrderProductForm() {
+	public RegisterProductForm() {
 	}
 	
-	public OrderProductForm(OrderProductForm form) {
+	public RegisterProductForm(RegisterProductForm form) {
 		this.id = form.getId();
 		this.ordersId = form.getOrdersId();
 	    this.productId = form.getProductId();

@@ -18,13 +18,13 @@
                 quotation.id as quot_id,
                 inquiry.id as inqu_id,
                 CASE 
-                    WHEN cases.shipping_status = 1 THEN '支払待ち'
-                    WHEN cases.shipping_status = 2 THEN '発送待ち'
-                    WHEN cases.shipping_status = 3 THEN '発送済み'
-                    WHEN cases.shipping_status = 4 THEN 'キャンセル'
-                    WHEN (cases.shipping_status = 0 AND orders.id IS NOT NULL) THEN '受注'
-                    WHEN (cases.shipping_status = 0 AND orders.id IS NULL AND quotation.id IS NOT NULL) THEN '見積'
-                    WHEN (cases.shipping_status = 0 AND orders.id IS NULL AND quotation.id IS NULL AND inquiry.id IS NOT NULL) THEN '問い合わせ'
+                    WHEN cases.shipping_status = '${@com.example.casemng.constant.Constant$ShippingStatus@AwaitingPayment.getValue}' THEN '${@com.example.casemng.constant.Constant$ShippingStatus@AwaitingPayment.getView}'
+                    WHEN cases.shipping_status = '${@com.example.casemng.constant.Constant$ShippingStatus@AwaitingShipment.getValue}' THEN '${@com.example.casemng.constant.Constant$ShippingStatus@AwaitingShipment.getView}'
+                    WHEN cases.shipping_status = '${@com.example.casemng.constant.Constant$ShippingStatus@Shipped.getValue}' THEN '${@com.example.casemng.constant.Constant$ShippingStatus@Shipped.getView}'
+                    WHEN cases.shipping_status = '${@com.example.casemng.constant.Constant$ShippingStatus@Cancel.getValue}' THEN '${@com.example.casemng.constant.Constant$ShippingStatus@Cancel.getView}'
+                    WHEN (cases.shipping_status = 0 AND orders.id IS NOT NULL) THEN '${@com.example.casemng.constant.Constant$OrderStatus@Order.getView}'
+                    WHEN (cases.shipping_status = 0 AND orders.id IS NULL AND quotation.id IS NOT NULL) THEN '${@com.example.casemng.constant.Constant$OrderStatus@Quantity.getView}'
+                    WHEN (cases.shipping_status = 0 AND orders.id IS NULL AND quotation.id IS NULL AND inquiry.id IS NOT NULL) THEN '${@com.example.casemng.constant.Constant$OrderStatus@Inquiry.getView}'
                     ELSE ''
                 END AS status
             FROM
@@ -116,13 +116,13 @@
                 quotation.id as quot_id,
                 inquiry.id as inqu_id,
                 CASE
-                    WHEN cases.shipping_status = 1 THEN '支払待ち'
-                    WHEN cases.shipping_status = 2 THEN '発送待ち'
-                    WHEN cases.shipping_status = 3 THEN '発送済み'
-                    WHEN cases.shipping_status = 4 THEN 'キャンセル'
-                    WHEN (cases.shipping_status = 0 AND orders.id IS NOT NULL) THEN '受注'
-                    WHEN (cases.shipping_status = 0 AND orders.id IS NULL AND quotation.id IS NOT NULL) THEN '見積'
-                    WHEN (cases.shipping_status = 0 AND orders.id IS NULL AND quotation.id IS NULL AND inquiry.id IS NOT NULL) THEN '問い合わせ'
+                    WHEN cases.shipping_status = '${@com.example.casemng.constant.Constant$ShippingStatus@AwaitingPayment.getValue}' THEN '${@com.example.casemng.constant.Constant$ShippingStatus@AwaitingPayment.getView}'
+                    WHEN cases.shipping_status = '${@com.example.casemng.constant.Constant$ShippingStatus@AwaitingShipment.getValue}' THEN '${@com.example.casemng.constant.Constant$ShippingStatus@AwaitingShipment.getView}'
+                    WHEN cases.shipping_status = '${@com.example.casemng.constant.Constant$ShippingStatus@Shipped.getValue}' THEN '${@com.example.casemng.constant.Constant$ShippingStatus@Shipped.getView}'
+                    WHEN cases.shipping_status = '${@com.example.casemng.constant.Constant$ShippingStatus@Cancel.getValue}' THEN '${@com.example.casemng.constant.Constant$ShippingStatus@Cancel.getView}'
+                    WHEN (cases.shipping_status = 0 AND orders.id IS NOT NULL) THEN '${@com.example.casemng.constant.Constant$OrderStatus@Order.getView}'
+                    WHEN (cases.shipping_status = 0 AND orders.id IS NULL AND quotation.id IS NOT NULL) THEN '${@com.example.casemng.constant.Constant$OrderStatus@Quantity.getView}'
+                    WHEN (cases.shipping_status = 0 AND orders.id IS NULL AND quotation.id IS NULL AND inquiry.id IS NOT NULL) THEN '${@com.example.casemng.constant.Constant$OrderStatus@Inquiry.getView}'
                     ELSE ''
                 END AS status
             FROM
