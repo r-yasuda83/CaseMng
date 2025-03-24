@@ -1,33 +1,16 @@
 package com.example.casemng.form.cases;
 
-import java.util.Date;
+import jakarta.validation.Valid;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-
-import org.springframework.format.annotation.DateTimeFormat;
+import com.example.casemng.form.register.RegisterCaseForm;
 
 import lombok.Data;
 
 @Data
 public class CaseForm {
-
-	private int id;
 	
-	@NotBlank
-	private String caseName;
-	
-	private int customerId;
-	
-	@NotNull
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
-	private Date caseDate;
-	
-	private int shippingStatus;
-	
-	private String memo;
-	
-	private boolean shippingStockFlg;
+	@Valid
+	private RegisterCaseForm cases;
 	
 	private CaseOrderForm order;
 }
