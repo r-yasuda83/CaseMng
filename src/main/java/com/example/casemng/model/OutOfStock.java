@@ -1,13 +1,13 @@
 package com.example.casemng.model;
 
+import com.example.casemng.model.entity.Product;
+
 import lombok.Data;
 
 @Data
 public class OutOfStock {
 
-	String productName;
-	
-	int stock;
+	Product product;
 	
 	int registedQuantity;
 }

@@ -97,9 +97,9 @@ public class CaseController {
 		List<String> errMsg = new ArrayList<String>();
 		int shipped = Constant.ShippingStatus.Shipped.getValue();
 		if (cases.getShippingStatus() == shipped && cases.isShippingStockFlg() == false) {
-			List<OutOfStock> outOfStockList = caseService.checkStock(cases);
+			List<OutOfStock> outOfStockList = caseService.checkStock(cases.getId());
 			for (OutOfStock os : outOfStockList) {
-				errMsg.add(os.getProductName() + "の発注数が在庫数を超えています。在庫数：" + os.getStock() + "　注文数：" + os.getRegistedQuantity());
+				errMsg.add(os.getProduct().getProductName() + "の発注数が在庫数を超えています。在庫数：" + os.getProduct().getStock() + "　注文数：" + os.getRegistedQuantity());
 			}
 		}
 

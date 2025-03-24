@@ -31,6 +31,7 @@ public class OrderForm {
 	private boolean isDeleted;
 
 	private RegisterCaseForm cases;
+	
 	@Valid
 	private List<RegisterProductForm> orderProduct;
 }
