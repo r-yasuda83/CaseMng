@@ -93,9 +93,7 @@ public class CaseServiceImpl implements CaseService {
 				if (orderProduct.getProductId() == product.getId()
 						&& orderProduct.getQuantity() > product.getStock()) {
 					OutOfStock os = new OutOfStock();
-					os.setProduct(new Product());
-					os.getProduct().setProductName(product.getProductName());
-					os.getProduct().setStock(product.getStock());
+					os.setProduct(product);
 					os.setRegistedQuantity(orderProduct.getQuantity());
 					outOfStockList.add(os);
 				}

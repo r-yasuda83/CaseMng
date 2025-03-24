@@ -24,11 +24,13 @@ import com.example.casemng.form.SearchForm;
 import com.example.casemng.form.cases.CaseEntryForm;
 import com.example.casemng.form.cases.CaseForm;
 import com.example.casemng.form.cases.CaseOrderForm;
+import com.example.casemng.form.register.RegisterCaseForm;
 import com.example.casemng.model.OutOfStock;
 import com.example.casemng.model.Pagenation;
 import com.example.casemng.model.entity.Case;
 import com.example.casemng.model.entity.CaseForList;
 import com.example.casemng.model.entity.Customer;
+import com.example.casemng.model.entity.Order;
 import com.example.casemng.service.CaseService;
 import com.example.casemng.service.CustomerService;
 
@@ -79,7 +81,9 @@ public class CaseController {
 		}
 
 		if (!model.containsAttribute("caseForm")) {
-			CaseForm form = modelMapper.map(cases, CaseForm.class);
+			RegisterCaseForm caseform = modelMapper.map(cases, RegisterCaseForm.class);
+			CaseForm form = new CaseForm();
+			form.setCases(caseform);
 			form.setOrder(modelMapper.map(cases.getOrder(), CaseOrderForm.class));
 			model.addAttribute("caseForm", form);
 		}
@@ -92,7 +96,9 @@ public class CaseController {
 	public String postEdit(@ModelAttribute("caseForm") @Validated CaseForm form, BindingResult result,
 			@PathVariable int id, Model model) {
 
-		Case cases = modelMapper.map(form, Case.class);
+		Case cases = modelMapper.map(form.getCases(), Case.class);
+		Order order = modelMapper.map(form.getOrder(), Order.class);
+		cases.setOrder(order);
 		
 		List<String> errMsg = new ArrayList<String>();
 		int shipped = Constant.ShippingStatus.Shipped.getValue();
@@ -113,9 +119,9 @@ public class CaseController {
 		}
 
 		caseService.caseEdit(cases);
-
-		int customerId = form.getCustomerId();
-		return "redirect:/customer/" + customerId + "?caseId=" + form.getId();
+		
+		int customerId = form.getCases().getCustomerId();
+		return "redirect:/customer/" + customerId + "?caseId=" + form.getCases().getId();
 	}
 
 	@GetMapping("/case/create/{id}")
