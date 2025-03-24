@@ -14,7 +14,7 @@ public interface CaseService {
 	public List<Case> findAll();
 	public Page<CaseForList> findByKeyword(Pageable pageable, String serachKey);
 	public Case findById(int id);
-	public List<OutOfStock> checkStock(Case cases);
+	public List<OutOfStock> checkStock(int id);
 	public void caseEdit(Case cases);
 	public int create(Case cases);
 	public void logicalDelete(int id);

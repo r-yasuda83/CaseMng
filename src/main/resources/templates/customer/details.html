@@ -117,7 +117,7 @@
 								<th>受注ステータス</th>
 								<td>
 									<th:block th:switch="${case.shippingStatus}">
-										<span th:case="4" th:text="キャンセル"></span>
+										<span th:case="${cancelStatus.value}" th:text="${cancelStatus.view}"></span>
 										<th:block th:case="*">
 											<span th:if="${#lists.isEmpty(case.order) eq false}" th:text="#{order}"></span>
 											<span

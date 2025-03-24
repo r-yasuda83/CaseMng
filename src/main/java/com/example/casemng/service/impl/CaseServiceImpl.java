@@ -80,9 +80,9 @@ public class CaseServiceImpl implements CaseService {
 		caseMapper.logicalDelete(id);
 	}
 
-	public List<OutOfStock> checkStock(Case cases) {
+	public List<OutOfStock> checkStock(int id) {
 
-		Order order = orderMapper.findByCaseId(cases.getId());
+		Order order = orderMapper.findByCaseId(id);
 		List<OrderProduct> checkList = organizeList(order.getOrderProduct());
 
 		List<Product> productList = productMapper.findAll();
@@ -93,8 +93,9 @@ public class CaseServiceImpl implements CaseService {
 				if (orderProduct.getProductId() == product.getId()
 						&& orderProduct.getQuantity() > product.getStock()) {
 					OutOfStock os = new OutOfStock();
-					os.setProductName(product.getProductName());
-					os.setStock(product.getStock());
+					os.setProduct(new Product());
+					os.getProduct().setProductName(product.getProductName());
+					os.getProduct().setStock(product.getStock());
 					os.setRegistedQuantity(orderProduct.getQuantity());
 					outOfStockList.add(os);
 				}

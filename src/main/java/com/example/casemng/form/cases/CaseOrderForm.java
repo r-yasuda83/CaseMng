@@ -8,6 +8,8 @@ import jakarta.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.example.casemng.form.register.RegisterProductForm;
+
 import lombok.Data;
 
 @Data
@@ -26,5 +28,5 @@ public class CaseOrderForm {
 	private boolean isDeleted;
 	
 	@Valid
-	private List<CaseOrderProductForm> orderProduct;
+	private List<RegisterProductForm> orderProduct;
 }

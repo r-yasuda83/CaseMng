@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Component;
 
+import com.example.casemng.form.register.RegisterCaseForm;
+
 import lombok.Data;
 
 @Component
@@ -25,5 +27,5 @@ public class InquiryForm {
 
 	private boolean isDeleted;
 
-	private InquiryCaseForm cases;
+	private RegisterCaseForm cases;
 }

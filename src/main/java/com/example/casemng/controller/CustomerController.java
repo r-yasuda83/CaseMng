@@ -71,6 +71,7 @@ public class CustomerController {
 		model.addAttribute("caseId", caseId);
 		
 		model.addAttribute("shippingStatus", Constant.ShippingStatus.values());
+		model.addAttribute("cancelStatus", Constant.ShippingStatus.Cancel);
 		
 		return "customer/details";
 	}
